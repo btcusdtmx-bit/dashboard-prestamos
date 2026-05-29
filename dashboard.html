@@ -129,85 +129,145 @@
     <div id="passModal" class="modal"><div class="modal-box"><button class="modal-close" onclick="closePassModal()">✕</button><h2>🔑 Cambiar Contraseña</h2><form id="passForm"><div class="field-group"><label>Nueva contraseña</label><input type="password" id="newPass" placeholder="Mínimo 6 caracteres" required minlength="6"></div><div class="field-group"><label>Confirmar contraseña</label><input type="password" id="confirmPass" placeholder="Repite la contraseña" required minlength="6"></div><button type="submit" class="btn-primary" id="passBtn">Actualizar contraseña</button></form><div id="passMsg"></div></div></div>
 
     <script>
-        // ✅ TUS CREDENCIALES CORREGIDAS
-        const SUPABASE_URL = 'https://ehcfrserpdqthkdqizsz.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL'; // ← NUEVA KEY
+    const SUPABASE_URL = 'https://ehcfrserpdqthkdqizsz.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
 
-        let db, currentUser;
+    let db, currentUser;
 
-        function initSupabase() {
-            if (db) return;
-            try {
-                if (!window.supabase) { console.warn('⏳ Esperando SDK...'); setTimeout(initSupabase, 300); return; }
-                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { persistSession: true },
-  global: { headers: { apikey: SUPABASE_ANON_KEY } }
-});
-                console.log('✅ Supabase listo con nueva key');
-                const statusEl = document.getElementById('loginError');
-                if (statusEl) statusEl.innerHTML = '';
-            } catch (err) {
-                console.error('❌ Error Supabase:', err);
-                const statusEl = document.getElementById('loginError');
-                if (statusEl) statusEl.innerHTML = `<div class="alert alert-error">❌ Error de conexión: ${err.message}</div>`;
-            }
+    function initSupabase() {
+        if (db) return;
+        if (!window.supabase) { setTimeout(initSupabase, 300); return; }
+        try {
+            // Inicialización estándar sin opciones extra
+            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Cliente Supabase inicializado');
+        } catch (err) {
+            console.error('❌ Fallo initSupabase:', err);
         }
+    }
 
-        async function login() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-            const btn = document.getElementById('loginBtn');
-            errorDiv.innerHTML = '';
-            if (!email || !password) { errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; return; }
-            if (!db) { errorDiv.innerHTML = '<div class="alert alert-error">Error: Conexión a Supabase fallida</div>'; return; }
-            btn.textContent = 'Verificando...'; btn.disabled = true;
-            try {
-                const { data, error } = await db.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                currentUser = data.user;
-                document.getElementById('userName').textContent = currentUser.email;
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboardSection').style.display = 'block';
-                await loadDashboard();
-            } catch (err) {
-                let msg = err.message || 'Credenciales incorrectas';
-                if (msg.includes('Invalid login')) msg = 'Correo o contraseña incorrectos';
-                if (msg.includes('Email not confirmed')) msg = 'Correo no verificado. Revisa tu bandeja de entrada';
-                errorDiv.innerHTML = `<div class="alert alert-error">❌ ${msg}</div>`;
-            } finally { btn.textContent = 'Iniciar sesión'; btn.disabled = false; }
+    async function login() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const errorDiv = document.getElementById('loginError');
+        const btn = document.getElementById('loginBtn');
+        errorDiv.innerHTML = '';
+
+        if (!email || !password) { errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; return; }
+        if (!db) { errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; return; }
+
+        btn.textContent = 'Verificando...'; btn.disabled = true;
+        console.log('🔑 Intentando login...');
+
+        try {
+            const { data, error } = await db.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            
+            currentUser = data.user;
+            console.log('✅ Login exitoso para:', currentUser.email);
+            document.getElementById('userName').textContent = currentUser.email;
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            
+            await loadDashboard();
+        } catch (err) {
+            console.error('❌ Error en login:', err);
+            let msg = err.message || 'Credenciales incorrectas';
+            errorDiv.innerHTML = `<div class="alert alert-error">❌ ${msg}</div>`;
+        } finally {
+            btn.textContent = 'Iniciar sesión'; btn.disabled = false;
         }
+    }
 
-        async function logout() { await db.auth.signOut(); currentUser = null; document.getElementById('loginSection').style.display = 'flex'; document.getElementById('dashboardSection').style.display = 'none'; document.getElementById('email').value = ''; document.getElementById('password').value = ''; document.getElementById('loginError').innerHTML = ''; }
+    async function logout() {
+        await db.auth.signOut();
+        currentUser = null;
+        document.getElementById('loginSection').style.display = 'flex';
+        document.getElementById('dashboardSection').style.display = 'none';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+    }
 
-        async function loadDashboard() { try { await Promise.all([loadCajaBalance(), loadPrestamos(), loadSocios(), loadDistribuciones()]); } catch (error) { console.error('Error cargando dashboard:', error); } }
+    async function loadDashboard() {
+        console.log('📊 Cargando dashboard...');
+        try {
+            // Cargamos tabla por tabla para detectar cuál falla
+            await loadCajaBalance();
+            await loadSocios();
+            await loadDistribuciones();
+            await loadPrestamos();
+            console.log('✅ Dashboard cargado correctamente');
+        } catch (err) {
+            console.error('❌ Error general en dashboard:', err);
+        }
+    }
 
-        async function loadCajaBalance() { try { const { data, error } = await db.from('caja').select('monto, tipo'); if (error) throw error; const entradas = data.filter(r => r.tipo === 'entrada').reduce((sum, r) => sum + r.monto, 0); const salidas = data.filter(r => r.tipo === 'salida').reduce((sum, r) => sum + r.monto, 0); document.getElementById('saldoCaja').textContent = `$${(entradas - salidas).toFixed(2)}`; } catch (err) { console.error('Error caja:', err); } }
+    async function loadCajaBalance() {
+        try {
+            console.log('🔍 Consultando tabla: caja');
+            const { data, error } = await db.from('caja').select('monto, tipo');
+            if (error) throw error;
+            const entradas = data.filter(r => r.tipo === 'entrada').reduce((sum, r) => sum + r.monto, 0);
+            const salidas = data.filter(r => r.tipo === 'salida').reduce((sum, r) => sum + r.monto, 0);
+            document.getElementById('saldoCaja').textContent = `$${(entradas - salidas).toFixed(2)}`;
+            console.log('✅ caja OK');
+        } catch (err) { console.error('❌ Fallo caja:', err); }
+    }
 
-        async function loadPrestamos() { try { const { data: prestamos, error } = await db.from('prestamos').select('id, monto_original, saldo_actual, interes_mensual, estatus, cliente_id').order('created_at', { ascending: false }).limit(10); if (error) throw error; const clientIds = prestamos.map(p => p.cliente_id); const { data: clientes } = await db.from('clientes').select('id, nombre').in('id', clientIds); const clientesMap = {}; clientes?.forEach(c => clientesMap[c.id] = c.nombre); document.getElementById('prestamosActivos').textContent = prestamos.filter(p => p.estatus === 'activo').length; const tbody = document.getElementById('prestamosTable'); tbody.innerHTML = ''; if (!prestamos.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px">Sin préstamos registrados</td></tr>'; return; } prestamos.forEach(p => { const row = document.createElement('tr'); row.innerHTML = `<td>${clientesMap[p.cliente_id] || 'N/A'}</td><td><span class="mono">$${parseFloat(p.monto_original||0).toFixed(2)}</span></td><td><span class="mono">$${parseFloat(p.saldo_actual||0).toFixed(2)}</span></td><td><span class="mono">${p.interes_mensual ? (p.interes_mensual * 100).toFixed(1) : 0}%</span></td><td><span class="badge ${p.estatus === 'activo' ? 'badge-active' : 'badge-paid'}">${p.estatus === 'activo' ? 'Activo' : 'Pagado'}</span></td>`; tbody.appendChild(row); }); } catch (err) { console.error('Error préstamos:', err); } }
+    async function loadSocios() {
+        try {
+            console.log('🔍 Consultando tabla: socios');
+            const { data, error } = await db.from('socios').select('id, nombre, porcentaje, activo').eq('activo', true);
+            if (error) throw error;
+            document.getElementById('totalSocios').textContent = data?.length || 0;
+            console.log('✅ socios OK');
+        } catch (err) { console.error('❌ Fallo socios:', err); }
+    }
 
-        async function loadSocios() { try { const { data, error } = await db.from('socios').select('id, nombre, porcentaje, activo').eq('activo', true); if (error) throw error; document.getElementById('totalSocios').textContent = data?.length || 0; } catch (err) { console.error('Error socios:', err); } }
+    async function loadDistribuciones() {
+        try {
+            console.log('🔍 Consultando tabla: distribuciones');
+            const { data: dist, error } = await db.from('distribuciones').select('socio_id, monto');
+            if (error) throw error;
+            const bySocio = {};
+            dist?.forEach(d => bySocio[d.socio_id] = (bySocio[d.socio_id] || 0) + d.monto);
+            const total = Object.values(bySocio).reduce((sum, v) => sum + v, 0);
+            document.getElementById('totalDistribuido').textContent = `$${total.toFixed(2)}`;
+            console.log('✅ distribuciones OK');
+        } catch (err) { console.error('❌ Fallo distribuciones:', err); }
+    }
 
-        async function loadDistribuciones() { try { const { data: dist, error } = await db.from('distribuciones').select('socio_id, monto'); if (error) throw error; const bySocio = {}; dist?.forEach(d => bySocio[d.socio_id] = (bySocio[d.socio_id] || 0) + d.monto); const total = Object.values(bySocio).reduce((sum, v) => sum + v, 0); document.getElementById('totalDistribuido').textContent = `$${total.toFixed(2)}`; const socioIds = Object.keys(bySocio); if (!socioIds.length) { document.getElementById('sociosTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px">Sin distribuciones registradas</td></tr>'; return; } const { data: socios } = await db.from('socios').select('id, nombre, porcentaje').in('id', socioIds); const tbody = document.getElementById('sociosTable'); tbody.innerHTML = ''; socios?.forEach(s => { const t = bySocio[s.id] || 0; const row = document.createElement('tr'); row.innerHTML = `<td>${s.nombre}</td><td><span class="mono">${s.porcentaje}%</span></td><td><span class="mono">$${t.toFixed(2)}</span></td><td><span class="mono">${s.porcentaje > 0 ? ((t / s.porcentaje) * 100).toFixed(2) : 0}%</span></td>`; tbody.appendChild(row); }); } catch (err) { console.error('Error distribuciones:', err); } }
+    async function loadPrestamos() {
+        try {
+            console.log('🔍 Consultando tabla: prestamos');
+            const { data: prestamos, error } = await db.from('prestamos').select('*').order('created_at', { ascending: false }).limit(10);
+            if (error) throw error;
+            document.getElementById('prestamosActivos').textContent = prestamos.filter(p => p.estatus === 'activo').length;
+            console.log('✅ prestamos OK');
+        } catch (err) { console.error('❌ Fallo prestamos:', err); }
+    }
 
-        function openPassModal() { document.getElementById('passModal').classList.add('open'); document.getElementById('passMsg').style.display = 'none'; document.getElementById('passForm').reset(); }
-        function closePassModal() { document.getElementById('passModal').classList.remove('open'); }
-        window.addEventListener('click', e => { if (e.target === document.getElementById('passModal')) closePassModal(); });
+    // Modal contraseña (sin cambios)
+    function openPassModal() { document.getElementById('passModal').classList.add('open'); document.getElementById('passMsg').style.display = 'none'; document.getElementById('passForm').reset(); }
+    function closePassModal() { document.getElementById('passModal').classList.remove('open'); }
+    window.addEventListener('click', e => { if (e.target === document.getElementById('passModal')) closePassModal(); });
 
-        document.getElementById('passForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const newP = document.getElementById('newPass').value;
-            const confP = document.getElementById('confirmPass').value;
-            const msg = document.getElementById('passMsg');
-            const btn = document.getElementById('passBtn');
-            msg.style.display = 'block'; msg.className = 'alert';
-            if (newP !== confP) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Las contraseñas no coinciden'; return; }
-            if (newP.length < 6) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Mínimo 6 caracteres'; return; }
-            btn.textContent = 'Actualizando...'; btn.disabled = true;
-            try { const { error } = await db.auth.updateUser({ password: newP }); if (error) throw error; msg.classList.add('alert-success'); msg.innerHTML = '✅ Contraseña actualizada correctamente.'; setTimeout(() => closePassModal(), 2500); } catch (err) { msg.classList.add('alert-error'); msg.innerHTML = `❌ Error: ${err.message}`; } finally { btn.textContent = 'Actualizar contraseña'; btn.disabled = false; }
-        });
+    document.getElementById('passForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const newP = document.getElementById('newPass').value;
+        const confP = document.getElementById('confirmPass').value;
+        const msg = document.getElementById('passMsg');
+        const btn = document.getElementById('passBtn');
+        msg.style.display = 'block'; msg.className = 'alert';
+        if (newP !== confP) { msg.classList.add('alert-error'); msg.innerHTML = ' Las contraseñas no coinciden'; return; }
+        if (newP.length < 6) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Mínimo 6 caracteres'; return; }
+        btn.textContent = 'Actualizando...'; btn.disabled = true;
+        try { const { error } = await db.auth.updateUser({ password: newP }); if (error) throw error; msg.classList.add('alert-success'); msg.innerHTML = '✅ Contraseña actualizada.'; setTimeout(closePassModal, 2500); } 
+        catch (err) { msg.classList.add('alert-error'); msg.innerHTML = `❌ ${err.message}`; } 
+        finally { btn.textContent = 'Actualizar contraseña'; btn.disabled = false; }
+    });
 
-        window.addEventListener('DOMContentLoaded', initSupabase);
-    </script>
+    window.addEventListener('DOMContentLoaded', initSupabase);
+</script>
 </body>
 </html>
