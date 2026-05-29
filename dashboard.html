@@ -4,18 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Préstamos y Socios</title>
-    <!-- ✅ CDN ACTUALIZADO a versión compatible con nuevas keys -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1/dist/umd/supabase.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --ink: #0d0f14; --ink-mid: #1e2330; --ink-soft: #2c3347; --surface: #f4f5f7;
-            --surface-raised: #ffffff; --accent: #3ecf8e; --accent-glow: rgba(62,207,142,0.18);
-            --accent-dim: #2da86f; --warn: #f5a623; --danger: #e05252; --blue: #4a90d9;
-            --muted: #8892a4; --border: rgba(255,255,255,0.07); --border-light: rgba(0,0,0,0.07);
-            --radius: 14px; --shadow: 0 2px 20px rgba(0,0,0,0.22); --shadow-sm: 0 1px 8px rgba(0,0,0,0.12);
-        }
+        :root { --ink: #0d0f14; --ink-mid: #1e2330; --ink-soft: #2c3347; --surface: #f4f5f7; --surface-raised: #ffffff; --accent: #3ecf8e; --accent-glow: rgba(62,207,142,0.18); --accent-dim: #2da86f; --warn: #f5a623; --danger: #e05252; --blue: #4a90d9; --muted: #8892a4; --border: rgba(255,255,255,0.07); --border-light: rgba(0,0,0,0.07); --radius: 14px; --shadow: 0 2px 20px rgba(0,0,0,0.22); --shadow-sm: 0 1px 8px rgba(0,0,0,0.12); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Sora', sans-serif; background: var(--ink); min-height: 100vh; color: #e4e8f0; overflow-x: hidden; }
         body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(62,207,142,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(74,144,217,0.05) 0%, transparent 55%); pointer-events: none; z-index: 0; }
@@ -128,154 +121,207 @@
     </div>
     <div id="passModal" class="modal"><div class="modal-box"><button class="modal-close" onclick="closePassModal()">✕</button><h2>🔑 Cambiar Contraseña</h2><form id="passForm"><div class="field-group"><label>Nueva contraseña</label><input type="password" id="newPass" placeholder="Mínimo 6 caracteres" required minlength="6"></div><div class="field-group"><label>Confirmar contraseña</label><input type="password" id="confirmPass" placeholder="Repite la contraseña" required minlength="6"></div><button type="submit" class="btn-primary" id="passBtn">Actualizar contraseña</button></form><div id="passMsg"></div></div></div>
 
-   <script>
-    const SUPABASE_URL = 'https://ehcfrserpdqthkdqizsz.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
-
-    let db, currentUser;
-
-    function initSupabase() {
-        if (db) return;
-        if (!window.supabase) { setTimeout(initSupabase, 300); return; }
-        try {
-            // ✅ Configuración explícita para evitar error de esquema
-            db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-                db: { schema: 'public' },
-                auth: { persistSession: true }
-            });
-            console.log('✅ Cliente inicializado con schema: public');
-        } catch (err) {
-            console.error('❌ Fallo initSupabase:', err);
-        }
-    }
-
-    async function login() {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const errorDiv = document.getElementById('loginError');
-    const btn = document.getElementById('loginBtn');
-    errorDiv.innerHTML = '';
-
-    if (!email || !password) { 
-        errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; 
-        return; 
-    }
-    if (!db) { 
-        errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; 
-        return; 
-    }
-
-    btn.textContent = 'Verificando...'; 
-    btn.disabled = true;
-    console.log('🔑 Validando usuario manualmente...');
-
-    try {
-        // 1️⃣ Iniciar sesión ANÓNIMA (evita el endpoint roto de auth)
-        const { error: anonError } = await db.auth.signInAnonymously();
-        if (anonError) throw anonError;
-
-        // 2️⃣ Validar usuario en nuestra tabla personalizada
-        const { data: user, error: userError } = await db
-            .from('app_users')
-            .select('id, email, nombre')
-            .eq('email', email)
-            .eq('activo', true)
-            .maybeSingle();
-
-        if (userError || !user) {
-            throw new Error('Credenciales incorrectas');
-        }
-
-        // 3️⃣ Validar contraseña (comparación simple para demo)
-        // ⚠️ En producción: usar bcryptjs para comparar hash
-        if (password !== 'Prestamos123') {
-            throw new Error('Contraseña incorrecta');
-        }
-
-        // 4️⃣ Login exitoso
-        currentUser = { email: user.email, nombre: user.nombre };
-        console.log('✅ Login exitoso para:', currentUser.email);
+    <script>
+        // ✅ CREDENCIALES
+        const SUPABASE_URL = 'https://ehcfrserpdqthkdqizsz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
         
-        document.getElementById('userName').textContent = currentUser.nombre || currentUser.email;
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('dashboardSection').style.display = 'block';
-        
-        await loadDashboard();
+        // ✅ CONTRASEÑA MAESTRA (cámbiala si quieres más seguridad)
+        const MASTER_PASSWORD = 'Prestamos123';
 
-    } catch (err) {
-        console.error('❌ Error en login:', err);
-        errorDiv.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
-    } finally {
-        btn.textContent = 'Iniciar sesión'; 
-        btn.disabled = false;
+        // ✅ USUARIOS PERMITIDOS
+        const ALLOWED_USERS = [
+            'tony_bravo@hotmail.com',
+            'axlj31@gmail.com',
+            'enrique_sabori@hotmail.com',
+            'itzel_riv93@hotmail.com',
+            'memsnena1005@hotmail.com',
+            'patty_walter25@hotmail.com'
+        ];
+
+        let db, currentUser;
+
+        function initSupabase() {
+            if (db) return;
+            if (!window.supabase) { setTimeout(initSupabase, 300); return; }
+            try {
+                // ✅ Conexión con schema explícito
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    db: { schema: 'public' },
+                    auth: { persistSession: true, autoRefreshToken: false }
+                });
+                console.log('✅ Cliente Supabase inicializado');
+            } catch (err) {
+                console.error('❌ Error initSupabase:', err);
+            }
         }
-    }
 
-    async function logout() {
-        await db.auth.signOut();
-        currentUser = null;
-        document.getElementById('loginSection').style.display = 'flex';
-        document.getElementById('dashboardSection').style.display = 'none';
-        document.getElementById('email').value = '';
-        document.getElementById('password').value = '';
-    }
+        // ✅ FUNCIÓN LOGIN CON BYPASS DE AUTH
+        async function login() {
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            const btn = document.getElementById('loginBtn');
+            errorDiv.innerHTML = '';
 
-    async function loadDashboard() {
-        console.log('📊 Cargando datos...');
-        try {
-            // 1. Caja
-            console.log(' Probando tabla: caja');
-            const { data: caja, error: errCaja } = await db.from('caja').select('monto, tipo');
-            if (errCaja) throw new Error('caja: ' + errCaja.message);
-            const entradas = caja.filter(r => r.tipo === 'entrada').reduce((s, r) => s + r.monto, 0);
-            const salidas = caja.filter(r => r.tipo === 'salida').reduce((s, r) => s + r.monto, 0);
-            document.getElementById('saldoCaja').textContent = `$${(entradas - salidas).toFixed(2)}`;
-            console.log('✅ caja OK');
+            if (!email || !password) { 
+                errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; 
+                return; 
+            }
+            if (!db) { 
+                errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; 
+                return; 
+            }
 
-            // 2. Socios
-            console.log(' Probando tabla: socios');
-            const { data: socios, error: errSocios } = await db.from('socios').select('id, nombre, porcentaje, activo').eq('activo', true);
-            if (errSocios) throw new Error('socios: ' + errSocios.message);
-            document.getElementById('totalSocios').textContent = socios?.length || 0;
-            console.log('✅ socios OK');
+            btn.textContent = 'Verificando...'; 
+            btn.disabled = true;
+            console.log('🔑 Validando usuario...');
 
-            // 3. Distribuciones
-            console.log('🔍 Probando tabla: distribuciones');
-            const { data: dist, error: errDist } = await db.from('distribuciones').select('socio_id, monto');
-            if (errDist) throw new Error('distribuciones: ' + errDist.message);
-            const bySocio = {};
-            dist?.forEach(d => bySocio[d.socio_id] = (bySocio[d.socio_id] || 0) + d.monto);
-            const total = Object.values(bySocio).reduce((s, v) => s + v, 0);
-            document.getElementById('totalDistribuido').textContent = `$${total.toFixed(2)}`;
-            console.log('✅ distribuciones OK');
+            try {
+                // 1️⃣ Validar email en lista permitida
+                if (!ALLOWED_USERS.includes(email)) {
+                    throw new Error('Correo no registrado');
+                }
 
-            console.log('🎉 Dashboard cargado sin errores');
-        } catch (err) {
-            console.error('🚨 FALLO EN TABLA:', err.message);
+                // 2️⃣ Validar contraseña maestra
+                if (password !== MASTER_PASSWORD) {
+                    throw new Error('Contraseña incorrecta');
+                }
+
+                // 3️⃣ Login anónimo (evita endpoint roto de auth)
+                const { error: anonError } = await db.auth.signInAnonymously();
+                if (anonError) throw anonError;
+
+                // 4️⃣ Éxito
+                currentUser = { email, nombre: email.split('@')[0] };
+                console.log('✅ Login exitoso:', currentUser.email);
+                
+                document.getElementById('userName').textContent = currentUser.nombre;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'block';
+                
+                await loadDashboard();
+
+            } catch (err) {
+                console.error('❌ Error login:', err);
+                errorDiv.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+            } finally {
+                btn.textContent = 'Iniciar sesión'; 
+                btn.disabled = false;
+            }
         }
-    }
 
-    // Modal y eventos
-    function openPassModal() { document.getElementById('passModal').classList.add('open'); document.getElementById('passMsg').style.display = 'none'; document.getElementById('passForm').reset(); }
-    function closePassModal() { document.getElementById('passModal').classList.remove('open'); }
-    window.addEventListener('click', e => { if (e.target === document.getElementById('passModal')) closePassModal(); });
+        async function logout() {
+            await db.auth.signOut();
+            currentUser = null;
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').innerHTML = '';
+        }
 
-    document.getElementById('passForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const newP = document.getElementById('newPass').value;
-        const confP = document.getElementById('confirmPass').value;
-        const msg = document.getElementById('passMsg');
-        const btn = document.getElementById('passBtn');
-        msg.style.display = 'block'; msg.className = 'alert';
-        if (newP !== confP) { msg.classList.add('alert-error'); msg.innerHTML = 'Las contraseñas no coinciden'; return; }
-        if (newP.length < 6) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Mínimo 6 caracteres'; return; }
-        btn.textContent = 'Actualizando...'; btn.disabled = true;
-        try { const { error } = await db.auth.updateUser({ password: newP }); if (error) throw error; msg.classList.add('alert-success'); msg.innerHTML = '✅ Contraseña actualizada.'; setTimeout(closePassModal, 2500); } 
-        catch (err) { msg.classList.add('alert-error'); msg.innerHTML = `❌ ${err.message}`; } 
-        finally { btn.textContent = 'Actualizar contraseña'; btn.disabled = false; }
-    });
+        async function loadDashboard() {
+            console.log('📊 Cargando dashboard...');
+            try {
+                await Promise.all([loadCajaBalance(), loadPrestamos(), loadSocios(), loadDistribuciones()]);
+                console.log('✅ Dashboard cargado');
+            } catch (err) {
+                console.error('❌ Error dashboard:', err);
+            }
+        }
 
-    window.addEventListener('DOMContentLoaded', initSupabase);
-</script>
+        async function loadCajaBalance() {
+            try {
+                const { data, error } = await db.from('caja').select('monto, tipo');
+                if (error) throw error;
+                const entradas = data.filter(r => r.tipo === 'entrada').reduce((s, r) => s + r.monto, 0);
+                const salidas = data.filter(r => r.tipo === 'salida').reduce((s, r) => s + r.monto, 0);
+                document.getElementById('saldoCaja').textContent = `$${(entradas - salidas).toFixed(2)}`;
+            } catch (err) { console.error('❌ caja:', err); }
+        }
+
+        async function loadPrestamos() {
+            try {
+                const { data: prestamos, error } = await db.from('prestamos')
+                    .select('id, monto_original, saldo_actual, interes_mensual, estatus, cliente_id')
+                    .order('created_at', { ascending: false }).limit(10);
+                if (error) throw error;
+                const clientIds = prestamos.map(p => p.cliente_id);
+                const { data: clientes } = await db.from('clientes').select('id, nombre').in('id', clientIds);
+                const clientesMap = {};
+                clientes?.forEach(c => clientesMap[c.id] = c.nombre);
+                document.getElementById('prestamosActivos').textContent = prestamos.filter(p => p.estatus === 'activo').length;
+                const tbody = document.getElementById('prestamosTable');
+                tbody.innerHTML = '';
+                if (!prestamos.length) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px">Sin préstamos</td></tr>';
+                    return;
+                }
+                prestamos.forEach(p => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${clientesMap[p.cliente_id] || 'N/A'}</td>
+                        <td><span class="mono">$${parseFloat(p.monto_original||0).toFixed(2)}</span></td>
+                        <td><span class="mono">$${parseFloat(p.saldo_actual||0).toFixed(2)}</span></td>
+                        <td><span class="mono">${p.interes_mensual ? (p.interes_mensual * 100).toFixed(1) : 0}%</span></td>
+                        <td><span class="badge ${p.estatus === 'activo' ? 'badge-active' : 'badge-paid'}">${p.estatus === 'activo' ? 'Activo' : 'Pagado'}</span></td>`;
+                    tbody.appendChild(row);
+                });
+            } catch (err) { console.error('❌ prestamos:', err); }
+        }
+
+        async function loadSocios() {
+            try {
+                const { data, error } = await db.from('socios').select('id, nombre, porcentaje, activo').eq('activo', true);
+                if (error) throw error;
+                document.getElementById('totalSocios').textContent = data?.length || 0;
+            } catch (err) { console.error('❌ socios:', err); }
+        }
+
+        async function loadDistribuciones() {
+            try {
+                const { data: dist, error } = await db.from('distribuciones').select('socio_id, monto');
+                if (error) throw error;
+                const bySocio = {};
+                dist?.forEach(d => bySocio[d.socio_id] = (bySocio[d.socio_id] || 0) + d.monto);
+                const total = Object.values(bySocio).reduce((s, v) => s + v, 0);
+                document.getElementById('totalDistribuido').textContent = `$${total.toFixed(2)}`;
+            } catch (err) { console.error('❌ distribuciones:', err); }
+        }
+
+        // Modal contraseña
+        function openPassModal() { 
+            document.getElementById('passModal').classList.add('open'); 
+            document.getElementById('passMsg').style.display = 'none'; 
+            document.getElementById('passForm').reset(); 
+        }
+        function closePassModal() { 
+            document.getElementById('passModal').classList.remove('open'); 
+        }
+        window.addEventListener('click', e => { 
+            if (e.target === document.getElementById('passModal')) closePassModal(); 
+        });
+
+        document.getElementById('passForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const newP = document.getElementById('newPass').value;
+            const confP = document.getElementById('confirmPass').value;
+            const msg = document.getElementById('passMsg');
+            const btn = document.getElementById('passBtn');
+            msg.style.display = 'block'; msg.className = 'alert';
+            if (newP !== confP) { msg.classList.add('alert-error'); msg.innerHTML = 'Las contraseñas no coinciden'; return; }
+            if (newP.length < 6) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Mínimo 6 caracteres'; return; }
+            // Actualizar contraseña maestra localmente
+            MASTER_PASSWORD = newP;
+            msg.classList.add('alert-success');
+            msg.innerHTML = '✅ Contraseña actualizada (solo en esta sesión)';
+            setTimeout(() => closePassModal(), 2500);
+            btn.textContent = 'Actualizar contraseña';
+            btn.disabled = false;
+        });
+
+        window.addEventListener('DOMContentLoaded', initSupabase);
+    </script>
 </body>
 </html>
