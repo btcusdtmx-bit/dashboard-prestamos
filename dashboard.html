@@ -156,60 +156,56 @@
             }
         }
 
-        // ✅ FUNCIÓN LOGIN CON BYPASS DE AUTH
-        async function login() {
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-            const btn = document.getElementById('loginBtn');
-            errorDiv.innerHTML = '';
+        // ✅ FUNCIÓN LOGIN CORREGIDA (sin signInAnonymously)
+async function login() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    errorDiv.innerHTML = '';
 
-            if (!email || !password) { 
-                errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; 
-                return; 
-            }
-            if (!db) { 
-                errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; 
-                return; 
-            }
+    if (!email || !password) { 
+        errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; 
+        return; 
+    }
+    if (!db) { 
+        errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; 
+        return; 
+    }
 
-            btn.textContent = 'Verificando...'; 
-            btn.disabled = true;
-            console.log('🔑 Validando usuario...');
+    btn.textContent = 'Verificando...'; 
+    btn.disabled = true;
+    console.log('🔑 Validando usuario...');
 
-            try {
-                // 1️⃣ Validar email en lista permitida
-                if (!ALLOWED_USERS.includes(email)) {
-                    throw new Error('Correo no registrado');
-                }
-
-                // 2️⃣ Validar contraseña maestra
-                if (password !== MASTER_PASSWORD) {
-                    throw new Error('Contraseña incorrecta');
-                }
-
-                // 3️⃣ Login anónimo (evita endpoint roto de auth)
-                const { error: anonError } = await db.auth.signInAnonymously();
-                if (anonError) throw anonError;
-
-                // 4️⃣ Éxito
-                currentUser = { email, nombre: email.split('@')[0] };
-                console.log('✅ Login exitoso:', currentUser.email);
-                
-                document.getElementById('userName').textContent = currentUser.nombre;
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboardSection').style.display = 'block';
-                
-                await loadDashboard();
-
-            } catch (err) {
-                console.error('❌ Error login:', err);
-                errorDiv.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
-            } finally {
-                btn.textContent = 'Iniciar sesión'; 
-                btn.disabled = false;
-            }
+    try {
+        // 1️⃣ Validar email en lista permitida
+        if (!ALLOWED_USERS.includes(email)) {
+            throw new Error('Correo no registrado');
         }
+
+        // 2️⃣ Validar contraseña maestra
+        if (password !== MASTER_PASSWORD) {
+            throw new Error('Contraseña incorrecta');
+        }
+
+        // ✅ Login exitoso (SIN llamada a auth - validación 100% local)
+        currentUser = { email, nombre: email.split('@')[0] };
+        console.log('✅ Login exitoso:', currentUser.email);
+        
+        document.getElementById('userName').textContent = currentUser.nombre;
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+        
+        await loadDashboard();
+
+    } catch (err) {
+        console.error('❌ Error login:', err);
+        errorDiv.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    } finally {
+        btn.textContent = 'Iniciar sesión'; 
+        btn.disabled = false;
+    }
+}
 
         async function logout() {
             await db.auth.signOut();
