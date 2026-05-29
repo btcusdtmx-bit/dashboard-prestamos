@@ -4,626 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Préstamos y Socios</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- ✅ CDN ACTUALIZADO a versión compatible con nuevas keys -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1/dist/umd/supabase.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ink: #0d0f14;
-            --ink-mid: #1e2330;
-            --ink-soft: #2c3347;
-            --surface: #f4f5f7;
-            --surface-raised: #ffffff;
-            --accent: #3ecf8e;
-            --accent-glow: rgba(62,207,142,0.18);
-            --accent-dim: #2da86f;
-            --warn: #f5a623;
-            --danger: #e05252;
-            --blue: #4a90d9;
-            --muted: #8892a4;
-            --border: rgba(255,255,255,0.07);
-            --border-light: rgba(0,0,0,0.07);
-            --radius: 14px;
-            --shadow: 0 2px 20px rgba(0,0,0,0.22);
-            --shadow-sm: 0 1px 8px rgba(0,0,0,0.12);
+            --ink: #0d0f14; --ink-mid: #1e2330; --ink-soft: #2c3347; --surface: #f4f5f7;
+            --surface-raised: #ffffff; --accent: #3ecf8e; --accent-glow: rgba(62,207,142,0.18);
+            --accent-dim: #2da86f; --warn: #f5a623; --danger: #e05252; --blue: #4a90d9;
+            --muted: #8892a4; --border: rgba(255,255,255,0.07); --border-light: rgba(0,0,0,0.07);
+            --radius: 14px; --shadow: 0 2px 20px rgba(0,0,0,0.22); --shadow-sm: 0 1px 8px rgba(0,0,0,0.12);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Sora', sans-serif;
-            background: var(--ink);
-            min-height: 100vh;
-            color: #e4e8f0;
-            overflow-x: hidden;
-        }
-
-        /* ─── BACKGROUND TEXTURE ─────────────────────────── */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 80% 60% at 20% 0%, rgba(62,207,142,0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 80% 100%, rgba(74,144,217,0.05) 0%, transparent 55%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* ─── LOGIN ──────────────────────────────────────── */
-        .login-wrap {
-            position: relative; z-index: 1;
-            min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-
-        .login-panel {
-            width: 100%; max-width: 420px;
-            background: var(--ink-mid);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 48px 40px 40px;
-            box-shadow: var(--shadow), 0 0 0 1px rgba(62,207,142,0.04);
-            animation: slideUp 0.5s cubic-bezier(.22,.68,0,1.2) both;
-        }
-
-        .login-logo {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
-        .login-logo .icon-wrap {
-            width: 64px; height: 64px;
-            background: linear-gradient(135deg, var(--accent), var(--blue));
-            border-radius: 18px;
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 28px;
-            margin-bottom: 16px;
-            box-shadow: 0 8px 24px rgba(62,207,142,0.3);
-        }
-
-        .login-logo h1 {
-            font-size: 1.45rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.02em;
-        }
-
-        .login-logo p {
-            font-size: 0.8rem;
-            color: var(--muted);
-            margin-top: 4px;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
+        body { font-family: 'Sora', sans-serif; background: var(--ink); min-height: 100vh; color: #e4e8f0; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(62,207,142,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(74,144,217,0.05) 0%, transparent 55%); pointer-events: none; z-index: 0; }
+        .login-wrap { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-panel { width: 100%; max-width: 420px; background: var(--ink-mid); border: 1px solid var(--border); border-radius: 20px; padding: 48px 40px 40px; box-shadow: var(--shadow), 0 0 0 1px rgba(62,207,142,0.04); animation: slideUp 0.5s cubic-bezier(.22,.68,0,1.2) both; }
+        .login-logo { text-align: center; margin-bottom: 36px; }
+        .login-logo .icon-wrap { width: 64px; height: 64px; background: linear-gradient(135deg, var(--accent), var(--blue)); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(62,207,142,0.3); }
+        .login-logo h1 { font-size: 1.45rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+        .login-logo p { font-size: 0.8rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
         .field-group { margin-bottom: 16px; }
-
-        .field-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--muted);
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        input {
-            width: 100%;
-            padding: 13px 16px;
-            background: var(--ink-soft);
-            border: 1.5px solid rgba(255,255,255,0.06);
-            border-radius: 10px;
-            color: #e4e8f0;
-            font-family: 'Sora', sans-serif;
-            font-size: 0.92rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
+        .field-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
+        input { width: 100%; padding: 13px 16px; background: var(--ink-soft); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 10px; color: #e4e8f0; font-family: 'Sora', sans-serif; font-size: 0.92rem; transition: border-color 0.2s, box-shadow 0.2s; }
         input::placeholder { color: var(--muted); }
-
-        input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: var(--ink);
-            border: none;
-            border-radius: 10px;
-            font-family: 'Sora', sans-serif;
-            font-size: 0.92rem;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.02em;
-            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-            margin-top: 8px;
-            box-shadow: 0 4px 16px rgba(62,207,142,0.25);
-        }
-
+        input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: var(--ink); border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 0.92rem; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; margin-top: 8px; box-shadow: 0 4px 16px rgba(62,207,142,0.25); }
         .btn-primary:hover { background: var(--accent-dim); box-shadow: 0 6px 20px rgba(62,207,142,0.35); }
         .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { background: var(--ink-soft); color: var(--muted); cursor: not-allowed; box-shadow: none; }
-
         .alert { padding: 12px 14px; border-radius: 8px; font-size: 0.84rem; margin-top: 14px; }
         .alert-error { background: rgba(224,82,82,0.12); border: 1px solid rgba(224,82,82,0.25); color: #f08080; }
         .alert-success { background: rgba(62,207,142,0.1); border: 1px solid rgba(62,207,142,0.25); color: var(--accent); }
-
-        /* ─── DASHBOARD ──────────────────────────────────── */
-        #dashboardSection {
-            position: relative; z-index: 1;
-            min-height: 100vh;
-            display: none;
-        }
-
-        .topbar {
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
-            gap: 12px;
-            padding: 20px 32px;
-            background: rgba(30,35,48,0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
-        }
-
-        .topbar-brand {
-            display: flex; align-items: center; gap: 12px;
-        }
-
-        .brand-icon {
-            width: 38px; height: 38px;
-            background: linear-gradient(135deg, var(--accent), var(--blue));
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            box-shadow: 0 4px 12px rgba(62,207,142,0.25);
-        }
-
-        .topbar-brand h1 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.01em;
-        }
-
-        .topbar-brand span {
-            font-size: 0.7rem;
-            color: var(--muted);
-            display: block;
-            letter-spacing: 0.04em;
-        }
-
-        .topbar-actions {
-            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-        }
-
-        #userName {
-            font-size: 0.8rem;
-            color: var(--muted);
-            padding: 6px 12px;
-            background: var(--ink-soft);
-            border-radius: 6px;
-            font-family: 'DM Mono', monospace;
-        }
-
-        .btn-sm {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Sora', sans-serif;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.01em;
-        }
-
+        #dashboardSection { position: relative; z-index: 1; min-height: 100vh; display: none; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px 32px; background: rgba(30,35,48,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .topbar-brand { display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--accent), var(--blue)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 12px rgba(62,207,142,0.25); }
+        .topbar-brand h1 { font-size: 1.05rem; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+        .topbar-brand span { font-size: 0.7rem; color: var(--muted); display: block; letter-spacing: 0.04em; }
+        .topbar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        #userName { font-size: 0.8rem; color: var(--muted); padding: 6px 12px; background: var(--ink-soft); border-radius: 6px; font-family: 'DM Mono', monospace; }
+        .btn-sm { padding: 8px 14px; border: none; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; letter-spacing: 0.01em; }
         .btn-warn { background: rgba(245,166,35,0.15); color: var(--warn); border: 1px solid rgba(245,166,35,0.2); }
         .btn-warn:hover { background: rgba(245,166,35,0.25); }
         .btn-danger { background: rgba(224,82,82,0.12); color: var(--danger); border: 1px solid rgba(224,82,82,0.2); }
         .btn-danger:hover { background: rgba(224,82,82,0.22); }
-
-        /* ─── MAIN CONTENT ───────────────────────────────── */
         .main-content { padding: 32px; max-width: 1300px; margin: 0 auto; }
-
-        .section-title {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--muted);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* ─── STATS ──────────────────────────────────────── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 16px;
-            margin-bottom: 36px;
-        }
-
-        .stat-card {
-            background: var(--ink-mid);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px 26px;
-            position: relative;
-            overflow: hidden;
-            animation: fadeIn 0.4s ease both;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--stat-tint, transparent);
-            opacity: 0.04;
-        }
-
+        .section-title { font-size: 0.7rem; font-weight: 700; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-bottom: 36px; }
+        .stat-card { background: var(--ink-mid); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 26px; position: relative; overflow: hidden; animation: fadeIn 0.4s ease both; }
+        .stat-card::before { content: ''; position: absolute; inset: 0; background: var(--stat-tint, transparent); opacity: 0.04; }
         .stat-card:nth-child(1) { --stat-tint: var(--accent); border-color: rgba(62,207,142,0.15); }
         .stat-card:nth-child(2) { --stat-tint: var(--blue); border-color: rgba(74,144,217,0.15); }
         .stat-card:nth-child(3) { --stat-tint: var(--warn); border-color: rgba(245,166,35,0.15); }
         .stat-card:nth-child(4) { --stat-tint: #b48ef0; border-color: rgba(180,142,240,0.15); }
-
-        .stat-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .stat-icon {
-            width: 36px; height: 36px;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 17px;
-        }
-
+        .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .stat-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+        .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
         .stat-card:nth-child(1) .stat-icon { background: rgba(62,207,142,0.12); }
         .stat-card:nth-child(2) .stat-icon { background: rgba(74,144,217,0.12); }
         .stat-card:nth-child(3) .stat-icon { background: rgba(245,166,35,0.12); }
         .stat-card:nth-child(4) .stat-icon { background: rgba(180,142,240,0.12); }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            font-family: 'DM Mono', monospace;
-        }
-
-        /* ─── TABLES ─────────────────────────────────────── */
-        .table-card {
-            background: var(--ink-mid);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 24px;
-            animation: fadeIn 0.5s ease both;
-        }
-
-        .table-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 20px 24px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .table-header h2 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #e4e8f0;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        .table-header .dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-            animation: pulse 2s infinite;
-        }
-
+        .stat-value { font-size: 2rem; font-weight: 700; color: #fff; letter-spacing: -0.03em; line-height: 1; font-family: 'DM Mono', monospace; }
+        .table-card { background: var(--ink-mid); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; animation: fadeIn 0.5s ease both; }
+        .table-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
+        .table-header h2 { font-size: 0.9rem; font-weight: 700; color: #e4e8f0; display: flex; align-items: center; gap: 10px; }
+        .table-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
         .table-scroll { overflow-x: auto; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-        }
-
-        thead th {
-            padding: 12px 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.09em;
-            text-align: left;
-            background: rgba(0,0,0,0.15);
-            white-space: nowrap;
-        }
-
-        tbody td {
-            padding: 14px 20px;
-            font-size: 0.875rem;
-            color: #ccd2e0;
-            border-top: 1px solid var(--border);
-        }
-
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        thead th { padding: 12px 20px; font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.09em; text-align: left; background: rgba(0,0,0,0.15); white-space: nowrap; }
+        tbody td { padding: 14px 20px; font-size: 0.875rem; color: #ccd2e0; border-top: 1px solid var(--border); }
         tbody td:first-child { font-weight: 600; color: #e4e8f0; }
-
         tbody td .mono { font-family: 'DM Mono', monospace; font-size: 0.85rem; }
-
         tbody tr { transition: background 0.15s; }
         tbody tr:hover { background: rgba(255,255,255,0.03); }
-
-        .badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
         .badge-active { background: rgba(62,207,142,0.12); color: var(--accent); border: 1px solid rgba(62,207,142,0.2); }
         .badge-paid { background: rgba(74,144,217,0.12); color: var(--blue); border: 1px solid rgba(74,144,217,0.2); }
-
-        /* ─── MODAL ──────────────────────────────────────── */
-        .modal {
-            display: none;
-            position: fixed; z-index: 1000;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
         .modal.open { display: flex; animation: fadeIn 0.25s ease; }
-
-        .modal-box {
-            background: var(--ink-mid);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 36px;
-            width: 100%; max-width: 400px;
-            position: relative;
-            animation: slideUp 0.3s cubic-bezier(.22,.68,0,1.1) both;
-        }
-
-        .modal-box h2 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 24px;
-        }
-
-        .modal-close {
-            position: absolute; top: 16px; right: 18px;
-            background: none; border: none; cursor: pointer;
-            color: var(--muted); font-size: 22px;
-            width: auto; padding: 4px;
-            transition: color 0.2s;
-        }
+        .modal-box { background: var(--ink-mid); border: 1px solid var(--border); border-radius: 18px; padding: 36px; width: 100%; max-width: 400px; position: relative; animation: slideUp 0.3s cubic-bezier(.22,.68,0,1.1) both; }
+        .modal-box h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 24px; }
+        .modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 22px; width: auto; padding: 4px; transition: color 0.2s; }
         .modal-close:hover { color: #fff; background: none; }
-
-        #passMsg {
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.82rem;
-            margin-top: 12px;
-            display: none;
-        }
-
-        /* ─── ANIMATIONS ─────────────────────────────────── */
+        #passMsg { padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-top: 12px; display: none; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.85); }
-        }
-
-        /* ─── RESPONSIVE ─────────────────────────────────── */
-        @media (max-width: 768px) {
-            .topbar { padding: 14px 18px; }
-            .main-content { padding: 20px 16px; }
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .stat-value { font-size: 1.5rem; }
-            tbody td, thead th { padding: 10px 12px; }
-            .modal-box { padding: 28px 22px; }
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            #userName { display: none; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+        @media (max-width: 768px) { .topbar { padding: 14px 18px; } .main-content { padding: 20px 16px; } .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .stat-value { font-size: 1.5rem; } tbody td, thead th { padding: 10px 12px; } .modal-box { padding: 28px 22px; } }
+        @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } #userName { display: none; } }
     </style>
 </head>
 <body>
-
-    <!-- ─── LOGIN ────────────────────────────────────────── -->
     <div id="loginSection" class="login-wrap">
         <div class="login-panel">
-            <div class="login-logo">
-                <div class="icon-wrap">🏦</div>
-                <h1>Sistema de Préstamos</h1>
-                <p>Panel de Administración</p>
-            </div>
-            <div class="field-group">
-                <label>Correo electrónico</label>
-                <input type="email" id="email" placeholder="usuario@correo.com">
-            </div>
-            <div class="field-group">
-                <label>Contraseña</label>
-                <input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()">
-            </div>
+            <div class="login-logo"><div class="icon-wrap">🏦</div><h1>Sistema de Préstamos</h1><p>Panel de Administración</p></div>
+            <div class="field-group"><label>Correo electrónico</label><input type="email" id="email" placeholder="usuario@correo.com"></div>
+            <div class="field-group"><label>Contraseña</label><input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()"></div>
             <button class="btn-primary" onclick="login()" id="loginBtn">Iniciar sesión</button>
             <div id="loginError"></div>
         </div>
     </div>
-
-    <!-- ─── DASHBOARD ────────────────────────────────────── -->
     <div id="dashboardSection" style="display:none">
-
         <nav class="topbar">
-            <div class="topbar-brand">
-                <div class="brand-icon">🏦</div>
-                <div>
-                    <h1>Sistema de Préstamos</h1>
-                    <span>Panel de control</span>
-                </div>
-            </div>
-            <div class="topbar-actions">
-                <span id="userName"></span>
-                <button class="btn-sm btn-warn" onclick="openPassModal()">🔑 Contraseña</button>
-                <button class="btn-sm btn-danger" onclick="logout()">Salir</button>
-            </div>
+            <div class="topbar-brand"><div class="brand-icon">🏦</div><div><h1>Sistema de Préstamos</h1><span>Panel de control</span></div></div>
+            <div class="topbar-actions"><span id="userName"></span><button class="btn-sm btn-warn" onclick="openPassModal()">🔑 Contraseña</button><button class="btn-sm btn-danger" onclick="logout()">Salir</button></div>
         </nav>
-
         <div class="main-content">
-
-            <!-- Stats -->
             <p class="section-title">Resumen general</p>
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Saldo de Caja</span>
-                        <div class="stat-icon">💰</div>
-                    </div>
-                    <div class="stat-value" id="saldoCaja">—</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Préstamos Activos</span>
-                        <div class="stat-icon">📑</div>
-                    </div>
-                    <div class="stat-value" id="prestamosActivos">—</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Total Distribuido</span>
-                        <div class="stat-icon">💸</div>
-                    </div>
-                    <div class="stat-value" id="totalDistribuido">—</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Total Socios</span>
-                        <div class="stat-icon">👥</div>
-                    </div>
-                    <div class="stat-value" id="totalSocios">—</div>
-                </div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-label">Saldo de Caja</span><div class="stat-icon">💰</div></div><div class="stat-value" id="saldoCaja">—</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-label">Préstamos Activos</span><div class="stat-icon">📑</div></div><div class="stat-value" id="prestamosActivos">—</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-label">Total Distribuido</span><div class="stat-icon">💸</div></div><div class="stat-value" id="totalDistribuido">—</div></div>
+                <div class="stat-card"><div class="stat-header"><span class="stat-label">Total Socios</span><div class="stat-icon">👥</div></div><div class="stat-value" id="totalSocios">—</div></div>
             </div>
-
-            <!-- Socios -->
             <p class="section-title">Distribución por socio</p>
-            <div class="table-card">
-                <div class="table-header">
-                    <h2><span class="dot"></span>Socios</h2>
-                </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Socio</th>
-                                <th>Porcentaje</th>
-                                <th>Intereses Ganados</th>
-                                <th>Rendimiento</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sociosTable">
-                            <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Préstamos -->
+            <div class="table-card"><div class="table-header"><h2><span class="dot"></span>Socios</h2></div><div class="table-scroll"><table><thead><tr><th>Socio</th><th>Porcentaje</th><th>Intereses Ganados</th><th>Rendimiento</th></tr></thead><tbody id="sociosTable"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px">Cargando...</td></tr></tbody></table></div></div>
             <p class="section-title">Préstamos recientes</p>
-            <div class="table-card">
-                <div class="table-header">
-                    <h2><span class="dot"></span>Préstamos</h2>
-                </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Monto Original</th>
-                                <th>Saldo Pendiente</th>
-                                <th>Interés</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="prestamosTable">
-                            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+            <div class="table-card"><div class="table-header"><h2><span class="dot"></span>Préstamos</h2></div><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Monto Original</th><th>Saldo Pendiente</th><th>Interés</th><th>Estado</th></tr></thead><tbody id="prestamosTable"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px">Cargando...</td></tr></tbody></table></div></div>
         </div>
     </div>
-
-    <!-- ─── MODAL CONTRASEÑA ──────────────────────────────── -->
-    <div id="passModal" class="modal">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closePassModal()">✕</button>
-            <h2>🔑 Cambiar Contraseña</h2>
-            <form id="passForm">
-                <div class="field-group">
-                    <label>Nueva contraseña</label>
-                    <input type="password" id="newPass" placeholder="Mínimo 6 caracteres" required minlength="6">
-                </div>
-                <div class="field-group">
-                    <label>Confirmar contraseña</label>
-                    <input type="password" id="confirmPass" placeholder="Repite la contraseña" required minlength="6">
-                </div>
-                <button type="submit" class="btn-primary" id="passBtn">Actualizar contraseña</button>
-            </form>
-            <div id="passMsg"></div>
-        </div>
-    </div>
+    <div id="passModal" class="modal"><div class="modal-box"><button class="modal-close" onclick="closePassModal()">✕</button><h2>🔑 Cambiar Contraseña</h2><form id="passForm"><div class="field-group"><label>Nueva contraseña</label><input type="password" id="newPass" placeholder="Mínimo 6 caracteres" required minlength="6"></div><div class="field-group"><label>Confirmar contraseña</label><input type="password" id="confirmPass" placeholder="Repite la contraseña" required minlength="6"></div><button type="submit" class="btn-primary" id="passBtn">Actualizar contraseña</button></form><div id="passMsg"></div></div></div>
 
     <script>
+        // ✅ TUS CREDENCIALES CORREGIDAS
         const SUPABASE_URL = 'https://ehcfrserpdqthkdqizsz.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoY2Zyc2VycGRxdGhrZHFpenN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMDMzNTgsImV4cCI6MjA5NDg3OTM1OH0.deHdXTIYPv19FcwXG2qY8HV1UHg6yuTk-LBg1UX7Bik';
+        const SUPABASE_ANON_KEY = 'sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL'; // ← NUEVA KEY
 
         let db, currentUser;
 
         function initSupabase() {
             if (db) return;
             try {
-                if (!window.supabase) {
-                    console.warn('⏳ Esperando SDK...');
-                    setTimeout(initSupabase, 300);
-                    return;
-                }
+                if (!window.supabase) { console.warn('⏳ Esperando SDK...'); setTimeout(initSupabase, 300); return; }
                 db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('✅ Supabase listo');
+                console.log('✅ Supabase listo con nueva key');
                 const statusEl = document.getElementById('loginError');
                 if (statusEl) statusEl.innerHTML = '';
             } catch (err) {
@@ -639,19 +156,9 @@
             const errorDiv = document.getElementById('loginError');
             const btn = document.getElementById('loginBtn');
             errorDiv.innerHTML = '';
-
-            if (!email || !password) {
-                errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>';
-                return;
-            }
-            if (!db) {
-                errorDiv.innerHTML = '<div class="alert alert-error">Error: Conexión a Supabase fallida</div>';
-                return;
-            }
-
-            btn.textContent = 'Verificando...';
-            btn.disabled = true;
-
+            if (!email || !password) { errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; return; }
+            if (!db) { errorDiv.innerHTML = '<div class="alert alert-error">Error: Conexión a Supabase fallida</div>'; return; }
+            btn.textContent = 'Verificando...'; btn.disabled = true;
             try {
                 const { data, error } = await db.auth.signInWithPassword({ email, password });
                 if (error) throw error;
@@ -665,128 +172,24 @@
                 if (msg.includes('Invalid login')) msg = 'Correo o contraseña incorrectos';
                 if (msg.includes('Email not confirmed')) msg = 'Correo no verificado. Revisa tu bandeja de entrada';
                 errorDiv.innerHTML = `<div class="alert alert-error">❌ ${msg}</div>`;
-            } finally {
-                btn.textContent = 'Iniciar sesión';
-                btn.disabled = false;
-            }
+            } finally { btn.textContent = 'Iniciar sesión'; btn.disabled = false; }
         }
 
-        async function logout() {
-            await db.auth.signOut();
-            currentUser = null;
-            document.getElementById('loginSection').style.display = 'flex';
-            document.getElementById('dashboardSection').style.display = 'none';
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('loginError').innerHTML = '';
-        }
+        async function logout() { await db.auth.signOut(); currentUser = null; document.getElementById('loginSection').style.display = 'flex'; document.getElementById('dashboardSection').style.display = 'none'; document.getElementById('email').value = ''; document.getElementById('password').value = ''; document.getElementById('loginError').innerHTML = ''; }
 
-        async function loadDashboard() {
-            try {
-                await Promise.all([loadCajaBalance(), loadPrestamos(), loadSocios(), loadDistribuciones()]);
-            } catch (error) {
-                console.error('Error cargando dashboard:', error);
-            }
-        }
+        async function loadDashboard() { try { await Promise.all([loadCajaBalance(), loadPrestamos(), loadSocios(), loadDistribuciones()]); } catch (error) { console.error('Error cargando dashboard:', error); } }
 
-        async function loadCajaBalance() {
-            try {
-                const { data, error } = await db.from('caja').select('monto, tipo');
-                if (error) throw error;
-                const entradas = data.filter(r => r.tipo === 'entrada').reduce((sum, r) => sum + r.monto, 0);
-                const salidas = data.filter(r => r.tipo === 'salida').reduce((sum, r) => sum + r.monto, 0);
-                document.getElementById('saldoCaja').textContent = `$${(entradas - salidas).toFixed(2)}`;
-            } catch (err) { console.error('Error caja:', err); }
-        }
+        async function loadCajaBalance() { try { const { data, error } = await db.from('caja').select('monto, tipo'); if (error) throw error; const entradas = data.filter(r => r.tipo === 'entrada').reduce((sum, r) => sum + r.monto, 0); const salidas = data.filter(r => r.tipo === 'salida').reduce((sum, r) => sum + r.monto, 0); document.getElementById('saldoCaja').textContent = `$${(entradas - salidas).toFixed(2)}`; } catch (err) { console.error('Error caja:', err); } }
 
-        async function loadPrestamos() {
-            try {
-                const { data: prestamos, error } = await db.from('prestamos')
-                    .select('id, monto_original, saldo_actual, interes_mensual, estatus, cliente_id')
-                    .order('created_at', { ascending: false }).limit(10);
-                if (error) throw error;
+        async function loadPrestamos() { try { const { data: prestamos, error } = await db.from('prestamos').select('id, monto_original, saldo_actual, interes_mensual, estatus, cliente_id').order('created_at', { ascending: false }).limit(10); if (error) throw error; const clientIds = prestamos.map(p => p.cliente_id); const { data: clientes } = await db.from('clientes').select('id, nombre').in('id', clientIds); const clientesMap = {}; clientes?.forEach(c => clientesMap[c.id] = c.nombre); document.getElementById('prestamosActivos').textContent = prestamos.filter(p => p.estatus === 'activo').length; const tbody = document.getElementById('prestamosTable'); tbody.innerHTML = ''; if (!prestamos.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px">Sin préstamos registrados</td></tr>'; return; } prestamos.forEach(p => { const row = document.createElement('tr'); row.innerHTML = `<td>${clientesMap[p.cliente_id] || 'N/A'}</td><td><span class="mono">$${parseFloat(p.monto_original||0).toFixed(2)}</span></td><td><span class="mono">$${parseFloat(p.saldo_actual||0).toFixed(2)}</span></td><td><span class="mono">${p.interes_mensual ? (p.interes_mensual * 100).toFixed(1) : 0}%</span></td><td><span class="badge ${p.estatus === 'activo' ? 'badge-active' : 'badge-paid'}">${p.estatus === 'activo' ? 'Activo' : 'Pagado'}</span></td>`; tbody.appendChild(row); }); } catch (err) { console.error('Error préstamos:', err); } }
 
-                const clientIds = prestamos.map(p => p.cliente_id);
-                const { data: clientes } = await db.from('clientes').select('id, nombre').in('id', clientIds);
-                const clientesMap = {};
-                clientes?.forEach(c => clientesMap[c.id] = c.nombre);
+        async function loadSocios() { try { const { data, error } = await db.from('socios').select('id, nombre, porcentaje, activo').eq('activo', true); if (error) throw error; document.getElementById('totalSocios').textContent = data?.length || 0; } catch (err) { console.error('Error socios:', err); } }
 
-                document.getElementById('prestamosActivos').textContent = prestamos.filter(p => p.estatus === 'activo').length;
+        async function loadDistribuciones() { try { const { data: dist, error } = await db.from('distribuciones').select('socio_id, monto'); if (error) throw error; const bySocio = {}; dist?.forEach(d => bySocio[d.socio_id] = (bySocio[d.socio_id] || 0) + d.monto); const total = Object.values(bySocio).reduce((sum, v) => sum + v, 0); document.getElementById('totalDistribuido').textContent = `$${total.toFixed(2)}`; const socioIds = Object.keys(bySocio); if (!socioIds.length) { document.getElementById('sociosTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px">Sin distribuciones registradas</td></tr>'; return; } const { data: socios } = await db.from('socios').select('id, nombre, porcentaje').in('id', socioIds); const tbody = document.getElementById('sociosTable'); tbody.innerHTML = ''; socios?.forEach(s => { const t = bySocio[s.id] || 0; const row = document.createElement('tr'); row.innerHTML = `<td>${s.nombre}</td><td><span class="mono">${s.porcentaje}%</span></td><td><span class="mono">$${t.toFixed(2)}</span></td><td><span class="mono">${s.porcentaje > 0 ? ((t / s.porcentaje) * 100).toFixed(2) : 0}%</span></td>`; tbody.appendChild(row); }); } catch (err) { console.error('Error distribuciones:', err); } }
 
-                const tbody = document.getElementById('prestamosTable');
-                tbody.innerHTML = '';
-                if (!prestamos.length) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px">Sin préstamos registrados</td></tr>';
-                    return;
-                }
-                prestamos.forEach(p => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${clientesMap[p.cliente_id] || 'N/A'}</td>
-                        <td><span class="mono">$${parseFloat(p.monto_original||0).toFixed(2)}</span></td>
-                        <td><span class="mono">$${parseFloat(p.saldo_actual||0).toFixed(2)}</span></td>
-                        <td><span class="mono">${p.interes_mensual ? (p.interes_mensual * 100).toFixed(1) : 0}%</span></td>
-                        <td><span class="badge ${p.estatus === 'activo' ? 'badge-active' : 'badge-paid'}">${p.estatus === 'activo' ? 'Activo' : 'Pagado'}</span></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (err) { console.error('Error préstamos:', err); }
-        }
-
-        async function loadSocios() {
-            try {
-                const { data, error } = await db.from('socios').select('id, nombre, porcentaje, activo').eq('activo', true);
-                if (error) throw error;
-                document.getElementById('totalSocios').textContent = data?.length || 0;
-            } catch (err) { console.error('Error socios:', err); }
-        }
-
-        async function loadDistribuciones() {
-            try {
-                const { data: dist, error } = await db.from('distribuciones').select('socio_id, monto');
-                if (error) throw error;
-
-                const bySocio = {};
-                dist?.forEach(d => bySocio[d.socio_id] = (bySocio[d.socio_id] || 0) + d.monto);
-                const total = Object.values(bySocio).reduce((sum, v) => sum + v, 0);
-                document.getElementById('totalDistribuido').textContent = `$${total.toFixed(2)}`;
-
-                const socioIds = Object.keys(bySocio);
-                if (!socioIds.length) {
-                    document.getElementById('sociosTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px">Sin distribuciones registradas</td></tr>';
-                    return;
-                }
-
-                const { data: socios } = await db.from('socios').select('id, nombre, porcentaje').in('id', socioIds);
-                const tbody = document.getElementById('sociosTable');
-                tbody.innerHTML = '';
-                socios?.forEach(s => {
-                    const t = bySocio[s.id] || 0;
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${s.nombre}</td>
-                        <td><span class="mono">${s.porcentaje}%</span></td>
-                        <td><span class="mono">$${t.toFixed(2)}</span></td>
-                        <td><span class="mono">${s.porcentaje > 0 ? ((t / s.porcentaje) * 100).toFixed(2) : 0}%</span></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (err) { console.error('Error distribuciones:', err); }
-        }
-
-        function openPassModal() {
-            document.getElementById('passModal').classList.add('open');
-            document.getElementById('passMsg').style.display = 'none';
-            document.getElementById('passForm').reset();
-        }
-
-        function closePassModal() {
-            document.getElementById('passModal').classList.remove('open');
-        }
-
-        window.addEventListener('click', e => {
-            if (e.target === document.getElementById('passModal')) closePassModal();
-        });
+        function openPassModal() { document.getElementById('passModal').classList.add('open'); document.getElementById('passMsg').style.display = 'none'; document.getElementById('passForm').reset(); }
+        function closePassModal() { document.getElementById('passModal').classList.remove('open'); }
+        window.addEventListener('click', e => { if (e.target === document.getElementById('passModal')) closePassModal(); });
 
         document.getElementById('passForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -794,29 +197,11 @@
             const confP = document.getElementById('confirmPass').value;
             const msg = document.getElementById('passMsg');
             const btn = document.getElementById('passBtn');
-
-            msg.style.display = 'block';
-            msg.className = 'alert';
-
+            msg.style.display = 'block'; msg.className = 'alert';
             if (newP !== confP) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Las contraseñas no coinciden'; return; }
             if (newP.length < 6) { msg.classList.add('alert-error'); msg.innerHTML = '❌ Mínimo 6 caracteres'; return; }
-
-            btn.textContent = 'Actualizando...';
-            btn.disabled = true;
-
-            try {
-                const { error } = await db.auth.updateUser({ password: newP });
-                if (error) throw error;
-                msg.classList.add('alert-success');
-                msg.innerHTML = '✅ Contraseña actualizada correctamente.';
-                setTimeout(() => closePassModal(), 2500);
-            } catch (err) {
-                msg.classList.add('alert-error');
-                msg.innerHTML = `❌ Error: ${err.message}`;
-            } finally {
-                btn.textContent = 'Actualizar contraseña';
-                btn.disabled = false;
-            }
+            btn.textContent = 'Actualizando...'; btn.disabled = true;
+            try { const { error } = await db.auth.updateUser({ password: newP }); if (error) throw error; msg.classList.add('alert-success'); msg.innerHTML = '✅ Contraseña actualizada correctamente.'; setTimeout(() => closePassModal(), 2500); } catch (err) { msg.classList.add('alert-error'); msg.innerHTML = `❌ Error: ${err.message}`; } finally { btn.textContent = 'Actualizar contraseña'; btn.disabled = false; }
         });
 
         window.addEventListener('DOMContentLoaded', initSupabase);
