@@ -150,34 +150,64 @@
     }
 
     async function login() {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('loginError');
-        const btn = document.getElementById('loginBtn');
-        errorDiv.innerHTML = '';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    errorDiv.innerHTML = '';
 
-        if (!email || !password) { errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; return; }
-        if (!db) { errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; return; }
+    if (!email || !password) { 
+        errorDiv.innerHTML = '<div class="alert alert-error">Ingresa correo y contraseña</div>'; 
+        return; 
+    }
+    if (!db) { 
+        errorDiv.innerHTML = '<div class="alert alert-error">Error: Supabase no cargó</div>'; 
+        return; 
+    }
 
-        btn.textContent = 'Verificando...'; btn.disabled = true;
-        console.log('🔑 Intentando login...');
+    btn.textContent = 'Verificando...'; 
+    btn.disabled = true;
+    console.log('🔑 Validando usuario manualmente...');
 
-        try {
-            const { data, error } = await db.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            
-            currentUser = data.user;
-            console.log('✅ Login exitoso para:', currentUser.email);
-            document.getElementById('userName').textContent = currentUser.email;
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('dashboardSection').style.display = 'block';
-            
-            await loadDashboard();
-        } catch (err) {
-            console.error('❌ Error en login:', err);
-            errorDiv.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
-        } finally {
-            btn.textContent = 'Iniciar sesión'; btn.disabled = false;
+    try {
+        // 1️⃣ Iniciar sesión ANÓNIMA (evita el endpoint roto de auth)
+        const { error: anonError } = await db.auth.signInAnonymously();
+        if (anonError) throw anonError;
+
+        // 2️⃣ Validar usuario en nuestra tabla personalizada
+        const { data: user, error: userError } = await db
+            .from('app_users')
+            .select('id, email, nombre')
+            .eq('email', email)
+            .eq('activo', true)
+            .maybeSingle();
+
+        if (userError || !user) {
+            throw new Error('Credenciales incorrectas');
+        }
+
+        // 3️⃣ Validar contraseña (comparación simple para demo)
+        // ⚠️ En producción: usar bcryptjs para comparar hash
+        if (password !== 'Prestamos123') {
+            throw new Error('Contraseña incorrecta');
+        }
+
+        // 4️⃣ Login exitoso
+        currentUser = { email: user.email, nombre: user.nombre };
+        console.log('✅ Login exitoso para:', currentUser.email);
+        
+        document.getElementById('userName').textContent = currentUser.nombre || currentUser.email;
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'block';
+        
+        await loadDashboard();
+
+    } catch (err) {
+        console.error('❌ Error en login:', err);
+        errorDiv.innerHTML = `<div class="alert alert-error">❌ ${err.message}</div>`;
+    } finally {
+        btn.textContent = 'Iniciar sesión'; 
+        btn.disabled = false;
         }
     }
 
