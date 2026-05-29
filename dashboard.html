@@ -430,21 +430,41 @@
             });
         }
 
-        async function loadCaja() {
+      async function loadCaja() {
     const tbody = document.querySelector('#table-caja tbody');
     try {
-        // 1. Consultar datos
-        const { data, error } = await sb.from('caja').select('*').order('created_at', { ascending: false });
+        // Usar updated_at en lugar de created_at
+        const { data, error } = await sb.from('caja').select('*').order('updated_at', { ascending: false });
         if (error) throw error;
 
-        // 2. Limpiar "Cargando..."
         tbody.innerHTML = '';
 
-        // 3. Si no hay datos
         if (!data || data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px; color:#8892a4">Sin movimientos en caja</td></tr>';
             return;
         }
+
+        data.forEach(r => {
+            const monto = parseFloat(r.monto || 0).toFixed(2);
+            // Usar updated_at en lugar de created_at
+            const fecha = r.updated_at ? new Date(r.updated_at).toLocaleDateString() : '-';
+            const tipo = r.tipo === 'entrada' ? '💰 Entrada' : ' Salida';
+            const color = r.tipo === 'entrada' ? 'var(--accent)' : 'var(--error)';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${fecha}</td>
+                    <td>${tipo}</td>
+                    <td>${r.concepto || '-'}</td>
+                    <td style="color:${color}">$${monto}</td>
+                    <td><button class="btn-sm btn-del" onclick="deleteRow('caja','${r.id}')">🗑️</button></td>
+                </tr>`;
+        });
+    } catch (err) {
+        console.error('❌ Error cargando caja:', err);
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--error)">⚠️ Error: ${err.message}</td></tr>`;
+    }
+}
 
         // 4. Pintar tabla con protección contra datos nulos
         data.forEach(r => {
