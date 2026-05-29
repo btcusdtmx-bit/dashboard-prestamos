@@ -1,338 +1,282 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema GODIN</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:sans-serif;background:#0d0f14;color:#e4e8f0;min-height:100vh}
-        .login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-        .box{background:#1e2330;padding:40px;border-radius:12px;max-width:400px;width:100%}
-        h1{color:#3ecf8e;margin-bottom:20px;text-align:center}
-        input{width:100%;padding:12px;margin:10px 0;background:#2c3347;border:1px solid #333;color:white;border-radius:6px}
-        button{width:100%;padding:12px;margin:5px 0;background:#3ecf8e;border:none;color:#000;font-weight:bold;cursor:pointer;border-radius:6px}
-        button:hover{background:#2da86f}
-        .hidden{display:none}
-        .dash{padding:20px;max-width:1200px;margin:0 auto}
-        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:#1e2330;padding:20px;border-radius:8px}
-        .tabs{display:flex;gap:10px;margin-bottom:20px}
-        .tab{padding:10px 20px;background:#1e2330;border:1px solid #333;color:#8892a4;cursor:pointer;border-radius:6px}
-        .tab.active{background:#3ecf8e;color:#000;border-color:#3ecf8e}
-        .panel{display:none}
-        .panel.active{display:block}
-        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
-        .card{background:#1e2330;padding:20px;border-radius:8px;border-left:4px solid #3ecf8e}
-        .card h4{color:#8892a4;font-size:0.85rem;margin-bottom:10px}
-        .card .val{font-size:2rem;font-weight:bold}
-        table{width:100%;border-collapse:collapse;background:#1e2330;border-radius:8px;overflow:hidden}
-        th,td{padding:12px;text-align:left;border-bottom:1px solid #333}
-        th{color:#8892a4;font-size:0.75rem;text-transform:uppercase}
-        .badge{padding:4px 8px;border-radius:12px;font-size:0.7rem;font-weight:bold}
-        .badge-act{background:rgba(62,207,142,0.2);color:#3ecf8e}
-        .badge-pag{background:rgba(74,144,217,0.2);color:#4a90d9}
-        .btn-sm{padding:4px 8px;font-size:0.75rem;border:none;cursor:pointer;border-radius:4px;margin:2px}
-        .btn-del{background:rgba(224,82,82,0.2);color:#e05252;border:1px solid #e05252}
-        .btn-pay{background:#3ecf8e;color:#000}
-        .btn-add{background:#3ecf8e;color:#000;padding:8px 16px;border:none;cursor:pointer;border-radius:6px}
-        .btn-out{background:#e05252;color:white;padding:8px 16px;border:none;cursor:pointer;border-radius:6px}
-        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:100}
-        .modal.open{display:flex}
-        .modal-content{background:#1e2330;padding:30px;border-radius:12px;max-width:500px;width:90%}
-        .modal-content h3{color:#3ecf8e;margin-bottom:20px}
-        .modal-content label{display:block;margin-top:10px;color:#8892a4;font-size:0.85rem}
-        .modal-content input,.modal-content select{width:100%;padding:10px;margin:5px 0 15px;background:#2c3347;border:1px solid #333;color:white;border-radius:6px}
-        .err{color:#e05252;margin-top:10px;font-size:0.9rem}
-        .warn{background:rgba(245,166,35,0.1);border:1px solid #f5a623;color:#f5a623;padding:12px;border-radius:6px;margin-bottom:20px}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GODIN PRO</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{font-family:sans-serif;background:#0d0f14;color:#e4e8f0}
+.hidden{display:none}
+.card{background:#1e2330;padding:15px;border-radius:10px;margin:10px}
+.val{font-size:22px;font-weight:bold}
+.tab{padding:10px;background:#1e2330;color:#aaa;border:none;cursor:pointer}
+.tab.active{background:#3ecf8e;color:#000}
+table{width:100%;background:#1e2330;margin-top:10px}
+th,td{padding:10px;text-align:left}
+.green{color:#3ecf8e}
+.red{color:#e05252}
+.yellow{color:#f5a623}
+</style>
 </head>
+
 <body>
 
-<div id="loginSection" class="login">
-    <div class="box">
-        <h1>🏦 Sistema GODIN</h1>
-        <p style="text-align:center;color:#8892a4;margin-bottom:20px">Acceso Administrativo</p>
-        <input type="email" id="loginEmail" placeholder="Correo electrónico">
-        <input type="password" id="loginPass" placeholder="Contraseña">
-        <button onclick="doLogin()">Entrar al Sistema</button>
-        <p id="loginErr" class="err"></p>
-    </div>
+<div id="login">
+<h2>Login</h2>
+<input id="email" placeholder="email">
+<input id="pass" type="password">
+<button onclick="login()">Entrar</button>
 </div>
 
-<div id="dashboardSection" class="dash hidden">
-    <div class="header">
-        <div><h2 style="color:#3ecf8e">Panel GODIN</h2><p style="color:#8892a4;font-size:0.85rem">Gestión de Préstamos</p></div>
-        <button class="btn-out" onclick="logout()">Salir</button>
-    </div>
+<div id="app" class="hidden">
 
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('dashboard')">📊 Resumen</button>
-        <button class="tab" onclick="switchTab('prestamos')">💰 Préstamos</button>
-        <button class="tab" onclick="switchTab('clientes')">👥 Clientes</button>
-        <button class="tab" onclick="switchTab('socios')">🤝 Socios</button>
-        <button class="tab" onclick="switchTab('caja')">💵 Caja</button>
-    </div>
+<button class="tab active" onclick="go('dash')">📊</button>
+<button class="tab" onclick="go('pres')">💰</button>
+<button class="tab" onclick="go('cal')">📅</button>
+<button class="tab" onclick="go('rep')">📈</button>
+<button class="tab" onclick="go('conf')">⚙️</button>
 
-    <div id="tab-dashboard" class="panel active">
-        <div class="stats">
-            <div class="card"><h4>Saldo Caja</h4><div class="val" id="stat-caja">$0.00</div></div>
-            <div class="card"><h4>Préstamos Activos</h4><div class="val" id="stat-pres">0</div></div>
-            <div class="card"><h4>Capital Prestado</h4><div class="val" id="stat-cap">$0.00</div></div>
-            <div class="card"><h4>Total Socios</h4><div class="val" id="stat-soc">0</div></div>
-        </div>
-        <h3 style="margin:20px 0 15px;color:#8892a4">Actividad Reciente</h3>
-        <div style="background:#1e2330;border-radius:8px;overflow:hidden">
-            <table id="table-reciente"><thead><tr><th>Fecha</th><th>Concepto</th><th>Monto</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
-        </div>
-    </div>
-
-    <div id="tab-prestamos" class="panel">
-        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
-            <h3>Préstamos</h3>
-            <button class="btn-add" onclick="openModal('modal-pres')">+ Nuevo</button>
-        </div>
-        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
-            <table id="table-prestamos"><thead><tr><th>Cliente</th><th>Monto</th><th>Saldo</th><th>Interés</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
-        </div>
-    </div>
-
-    <div id="tab-clientes" class="panel">
-        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
-            <h3>Clientes</h3>
-            <button class="btn-add" onclick="openModal('modal-cli')">+ Nuevo</button>
-        </div>
-        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
-            <table id="table-clientes"><thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
-        </div>
-    </div>
-
-    <div id="tab-socios" class="panel">
-        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
-            <h3>Socios</h3>
-            <button class="btn-add" onclick="openModal('modal-soc')">+ Nuevo</button>
-        </div>
-        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
-            <table id="table-socios"><thead><tr><th>Nombre</th><th>Porcentaje</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
-        </div>
-    </div>
-
-    <div id="tab-caja" class="panel">
-        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
-            <h3>Caja</h3>
-            <button class="btn-add" onclick="openModal('modal-caja')">+ Registro</button>
-        </div>
-        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
-            <table id="table-caja"><thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Monto</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="5" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
-        </div>
-    </div>
+<!-- DASHBOARD -->
+<div id="dash">
+<div class="card">Caja <div class="val" id="caja"></div></div>
+<div class="card">Prestado <div class="val" id="cap"></div></div>
+<div class="card">Por cobrar <div class="val" id="cob"></div></div>
+<div class="card">Ganancia <div class="val" id="gan"></div></div>
 </div>
 
-<!-- Modals -->
-<div id="modal-pres" class="modal">
-    <div class="modal-content">
-        <h3>Nuevo Préstamo</h3>
-        <label>Cliente</label><select id="pres-cliente"></select>
-        <label>Monto</label><input type="number" id="pres-monto">
-        <label>Interés (%)</label><input type="number" id="pres-interes" value="10">
-        <button onclick="savePrestamo()">Guardar</button>
-        <button onclick="closeModal('modal-pres')" style="background:#333;color:white">Cancelar</button>
-    </div>
+<!-- PRESTAMOS -->
+<div id="pres" class="hidden">
+<button onclick="nuevo()">+ préstamo</button>
+<input onkeyup="buscar()" id="buscador" placeholder="buscar">
+
+<table>
+<thead>
+<tr>
+<th>Cliente</th>
+<th>Monto</th>
+<th>Saldo</th>
+<th>Tipo</th>
+<th>Estado</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
 </div>
 
-<div id="modal-cli" class="modal">
-    <div class="modal-content">
-        <h3>Nuevo Cliente</h3>
-        <label>Nombre</label><input type="text" id="cli-nombre">
-        <label>Teléfono</label><input type="text" id="cli-tel">
-        <label>Dirección</label><input type="text" id="cli-dir">
-        <button onclick="saveCliente()">Guardar</button>
-        <button onclick="closeModal('modal-cli')" style="background:#333;color:white">Cancelar</button>
-    </div>
+<!-- CALENDARIO -->
+<div id="cal" class="hidden">
+<h3>Pagos próximos</h3>
+<table>
+<thead>
+<tr>
+<th>Cliente</th>
+<th>Fecha</th>
+<th>Tipo</th>
+<th>Saldo</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="calendario"></tbody>
+</table>
 </div>
 
-<div id="modal-soc" class="modal">
-    <div class="modal-content">
-        <h3>Nuevo Socio</h3>
-        <label>Nombre</label><input type="text" id="soc-nombre">
-        <label>Porcentaje (%)</label><input type="number" id="soc-porcentaje">
-        <button onclick="saveSocio()">Guardar</button>
-        <button onclick="closeModal('modal-soc')" style="background:#333;color:white">Cancelar</button>
-    </div>
+<!-- REPORTES -->
+<div id="rep" class="hidden">
+<h3>Reporte</h3>
+<p id="r1"></p>
+<p id="r2"></p>
+<p id="r3"></p>
 </div>
 
-<div id="modal-caja" class="modal">
-    <div class="modal-content">
-        <h3>Movimiento de Caja</h3>
-        <label>Tipo</label><select id="caja-tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select>
-        <label>Monto</label><input type="number" id="caja-monto">
-        <label>Concepto</label><input type="text" id="caja-concepto">
-        <button onclick="saveCaja()">Guardar</button>
-        <button onclick="closeModal('modal-caja')" style="background:#333;color:white">Cancelar</button>
-    </div>
+<!-- CONFIG -->
+<div id="conf" class="hidden">
+<h3>Cambiar contraseña</h3>
+<input id="newPass">
+<button onclick="changePass()">Guardar</button>
+</div>
+
 </div>
 
 <script>
+// SUPABASE (NO CAMBIADO)
 const SB_URL='https://ehcfrserpdqthkdqizsz.supabase.co';
 const SB_KEY='sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+
+const USERS=['tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com'];
 const PASS=localStorage.getItem('GODIN_PASS')||'Prestamos123';
-const USERS = ['tony_bravo@hotmail.com','viacp_1110@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com','itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com'];
-const sb=supabase.createClient(SB_URL,SB_KEY,{db:{schema:'public'},auth:{persistSession:false}});
 
-function doLogin(){
-    const e=document.getElementById('loginEmail').value.trim().toLowerCase();
-    const p=document.getElementById('loginPass').value;
-    if(USERS.includes(e)&&p===PASS){
-        document.getElementById('loginSection').style.display='none';
-        document.getElementById('dashboardSection').classList.remove('hidden');
-        initApp();
-    }else{
-        document.getElementById('loginErr').innerText='Credenciales incorrectas';
-    }
-}
-function logout(){location.reload();}
-function switchTab(id){
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.getElementById('tab-'+id).classList.add('active');
-    event.target.classList.add('active');
-    if(id==='dashboard')loadDashboard();
-    if(id==='prestamos')loadPrestamos();
-    if(id==='clientes')loadClientes();
-    if(id==='socios')loadSocios();
-    if(id==='caja')loadCaja();
-}
-function openModal(id){document.getElementById(id).classList.add('open');if(id==='modal-pres')loadClientesSelect();}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-async function initApp(){loadDashboard();}
-
-async function loadDashboard(){
-    try{
-        const{data:caja,error:errC}=await sb.from('caja').select('monto,tipo,concepto').order('updated_at',{ascending:false}).limit(5);
-        if(errC)throw errC;
-        let total=0;caja?.forEach(r=>{total+=(r.tipo==='entrada'?r.monto:-r.monto);});
-        document.getElementById('stat-caja').innerText='$'+total.toFixed(2);
-        const tbody=document.querySelector('#table-reciente tbody');tbody.innerHTML='';
-        if(!caja||caja.length===0){tbody.innerHTML='<tr><td colspan="3" style="text-align:center;padding:20px">Sin movimientos</td></tr>';}
-        else{caja.forEach(r=>{tbody.innerHTML+=`<tr><td>-</td><td>${r.concepto||'-'}</td><td style="color:${r.tipo==='entrada'?'#3ecf8e':'#e05252'}">$${r.monto.toFixed(2)}</td></tr>`;});}
-        
-        const{data:pres}=await sb.from('prestamos').select('estatus,saldo_actual');
-        document.getElementById('stat-pres').innerText=pres?.filter(p=>p.estatus==='activo').length||0;
-        let cap=0;pres?.forEach(p=>{if(p.estatus==='activo')cap+=parseFloat(p.saldo_actual||0);});
-        document.getElementById('stat-cap').innerText='$'+cap.toFixed(2);
-        
-        const{data:soc}=await sb.from('socios').select('id');
-        document.getElementById('stat-soc').innerText=soc?.length||0;
-    }catch(err){console.error('Error dashboard:',err);}
+// LOGIN
+function login(){
+let e=email.value;
+let p=pass.value;
+if(USERS.includes(e)&&p===PASS){
+login.style.display='none';
+app.classList.remove('hidden');
+loadAll();
+}else alert('error');
 }
 
-async function loadPrestamos(){
-    try{
-        const{data}=await sb.from('prestamos').select('*,clientes(nombre)').order('created_at',{ascending:false}).limit(50);
-        const tbody=document.querySelector('#table-prestamos tbody');tbody.innerHTML='';
-        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px">Sin préstamos</td></tr>';return;}
-        data.forEach(p=>{
-            const saldo=parseFloat(p.saldo_actual||0);
-            const color=saldo<0?'#e05252':(saldo===0?'#8892a4':'#3ecf8e');
-            tbody.innerHTML+=`<tr><td>${p.clientes?.nombre||'-'}</td><td>$${parseFloat(p.monto_original).toFixed(2)}</td><td style="color:${color}">$${saldo.toFixed(2)}</td><td>${(p.interes_mensual*100).toFixed(0)}%</td><td><span class="badge ${p.estatus==='activo'?'badge-act':'badge-pag'}">${p.estatus.toUpperCase()}</span></td><td>${p.estatus==='activo'?'<button class="btn-sm btn-pay" onclick="abonarPrestamo(\''+p.id+'\','+saldo+',\''+(p.clientes?.nombre||'Cliente')+'\')">Abonar</button>':'-'} <button class="btn-sm btn-del" onclick="deleteRow(\'prestamos\',\''+p.id+'\')">🗑️</button></td></tr>`;
-        });
-    }catch(err){console.error('Error prestamos:',err);}
+// TABS
+function go(id){
+['dash','pres','cal','rep','conf'].forEach(x=>{
+document.getElementById(x).classList.add('hidden')
+});
+document.getElementById(id).classList.remove('hidden');
+
+if(id==='cal')loadCal();
+if(id==='rep')loadRep();
 }
 
-async function loadClientes(){
-    try{
-        const{data}=await sb.from('clientes').select('*').order('created_at',{ascending:false}).limit(100);
-        const tbody=document.querySelector('#table-clientes tbody');tbody.innerHTML='';
-        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px">Sin clientes</td></tr>';return;}
-        data.forEach(c=>{tbody.innerHTML+=`<tr><td>${c.nombre}</td><td>${c.telefono||'-'}</td><td>${c.direccion||'-'}</td><td><button class="btn-sm btn-del" onclick="deleteRow(\'clientes\',\''+c.id+'\')">🗑️</button></td></tr>`;});
-    }catch(err){console.error('Error clientes:',err);}
+// DASHBOARD
+async function loadDash(){
+let {data:caja}=await sb.from('caja').select('*');
+let {data:pres}=await sb.from('prestamos').select('*');
+
+let cajaT=0,cap=0,cob=0,gan=0;
+
+caja.forEach(r=>cajaT+=(r.tipo==='entrada'?r.monto:-r.monto));
+
+pres.forEach(p=>{
+if(p.estatus==='activo'){
+cap+=p.monto_original;
+cob+=p.saldo_actual;
+gan+=(p.saldo_actual*p.interes_mensual);
+}
+});
+
+caja.innerText='$'+cajaT.toFixed(2);
+capel=cap;
+cajaEl=document.getElementById('caja');
+document.getElementById('caja').innerText='$'+cajaT;
+document.getElementById('cap').innerText='$'+cap;
+document.getElementById('cob').innerText='$'+cob;
+document.getElementById('gan').innerText='$'+gan;
+
+if(cajaT<0)cajaEl.className='red';
 }
 
-async function loadSocios(){
-    try{
-        const{data}=await sb.from('socios').select('*').order('created_at',{ascending:false}).limit(100);
-        const tbody=document.querySelector('#table-socios tbody');tbody.innerHTML='';
-        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px">Sin socios</td></tr>';return;}
-        data.forEach(s=>{tbody.innerHTML+=`<tr><td>${s.nombre}</td><td>${s.porcentaje}%</td><td>${s.activo?'Activo':'Inactivo'}</td><td><button class="btn-sm btn-del" onclick="deleteRow(\'socios\',\''+s.id+'\')">🗑️</button></td></tr>`;});
-    }catch(err){console.error('Error socios:',err);}
+// PRESTAMOS
+async function loadPres(){
+let {data}=await sb.from('prestamos').select('*,clientes(nombre)');
+let t=tabla; t.innerHTML='';
+
+data.forEach(p=>{
+t.innerHTML+=`
+<tr>
+<td>${p.clientes?.nombre}</td>
+<td>${p.monto_original}</td>
+<td>${p.saldo_actual}</td>
+<td>${p.tipo_pago||'mensual'}</td>
+<td>${p.estatus}</td>
+<td><button onclick="abonar('${p.id}',${p.saldo_actual})">💰</button></td>
+</tr>`;
+});
 }
 
-async function loadCaja(){
-    try{
-        const{data,error}=await sb.from('caja').select('*').order('updated_at',{ascending:false}).limit(100);
-        if(error)throw error;
-        const tbody=document.querySelector('#table-caja tbody');tbody.innerHTML='';
-        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px">Sin movimientos</td></tr>';return;}
-        data.forEach(r=>{
-            const fecha=r.updated_at?new Date(r.updated_at).toLocaleDateString():'-';
-            const tipo=r.tipo==='entrada'?'💰 Entrada':'💸 Salida';
-            const color=r.tipo==='entrada'?'#3ecf8e':'#e05252';
-            tbody.innerHTML+=`<tr><td>${fecha}</td><td>${tipo}</td><td>${r.concepto||'-'}</td><td style="color:${color}">$${parseFloat(r.monto||0).toFixed(2)}</td><td><button class="btn-sm btn-del" onclick="deleteRow(\'caja\',\''+r.id+'\')">🗑️</button></td></tr>`;
-        });
-    }catch(err){
-        console.error('Error caja:',err);
-        document.querySelector('#table-caja tbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#e05252">Error: '+err.message+'</td></tr>';
-    }
+// NUEVO
+async function nuevo(){
+let monto=prompt('monto');
+let tipo=prompt('mensual o quincenal');
+
+await sb.from('prestamos').insert({
+monto_original:monto,
+saldo_actual:monto,
+tipo_pago:tipo,
+estatus:'activo'
+});
+loadPres(); loadDash();
 }
 
-async function savePrestamo(){
-    const cid=document.getElementById('pres-cliente').value;
-    const monto=parseFloat(document.getElementById('pres-monto').value);
-    const interes=parseFloat(document.getElementById('pres-interes').value)/100;
-    if(!cid||!monto){alert('Completa los campos');return;}
-    const clienteNombre=document.getElementById('pres-cliente').options[document.getElementById('pres-cliente').selectedIndex].text;
-    await sb.from('caja').insert({tipo:'salida',monto:monto,concepto:'Préstamo a '+clienteNombre});
-    await sb.from('prestamos').insert({cliente_id:cid,monto_original:monto,saldo_actual:monto,interes_mensual:interes,estatus:'activo'});
-    closeModal('modal-pres');loadPrestamos();loadDashboard();alert('Préstamo creado');
+// ABONO
+async function abonar(id,s){
+let val=prompt('abono');
+let nuevo=s-val;
+await sb.from('prestamos').update({
+saldo_actual:nuevo,
+estatus:nuevo<=0?'pagado':'activo'
+}).eq('id',id);
+
+await sb.from('caja').insert({
+tipo:'entrada',
+monto:val
+});
+
+loadAll();
 }
 
-async function saveCliente(){
-    const nombre=document.getElementById('cli-nombre').value;
-    if(!nombre){alert('Nombre obligatorio');return;}
-    await sb.from('clientes').insert({nombre,telefono:document.getElementById('cli-tel').value,direccion:document.getElementById('cli-dir').value});
-    closeModal('modal-cli');loadClientes();alert('Cliente guardado');
+// CALENDARIO
+async function loadCal(){
+let {data}=await sb.from('prestamos').select('*,clientes(nombre)').eq('estatus','activo');
+
+let hoy=new Date();
+
+calendario.innerHTML='';
+
+data.forEach(p=>{
+let inicio=new Date(p.fecha_inicio||new Date());
+let dias=p.tipo_pago==='quincenal'?15:30;
+
+while(inicio<hoy)inicio.setDate(inicio.getDate()+dias);
+
+let estado='OK',color='green';
+
+if(inicio-hoy<3*86400000){estado='PRÓXIMO';color='yellow';}
+if(inicio<hoy){estado='ATRASADO';color='red';}
+
+calendario.innerHTML+=`
+<tr>
+<td>${p.clientes?.nombre}</td>
+<td>${inicio.toLocaleDateString()}</td>
+<td>${p.tipo_pago}</td>
+<td>${p.saldo_actual}</td>
+<td class="${color}">${estado}</td>
+</tr>`;
+});
 }
 
-async function saveSocio(){
-    const nombre=document.getElementById('soc-nombre').value;
-    if(!nombre){alert('Nombre obligatorio');return;}
-    await sb.from('socios').insert({nombre,porcentaje:document.getElementById('soc-porcentaje').value});
-    closeModal('modal-soc');loadSocios();loadDashboard();alert('Socio guardado');
+// REPORTES
+async function loadRep(){
+let {data}=await sb.from('prestamos').select('*');
+
+let total=0,count=0;
+
+data.forEach(p=>{
+if(p.estatus==='activo'){
+total+=p.saldo_actual;count++;
+}
+});
+
+r1.innerText='Total: $'+total;
+r2.innerText='Activos: '+count;
+r3.innerText='Promedio: '+(total/count).toFixed(2);
 }
 
-async function saveCaja(){
-    const monto=parseFloat(document.getElementById('caja-monto').value);
-    if(!monto){alert('Monto obligatorio');return;}
-    await sb.from('caja').insert({tipo:document.getElementById('caja-tipo').value,monto:monto,concepto:document.getElementById('caja-concepto').value});
-    closeModal('modal-caja');loadCaja();loadDashboard();alert('Movimiento registrado');
+// BUSCAR
+function buscar(){
+let txt=buscador.value.toLowerCase();
+document.querySelectorAll('#tabla tr').forEach(r=>{
+r.style.display=r.innerText.toLowerCase().includes(txt)?'':'none';
+});
 }
 
-async function abonarPrestamo(id,saldoActual,nombreCliente){
-    const monto=prompt('Abono para: '+nombreCliente+'\nSaldo: $'+saldoActual.toFixed(2)+'\n¿Monto?');
-    if(!monto)return;
-    const val=parseFloat(monto);
-    const nuevoSaldo=saldoActual-val;
-    await sb.from('prestamos').update({saldo_actual:nuevoSaldo,estatus:nuevoSaldo<=0?'pagado':'activo'}).eq('id',id);
-    await sb.from('caja').insert({tipo:'entrada',monto:val,concepto:'Abono '+nombreCliente});
-    loadPrestamos();loadDashboard();alert('Abono registrado');
+// PASSWORD
+function changePass(){
+let p=newPass.value;
+localStorage.setItem('GODIN_PASS',p);
+alert('ok');
 }
 
-async function deleteRow(table,id){
-    if(!confirm('¿Eliminar este registro?'))return;
-    await sb.from(table).delete().eq('id',id);
-    if(table==='clientes')loadClientes();
-    if(table==='socios')loadSocios();
-    if(table==='prestamos')loadPrestamos();
-    if(table==='caja')loadCaja();
-    loadDashboard();
-}
-
-async function loadClientesSelect(){
-    const{data}=await sb.from('clientes').select('id,nombre');
-    const sel=document.getElementById('pres-cliente');sel.innerHTML='';
-    if(!data||data.length===0){sel.innerHTML='<option>Sin clientes</option>';return;}
-    data.forEach(c=>{sel.innerHTML+='<option value="'+c.id+'">'+c.nombre+'</option>';});
+// INIT
+function loadAll(){
+loadDash();
+loadPres();
 }
 </script>
+
 </body>
 </html>
