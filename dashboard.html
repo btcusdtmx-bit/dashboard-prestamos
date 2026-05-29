@@ -139,7 +139,10 @@
             if (db) return;
             try {
                 if (!window.supabase) { console.warn('⏳ Esperando SDK...'); setTimeout(initSupabase, 300); return; }
-                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: true },
+  global: { headers: { apikey: SUPABASE_ANON_KEY } }
+});
                 console.log('✅ Supabase listo con nueva key');
                 const statusEl = document.getElementById('loginError');
                 if (statusEl) statusEl.innerHTML = '';
