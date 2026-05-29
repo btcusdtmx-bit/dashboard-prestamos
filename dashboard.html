@@ -3,714 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema GODIN - Gestión Completa</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.46.1/dist/umd/supabase.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+    <title>Sistema GODIN</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
-        :root { --bg:#0d0f14; --panel:#1e2330; --text:#e4e8f0; --accent:#3ecf8e; --error:#e05252; --warn:#f5a623; --blue:#4a90d9; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Sora',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-
-        /* Login */
-        #loginSection { display:flex; align-items:center; justify-content:center; height:100vh; }
-        .login-box { background:var(--panel); padding:40px; border-radius:20px; width:90%; max-width:400px; text-align:center; }
-        .login-box input { width:100%; padding:12px; margin:10px 0; background:#2c3347; border:1px solid #333; color:white; border-radius:8px; }
-        .btn-main { background:var(--accent); color:#000; padding:12px 24px; border:none; border-radius:8px; font-weight:700; cursor:pointer; width:100%; margin-top:10px; }
-        .login-box { background:var(--panel); padding:40px; border-radius:20px; width:90%; max-width:400px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .login-box h2 { margin-bottom: 10px; color: var(--accent); }
-        .login-box input { width:100%; padding:12px; margin:10px 0; background:#2c3347; border:1px solid #333; color:white; border-radius:8px; font-size: 1rem; }
-        .btn-main { background:var(--accent); color:#000; padding:12px 24px; border:none; border-radius:8px; font-weight:700; cursor:pointer; width:100%; margin-top:10px; font-size: 1rem; transition: transform 0.1s; }
-        .btn-main:active { transform: scale(0.98); }
-
-        /* Dashboard Layout */
-        #dashboardSection { display:none; padding:20px; max-width:1200px; margin:0 auto; }
-        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; background:var(--panel); padding:20px; border-radius:12px; }
-        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; background:var(--panel); padding:20px; border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-
-        /* Tabs */
-        .tabs { display:flex; gap:10px; margin-bottom:20px; overflow-x:auto; }
-        .tab { padding:10px 20px; background:var(--panel); border:none; color:#8892a4; cursor:pointer; border-radius:8px; font-weight:600; white-space:nowrap; }
-        .tab.active { background:var(--accent); color:#000; }
-        .tabs { display:flex; gap:10px; margin-bottom:20px; overflow-x:auto; padding-bottom: 5px; }
-        .tab { padding:10px 20px; background:var(--panel); border:1px solid #333; color:#8892a4; cursor:pointer; border-radius:8px; font-weight:600; white-space:nowrap; transition: all 0.2s; }
-        .tab:hover { background: #2c3347; color: white; }
-        .tab.active { background:var(--accent); color:#000; border-color: var(--accent); }
-
-        /* Content */
-        .content-panel { display:none; animation:fadeIn 0.3s; }
-        .content-panel.active { display:block; }
-
-        /* Stats Cards */
-        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:15px; margin-bottom:20px; }
-        .card { background:var(--panel); padding:20px; border-radius:12px; border-left:4px solid var(--accent); }
-        .card h4 { color:#8892a4; font-size:0.8rem; text-transform:uppercase; }
-        .card .val { font-size:1.8rem; font-weight:700; font-family:'DM Mono'; margin-top:5px; }
-        .card { background:var(--panel); padding:20px; border-radius:12px; border-left:4px solid var(--accent); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .card h4 { color:#8892a4; font-size:0.8rem; text-transform:uppercase; margin-bottom: 5px; }
-        .card .val { font-size:1.8rem; font-weight:700; font-family:'DM Mono'; color: var(--text); }
-        .card .val.neg { color: var(--error); }
-
-        /* Tables */
-        .table-wrap { background:var(--panel); border-radius:12px; overflow-x:auto; padding:10px; }
-        .table-wrap { background:var(--panel); border-radius:12px; overflow-x:auto; padding:10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        table { width:100%; border-collapse:collapse; min-width:600px; }
-        th, td { padding:12px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.05); }
-        th { color:#8892a4; font-size:0.75rem; text-transform:uppercase; }
-        .badge { padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:700; }
-        .badge-act { background:rgba(62,207,142,0.2); color:var(--accent); }
-        .badge-pag { background:rgba(74,144,217,0.2); color:var(--blue); }
-        th { color:#8892a4; font-size:0.75rem; text-transform:uppercase; font-weight: 600; background: rgba(0,0,0,0.2); }
-        tr:last-child td { border-bottom: none; }
-        .badge { padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
-        .badge-act { background:rgba(62,207,142,0.15); color:var(--accent); border: 1px solid var(--accent); }
-        .badge-pag { background:rgba(74,144,217,0.15); color:var(--blue); border: 1px solid var(--blue); }
-
-        /* Actions */
-        .action-bar { display:flex; justify-content:space-between; margin-bottom:15px; }
-        .action-bar { display:flex; justify-content:space-between; align-items: center; margin-bottom:15px; flex-wrap: wrap; gap: 10px; }
-        .btn-add { background:var(--accent); color:#000; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
-        .btn-exp { background:var(--blue); color:white; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
-        .btn-out { background:var(--error); color:white; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; }
-        .btn-out { background:var(--error); color:white; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight: 600; }
-        .btn-key { background:var(--warn); color:#000; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight: 600; margin-right: 10px; }
-        .btn-sm { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; border: none; }
-        .btn-del { background: rgba(224, 82, 82, 0.2); color: var(--error); border: 1px solid var(--error); }
-        .btn-pay { background: var(--accent); color: #000; }
-
-        /* Modal */
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center; }
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:100; align-items:center; justify-content:center; backdrop-filter: blur(4px); }
-        .modal.open { display:flex; }
-        .modal-content { background:var(--panel); padding:30px; border-radius:16px; width:90%; max-width:500px; }
-        .modal-content input, .modal-content select { width:100%; padding:10px; margin:5px 0 15px; background:#2c3347; border:1px solid #333; color:white; border-radius:6px; }
-        .modal-content { background:var(--panel); padding:30px; border-radius:16px; width:90%; max-width:500px; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .modal-content h3 { margin-bottom: 20px; color: var(--accent); }
-        .modal-content label { display: block; margin-top: 10px; margin-bottom: 5px; color: #8892a4; font-size: 0.85rem; }
-        .modal-content input, .modal-content select { width:100%; padding:10px; margin:0 0 15px; background:#2c3347; border:1px solid #333; color:white; border-radius:6px; }
-        .form-row { display:flex; gap:10px; }
-
-        @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:sans-serif;background:#0d0f14;color:#e4e8f0;min-height:100vh}
+        .login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+        .box{background:#1e2330;padding:40px;border-radius:12px;max-width:400px;width:100%}
+        h1{color:#3ecf8e;margin-bottom:20px;text-align:center}
+        input{width:100%;padding:12px;margin:10px 0;background:#2c3347;border:1px solid #333;color:white;border-radius:6px}
+        button{width:100%;padding:12px;margin:5px 0;background:#3ecf8e;border:none;color:#000;font-weight:bold;cursor:pointer;border-radius:6px}
+        button:hover{background:#2da86f}
+        .hidden{display:none}
+        .dash{padding:20px;max-width:1200px;margin:0 auto}
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:#1e2330;padding:20px;border-radius:8px}
+        .tabs{display:flex;gap:10px;margin-bottom:20px}
+        .tab{padding:10px 20px;background:#1e2330;border:1px solid #333;color:#8892a4;cursor:pointer;border-radius:6px}
+        .tab.active{background:#3ecf8e;color:#000;border-color:#3ecf8e}
+        .panel{display:none}
+        .panel.active{display:block}
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
+        .card{background:#1e2330;padding:20px;border-radius:8px;border-left:4px solid #3ecf8e}
+        .card h4{color:#8892a4;font-size:0.85rem;margin-bottom:10px}
+        .card .val{font-size:2rem;font-weight:bold}
+        table{width:100%;border-collapse:collapse;background:#1e2330;border-radius:8px;overflow:hidden}
+        th,td{padding:12px;text-align:left;border-bottom:1px solid #333}
+        th{color:#8892a4;font-size:0.75rem;text-transform:uppercase}
+        .badge{padding:4px 8px;border-radius:12px;font-size:0.7rem;font-weight:bold}
+        .badge-act{background:rgba(62,207,142,0.2);color:#3ecf8e}
+        .badge-pag{background:rgba(74,144,217,0.2);color:#4a90d9}
+        .btn-sm{padding:4px 8px;font-size:0.75rem;border:none;cursor:pointer;border-radius:4px;margin:2px}
+        .btn-del{background:rgba(224,82,82,0.2);color:#e05252;border:1px solid #e05252}
+        .btn-pay{background:#3ecf8e;color:#000}
+        .btn-add{background:#3ecf8e;color:#000;padding:8px 16px;border:none;cursor:pointer;border-radius:6px}
+        .btn-out{background:#e05252;color:white;padding:8px 16px;border:none;cursor:pointer;border-radius:6px}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:100}
+        .modal.open{display:flex}
+        .modal-content{background:#1e2330;padding:30px;border-radius:12px;max-width:500px;width:90%}
+        .modal-content h3{color:#3ecf8e;margin-bottom:20px}
+        .modal-content label{display:block;margin-top:10px;color:#8892a4;font-size:0.85rem}
+        .modal-content input,.modal-content select{width:100%;padding:10px;margin:5px 0 15px;background:#2c3347;border:1px solid #333;color:white;border-radius:6px}
+        .err{color:#e05252;margin-top:10px;font-size:0.9rem}
+        .warn{background:rgba(245,166,35,0.1);border:1px solid #f5a623;color:#f5a623;padding:12px;border-radius:6px;margin-bottom:20px}
     </style>
 </head>
 <body>
 
-    <!-- LOGIN -->
-    <div id="loginSection">
-        <div class="login-box">
-            <h2>🏦 Sistema GODIN</h2>
-            <p style="color:#8892a4;margin-bottom:20px">Acceso Administrativo</p>
-            <input type="email" id="loginEmail" placeholder="Correo">
-            <input type="email" id="loginEmail" placeholder="Correo electrónico">
-            <input type="password" id="loginPass" placeholder="Contraseña">
-            <button class="btn-main" onclick="doLogin()">Entrar</button>
-            <button class="btn-main" onclick="doLogin()">Entrar al Sistema</button>
-            <p id="loginErr" style="color:var(--error);margin-top:10px;font-size:0.9rem"></p>
+<div id="loginSection" class="login">
+    <div class="box">
+        <h1>🏦 Sistema GODIN</h1>
+        <p style="text-align:center;color:#8892a4;margin-bottom:20px">Acceso Administrativo</p>
+        <input type="email" id="loginEmail" placeholder="Correo electrónico">
+        <input type="password" id="loginPass" placeholder="Contraseña">
+        <button onclick="doLogin()">Entrar al Sistema</button>
+        <p id="loginErr" class="err"></p>
+    </div>
+</div>
+
+<div id="dashboardSection" class="dash hidden">
+    <div class="header">
+        <div><h2 style="color:#3ecf8e">Panel GODIN</h2><p style="color:#8892a4;font-size:0.85rem">Gestión de Préstamos</p></div>
+        <button class="btn-out" onclick="logout()">Salir</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('dashboard')">📊 Resumen</button>
+        <button class="tab" onclick="switchTab('prestamos')">💰 Préstamos</button>
+        <button class="tab" onclick="switchTab('clientes')">👥 Clientes</button>
+        <button class="tab" onclick="switchTab('socios')">🤝 Socios</button>
+        <button class="tab" onclick="switchTab('caja')">💵 Caja</button>
+    </div>
+
+    <div id="tab-dashboard" class="panel active">
+        <div class="stats">
+            <div class="card"><h4>Saldo Caja</h4><div class="val" id="stat-caja">$0.00</div></div>
+            <div class="card"><h4>Préstamos Activos</h4><div class="val" id="stat-pres">0</div></div>
+            <div class="card"><h4>Capital Prestado</h4><div class="val" id="stat-cap">$0.00</div></div>
+            <div class="card"><h4>Total Socios</h4><div class="val" id="stat-soc">0</div></div>
+        </div>
+        <h3 style="margin:20px 0 15px;color:#8892a4">Actividad Reciente</h3>
+        <div style="background:#1e2330;border-radius:8px;overflow:hidden">
+            <table id="table-reciente"><thead><tr><th>Fecha</th><th>Concepto</th><th>Monto</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
         </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboardSection">
-        <div class="header">
-            <h2>🏦 Panel GODIN</h2>
-            <button class="btn-out" onclick="logout()">Salir</button>
-            <div>
-                <h2 style="color:var(--accent)">🏦 Panel GODIN</h2>
-                <p style="color:#8892a4; font-size:0.8rem">Gestión de Préstamos y Socios</p>
-            </div>
-            <div>
-                <button class="btn-key" onclick="openModal('modal-pass')">🔑 Clave</button>
-                <button class="btn-out" onclick="logout()">Salir</button>
-            </div>
+    <div id="tab-prestamos" class="panel">
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
+            <h3>Préstamos</h3>
+            <button class="btn-add" onclick="openModal('modal-pres')">+ Nuevo</button>
         </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('dashboard')">📊 Resumen</button>
-            <button class="tab" onclick="switchTab('prestamos')">💰 Préstamos</button>
-            <button class="tab" onclick="switchTab('clientes')">👥 Clientes</button>
-            <button class="tab" onclick="switchTab('socios')">🤝 Socios</button>
-            <button class="tab" onclick="switchTab('caja')"> Caja</button>
-            <button class="tab" onclick="switchTab('caja')">💵 Caja</button>
-        </div>
-
-        <!-- TAB: RESUMEN -->
-        <div id="tab-dashboard" class="content-panel active">
-            <div class="stats-grid">
-                <div class="card"><h4>Saldo Caja</h4><div class="val" id="stat-caja">$0</div></div>
-                <div class="card"><h4>Saldo Caja</h4><div class="val" id="stat-caja">$0.00</div></div>
-                <div class="card"><h4>Préstamos Activos</h4><div class="val" id="stat-pres">0</div></div>
-                <div class="card"><h4>Capital Prestado</h4><div class="val" id="stat-cap">$0</div></div>
-                <div class="card"><h4>Capital Prestado</h4><div class="val" id="stat-cap">$0.00</div></div>
-                <div class="card"><h4>Total Socios</h4><div class="val" id="stat-soc">0</div></div>
-            </div>
-            <h3>️ Actividad Reciente</h3>
-            <div class="table-wrap" style="margin-top:10px">
-                <table id="table-reciente"><thead><tr><th>Fecha</th><th>Concepto</th><th>Monto</th></tr></thead><tbody></tbody></table>
-            <h3 style="margin-bottom:15px; color:#8892a4">🕒 Actividad Reciente</h3>
-            <div class="table-wrap">
-                <table id="table-reciente"><thead><tr><th>Fecha</th><th>Concepto</th><th>Monto</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center; padding:20px">Cargando...</td></tr></tbody></table>
-            </div>
-        </div>
-
-        <!-- TAB: PRESTAMOS -->
-        <div id="tab-prestamos" class="content-panel">
-            <div class="action-bar">
-                <h3> Préstamos</h3>
-                <div>
-                    <button class="btn-exp" onclick="exportTable('table-prestamos')">️ Excel</button>
-                    <button class="btn-add" onclick="openModal('modal-pres')">+ Nuevo</button>
-                <h3>💰 Préstamos Activos</h3>
-                <div style="display:flex; gap:10px">
-                    <button class="btn-exp" onclick="exportTable('table-prestamos')">⬇️ Excel</button>
-                    <button class="btn-add" onclick="openModal('modal-pres')">+ Nuevo Préstamo</button>
-                </div>
-            </div>
-            <div class="table-wrap">
-                <table id="table-prestamos"><thead><tr><th>Cliente</th><th>Monto</th><th>Saldo</th><th>Interés</th><th>Estado</th><th>Acciones</th></tr></thead><tbody></tbody></table>
-                <table id="table-prestamos"><thead><tr><th>Cliente</th><th>Monto Original</th><th>Saldo Pendiente</th><th>Interés</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center; padding:20px">Cargando...</td></tr></tbody></table>
-            </div>
-        </div>
-
-        <!-- TAB: CLIENTES -->
-        <div id="tab-clientes" class="content-panel">
-            <div class="action-bar">
-                <h3>👥 Clientes</h3>
-                <div>
-                <div style="display:flex; gap:10px">
-                    <button class="btn-exp" onclick="exportTable('table-clientes')">⬇️ Excel</button>
-                    <button class="btn-add" onclick="openModal('modal-cli')">+ Nuevo</button>
-                    <button class="btn-add" onclick="openModal('modal-cli')">+ Nuevo Cliente</button>
-                </div>
-            </div>
-            <div class="table-wrap">
-                <table id="table-clientes"><thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr></thead><tbody></tbody></table>
-                <table id="table-clientes"><thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center; padding:20px">Cargando...</td></tr></tbody></table>
-            </div>
-        </div>
-
-        <!-- TAB: SOCIOS -->
-        <div id="tab-socios" class="content-panel">
-            <div class="action-bar">
-                <h3> Socios</h3>
-                <div>
-                <h3>🤝 Socios</h3>
-                <div style="display:flex; gap:10px">
-                    <button class="btn-exp" onclick="exportTable('table-socios')">⬇️ Excel</button>
-                    <button class="btn-add" onclick="openModal('modal-soc')">+ Nuevo</button>
-                    <button class="btn-add" onclick="openModal('modal-soc')">+ Nuevo Socio</button>
-                </div>
-            </div>
-            <div class="table-wrap">
-                <table id="table-socios"><thead><tr><th>Nombre</th><th>Porcentaje</th><th>Estado</th><th>Acciones</th></tr></thead><tbody></tbody></table>
-                <table id="table-socios"><thead><tr><th>Nombre</th><th>Porcentaje</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center; padding:20px">Cargando...</td></tr></tbody></table>
-            </div>
-        </div>
-
-        <!-- TAB: CAJA -->
-        <div id="tab-caja" class="content-panel">
-            <div class="action-bar">
-                <h3>🏦 Movimientos de Caja</h3>
-                <div>
-                <h3>💵 Movimientos de Caja</h3>
-                <div style="display:flex; gap:10px">
-                    <button class="btn-exp" onclick="exportTable('table-caja')">⬇️ Excel</button>
-                    <button class="btn-add" onclick="openModal('modal-caja')">+ Registro</button>
-                </div>
-            </div>
-            <div class="table-wrap">
-                <table id="table-caja"><thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Monto</th></tr></thead><tbody></tbody></table>
-                <table id="table-caja"><thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Monto</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="5" style="text-align:center; padding:20px">Cargando...</td></tr></tbody></table>
-            </div>
+        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
+            <table id="table-prestamos"><thead><tr><th>Cliente</th><th>Monto</th><th>Saldo</th><th>Interés</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="6" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
         </div>
     </div>
 
-    <!-- MODALS (Formularios) -->
-    <!-- MODALS -->
-
-    <!-- Modal Prestamo -->
-    <div id="modal-pres" class="modal">
-        <div class="modal-content">
-            <h3>Nuevo Préstamo</h3>
-            <label>Cliente</label>
-            <select id="pres-cliente"></select>
-            <label>Monto</label>
-            <input type="number" id="pres-monto">
-            <select id="pres-cliente"><option value="">Cargando clientes...</option></select>
-            <label>Monto a Prestar ($)</label>
-            <input type="number" id="pres-monto" placeholder="Ej: 5000">
-            <label>Interés Mensual (%)</label>
-            <input type="number" id="pres-interes" value="10">
-            <button class="btn-main" onclick="savePrestamo()">Guardar</button>
-            <button class="btn-main" style="background:#333;color:white;margin-top:5px" onclick="closeModal('modal-pres')">Cancelar</button>
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button class="btn-main" onclick="savePrestamo()">Guardar Préstamo</button>
-                <button class="btn-main" style="background:#333;color:white" onclick="closeModal('modal-pres')">Cancelar</button>
-            </div>
+    <div id="tab-clientes" class="panel">
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
+            <h3>Clientes</h3>
+            <button class="btn-add" onclick="openModal('modal-cli')">+ Nuevo</button>
+        </div>
+        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
+            <table id="table-clientes"><thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
         </div>
     </div>
 
-    <!-- Modal Cliente -->
-    <div id="modal-cli" class="modal">
-        <div class="modal-content">
-            <h3>Nuevo Cliente</h3>
-            <label>Nombre</label>
-            <input type="text" id="cli-nombre">
-            <label>Nombre Completo</label>
-            <input type="text" id="cli-nombre" placeholder="Ej: Juan Pérez">
-            <label>Teléfono</label>
-            <input type="text" id="cli-tel">
-            <input type="text" id="cli-tel" placeholder="Ej: 55-1234-5678">
-            <label>Dirección</label>
-            <input type="text" id="cli-dir">
-            <button class="btn-main" onclick="saveCliente()">Guardar</button>
-            <button class="btn-main" style="background:#333;color:white;margin-top:5px" onclick="closeModal('modal-cli')">Cancelar</button>
-            <input type="text" id="cli-dir" placeholder="Ej: Calle 123, Colonia...">
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button class="btn-main" onclick="saveCliente()">Guardar Cliente</button>
-                <button class="btn-main" style="background:#333;color:white" onclick="closeModal('modal-cli')">Cancelar</button>
-            </div>
+    <div id="tab-socios" class="panel">
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
+            <h3>Socios</h3>
+            <button class="btn-add" onclick="openModal('modal-soc')">+ Nuevo</button>
+        </div>
+        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
+            <table id="table-socios"><thead><tr><th>Nombre</th><th>Porcentaje</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
         </div>
     </div>
 
-    <!-- Modal Socio -->
-    <div id="modal-soc" class="modal">
-        <div class="modal-content">
-            <h3>Nuevo Socio</h3>
-            <label>Nombre</label>
-            <input type="text" id="soc-nombre">
-            <label>Porcentaje (%)</label>
-            <input type="number" id="soc-porcentaje">
-            <button class="btn-main" onclick="saveSocio()">Guardar</button>
-            <button class="btn-main" style="background:#333;color:white;margin-top:5px" onclick="closeModal('modal-soc')">Cancelar</button>
-            <input type="text" id="soc-nombre" placeholder="Nombre del socio">
-            <label>Porcentaje de Participación (%)</label>
-            <input type="number" id="soc-porcentaje" placeholder="Ej: 20">
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button class="btn-main" onclick="saveSocio()">Guardar Socio</button>
-                <button class="btn-main" style="background:#333;color:white" onclick="closeModal('modal-soc')">Cancelar</button>
-            </div>
+    <div id="tab-caja" class="panel">
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px">
+            <h3>Caja</h3>
+            <button class="btn-add" onclick="openModal('modal-caja')">+ Registro</button>
+        </div>
+        <div style="background:#1e2330;border-radius:8px;overflow-x:auto">
+            <table id="table-caja"><thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Monto</th><th>Acciones</th></tr></thead><tbody><tr><td colspan="5" style="text-align:center;padding:20px">Cargando...</td></tr></tbody></table>
         </div>
     </div>
+</div>
 
-    <!-- Modal Caja -->
-    <div id="modal-caja" class="modal">
-        <div class="modal-content">
-            <h3>Movimiento de Caja</h3>
-            <label>Tipo</label>
-            <select id="caja-tipo"><option value="entrada">Entrada (Ingreso)</option><option value="salida">Salida (Egreso)</option></select>
-            <label>Monto</label>
-            <input type="number" id="caja-monto">
-            <label>Concepto</label>
-            <input type="text" id="caja-concepto">
-            <button class="btn-main" onclick="saveCaja()">Guardar</button>
-            <button class="btn-main" style="background:#333;color:white;margin-top:5px" onclick="closeModal('modal-caja')">Cancelar</button>
-            <label>Tipo de Movimiento</label>
-            <select id="caja-tipo">
-                <option value="entrada">💰 Entrada (Ingreso)</option>
-                <option value="salida">💸 Salida (Gasto/Egreso)</option>
-            </select>
-            <label>Monto ($)</label>
-            <input type="number" id="caja-monto" placeholder="0.00">
-            <label>Concepto / Descripción</label>
-            <input type="text" id="caja-concepto" placeholder="Ej: Pago de luz, Abono préstamo...">
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button class="btn-main" onclick="saveCaja()">Registrar</button>
-                <button class="btn-main" style="background:#333;color:white" onclick="closeModal('modal-caja')">Cancelar</button>
-            </div>
-        </div>
+<!-- Modals -->
+<div id="modal-pres" class="modal">
+    <div class="modal-content">
+        <h3>Nuevo Préstamo</h3>
+        <label>Cliente</label><select id="pres-cliente"></select>
+        <label>Monto</label><input type="number" id="pres-monto">
+        <label>Interés (%)</label><input type="number" id="pres-interes" value="10">
+        <button onclick="savePrestamo()">Guardar</button>
+        <button onclick="closeModal('modal-pres')" style="background:#333;color:white">Cancelar</button>
     </div>
+</div>
 
-    <!-- Modal Cambiar Contraseña -->
-    <div id="modal-pass" class="modal">
-        <div class="modal-content">
-            <h3>🔑 Cambiar Contraseña Maestra</h3>
-            <p style="color:#8892a4; font-size:0.85rem; margin-bottom:15px">Esta contraseña se guardará en este navegador.</p>
-            <label>Nueva Contraseña</label>
-            <input type="password" id="new-pass" placeholder="Escribe la nueva clave">
-            <label>Confirmar Contraseña</label>
-            <input type="password" id="confirm-pass" placeholder="Repite la nueva clave">
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button class="btn-main" onclick="changePassword()">Actualizar Clave</button>
-                <button class="btn-main" style="background:#333;color:white" onclick="closeModal('modal-pass')">Cancelar</button>
-            </div>
-        </div>
+<div id="modal-cli" class="modal">
+    <div class="modal-content">
+        <h3>Nuevo Cliente</h3>
+        <label>Nombre</label><input type="text" id="cli-nombre">
+        <label>Teléfono</label><input type="text" id="cli-tel">
+        <label>Dirección</label><input type="text" id="cli-dir">
+        <button onclick="saveCliente()">Guardar</button>
+        <button onclick="closeModal('modal-cli')" style="background:#333;color:white">Cancelar</button>
     </div>
+</div>
 
-    <script>
-        // CONFIGURACIÓN
-        const SB_URL = 'https://ehcfrserpdqthkdqizsz.supabase.co';
-        const SB_KEY = 'sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
-        const PASS = 'Prestamos123';
-        const DEFAULT_PASS = 'Prestamos123';
-        const USERS = ['tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com','itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com'];
+<div id="modal-soc" class="modal">
+    <div class="modal-content">
+        <h3>Nuevo Socio</h3>
+        <label>Nombre</label><input type="text" id="soc-nombre">
+        <label>Porcentaje (%)</label><input type="number" id="soc-porcentaje">
+        <button onclick="saveSocio()">Guardar</button>
+        <button onclick="closeModal('modal-soc')" style="background:#333;color:white">Cancelar</button>
+    </div>
+</div>
 
-        // Obtener contraseña guardada o usar la default
-        let currentPass = localStorage.getItem('GODIN_PASS') || DEFAULT_PASS;
+<div id="modal-caja" class="modal">
+    <div class="modal-content">
+        <h3>Movimiento de Caja</h3>
+        <label>Tipo</label><select id="caja-tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select>
+        <label>Monto</label><input type="number" id="caja-monto">
+        <label>Concepto</label><input type="text" id="caja-concepto">
+        <button onclick="saveCaja()">Guardar</button>
+        <button onclick="closeModal('modal-caja')" style="background:#333;color:white">Cancelar</button>
+    </div>
+</div>
 
-        const sb = window.supabase.createClient(SB_URL, SB_KEY, { db:{schema:'public'}, auth:{persistSession:false} });
+<script>
+const SB_URL='https://ehcfrserpdqthkdqizsz.supabase.co';
+const SB_KEY='sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
+const PASS=localStorage.getItem('GODIN_PASS')||'Prestamos123';
+const USERS=['tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com','itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com'];
+const sb=supabase.createClient(SB_URL,SB_KEY,{db:{schema:'public'},auth:{persistSession:false}});
 
-        // LOGIN
-        function doLogin() {
-            const e = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const p = document.getElementById('loginPass').value;
-            if(USERS.includes(e) && p === PASS) {
-            if(USERS.includes(e) && p === currentPass) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboardSection').style.display = 'block';
-                initApp();
-            } else {
-                document.getElementById('loginErr').innerText = '❌ Acceso Denegado';
-                const err = document.getElementById('loginErr');
-                err.innerText = p !== currentPass ? '❌ Contraseña incorrecta' : '❌ Usuario no registrado';
-                err.style.animation = 'fadeIn 0.2s';
-            }
-        }
-        function logout() { location.reload(); }
+function doLogin(){
+    const e=document.getElementById('loginEmail').value.trim().toLowerCase();
+    const p=document.getElementById('loginPass').value;
+    if(USERS.includes(e)&&p===PASS){
+        document.getElementById('loginSection').style.display='none';
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        initApp();
+    }else{
+        document.getElementById('loginErr').innerText='Credenciales incorrectas';
+    }
+}
+function logout(){location.reload();}
+function switchTab(id){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('tab-'+id).classList.add('active');
+    event.target.classList.add('active');
+    if(id==='dashboard')loadDashboard();
+    if(id==='prestamos')loadPrestamos();
+    if(id==='clientes')loadClientes();
+    if(id==='socios')loadSocios();
+    if(id==='caja')loadCaja();
+}
+function openModal(id){document.getElementById(id).classList.add('open');if(id==='modal-pres')loadClientesSelect();}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+async function initApp(){loadDashboard();}
 
-        // NAVEGACIÓN
-        function switchTab(id) {
-            document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById('tab-'+id).classList.add('active');
-            event.target.classList.add('active');
-            if(id==='dashboard') loadDashboard();
-            if(id==='prestamos') loadPrestamos();
-            if(id==='clientes') loadClientes();
-            if(id==='socios') loadSocios();
-            if(id==='caja') loadCaja();
-        }
+async function loadDashboard(){
+    try{
+        const{data:caja,error:errC}=await sb.from('caja').select('monto,tipo,concepto').order('updated_at',{ascending:false}).limit(5);
+        if(errC)throw errC;
+        let total=0;caja?.forEach(r=>{total+=(r.tipo==='entrada'?r.monto:-r.monto);});
+        document.getElementById('stat-caja').innerText='$'+total.toFixed(2);
+        const tbody=document.querySelector('#table-reciente tbody');tbody.innerHTML='';
+        if(!caja||caja.length===0){tbody.innerHTML='<tr><td colspan="3" style="text-align:center;padding:20px">Sin movimientos</td></tr>';}
+        else{caja.forEach(r=>{tbody.innerHTML+=`<tr><td>-</td><td>${r.concepto||'-'}</td><td style="color:${r.tipo==='entrada'?'#3ecf8e':'#e05252'}">$${r.monto.toFixed(2)}</td></tr>`;});}
+        
+        const{data:pres}=await sb.from('prestamos').select('estatus,saldo_actual');
+        document.getElementById('stat-pres').innerText=pres?.filter(p=>p.estatus==='activo').length||0;
+        let cap=0;pres?.forEach(p=>{if(p.estatus==='activo')cap+=parseFloat(p.saldo_actual||0);});
+        document.getElementById('stat-cap').innerText='$'+cap.toFixed(2);
+        
+        const{data:soc}=await sb.from('socios').select('id');
+        document.getElementById('stat-soc').innerText=soc?.length||0;
+    }catch(err){console.error('Error dashboard:',err);}
+}
 
-        // MODALS
-        function openModal(id) {
-            document.getElementById(id).classList.add('open');
-            if(id==='modal-pres') loadClientesSelect();
-        }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+async function loadPrestamos(){
+    try{
+        const{data}=await sb.from('prestamos').select('*,clientes(nombre)').order('created_at',{ascending:false}).limit(50);
+        const tbody=document.querySelector('#table-prestamos tbody');tbody.innerHTML='';
+        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px">Sin préstamos</td></tr>';return;}
+        data.forEach(p=>{
+            const saldo=parseFloat(p.saldo_actual||0);
+            const color=saldo<0?'#e05252':(saldo===0?'#8892a4':'#3ecf8e');
+            tbody.innerHTML+=`<tr><td>${p.clientes?.nombre||'-'}</td><td>$${parseFloat(p.monto_original).toFixed(2)}</td><td style="color:${color}">$${saldo.toFixed(2)}</td><td>${(p.interes_mensual*100).toFixed(0)}%</td><td><span class="badge ${p.estatus==='activo'?'badge-act':'badge-pag'}">${p.estatus.toUpperCase()}</span></td><td>${p.estatus==='activo'?'<button class="btn-sm btn-pay" onclick="abonarPrestamo(\''+p.id+'\','+saldo+',\''+(p.clientes?.nombre||'Cliente')+'\')">Abonar</button>':'-'} <button class="btn-sm btn-del" onclick="deleteRow(\'prestamos\',\''+p.id+'\')">🗑️</button></td></tr>`;
+        });
+    }catch(err){console.error('Error prestamos:',err);}
+}
 
-        // CAMBIAR CONTRASEÑA
-        function changePassword() {
-            const newP = document.getElementById('new-pass').value;
-            const confP = document.getElementById('confirm-pass').value;
-            if(newP.length < 4) { alert('La contraseña debe tener al menos 4 caracteres'); return; }
-            if(newP !== confP) { alert('Las contraseñas no coinciden'); return; }
-            
-            localStorage.setItem('GODIN_PASS', newP);
-            currentPass = newP;
-            alert('✅ Contraseña actualizada correctamente.\nRecuerda: Si borras el caché del navegador, la contraseña volverá a ser "Prestamos123"');
-            closeModal('modal-pass');
-        }
+async function loadClientes(){
+    try{
+        const{data}=await sb.from('clientes').select('*').order('created_at',{ascending:false}).limit(100);
+        const tbody=document.querySelector('#table-clientes tbody');tbody.innerHTML='';
+        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px">Sin clientes</td></tr>';return;}
+        data.forEach(c=>{tbody.innerHTML+=`<tr><td>${c.nombre}</td><td>${c.telefono||'-'}</td><td>${c.direccion||'-'}</td><td><button class="btn-sm btn-del" onclick="deleteRow(\'clientes\',\''+c.id+'\')">🗑️</button></td></tr>`;});
+    }catch(err){console.error('Error clientes:',err);}
+}
 
-        // LOGICA CRUD
-        async function initApp() {
-            loadDashboard();
-        }
+async function loadSocios(){
+    try{
+        const{data}=await sb.from('socios').select('*').order('created_at',{ascending:false}).limit(100);
+        const tbody=document.querySelector('#table-socios tbody');tbody.innerHTML='';
+        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px">Sin socios</td></tr>';return;}
+        data.forEach(s=>{tbody.innerHTML+=`<tr><td>${s.nombre}</td><td>${s.porcentaje}%</td><td>${s.activo?'Activo':'Inactivo'}</td><td><button class="btn-sm btn-del" onclick="deleteRow(\'socios\',\''+s.id+'\')">🗑️</button></td></tr>`;});
+    }catch(err){console.error('Error socios:',err);}
+}
 
-        async function loadDashboard() {
-            // Caja
-            const {data:caja} = await sb.from('caja').select('monto,tipo,created_at,concepto');
-            const {data:caja, error:errCaja} = await sb.from('caja').select('monto,tipo,created_at,concepto').order('created_at', {ascending:false});
-            if(errCaja) console.error(errCaja);
-            
-            let total = 0;
-            caja?.forEach(r => { total += (r.tipo==='entrada' ? r.monto : -r.monto); });
-            document.getElementById('stat-caja').innerText = '$'+total.toFixed(2);
-            
-            const elCaja = document.getElementById('stat-caja');
-            elCaja.innerText = '$'+total.toFixed(2);
-            if(total < 0) elCaja.classList.add('neg');
+async function loadCaja(){
+    try{
+        const{data,error}=await sb.from('caja').select('*').order('updated_at',{ascending:false}).limit(100);
+        if(error)throw error;
+        const tbody=document.querySelector('#table-caja tbody');tbody.innerHTML='';
+        if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px">Sin movimientos</td></tr>';return;}
+        data.forEach(r=>{
+            const fecha=r.updated_at?new Date(r.updated_at).toLocaleDateString():'-';
+            const tipo=r.tipo==='entrada'?'💰 Entrada':'💸 Salida';
+            const color=r.tipo==='entrada'?'#3ecf8e':'#e05252';
+            tbody.innerHTML+=`<tr><td>${fecha}</td><td>${tipo}</td><td>${r.concepto||'-'}</td><td style="color:${color}">$${parseFloat(r.monto||0).toFixed(2)}</td><td><button class="btn-sm btn-del" onclick="deleteRow(\'caja\',\''+r.id+'\')">🗑️</button></td></tr>`;
+        });
+    }catch(err){
+        console.error('Error caja:',err);
+        document.querySelector('#table-caja tbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:#e05252">Error: '+err.message+'</td></tr>';
+    }
+}
 
-            // Tabla reciente
-            const tbody = document.querySelector('#table-reciente tbody');
-            tbody.innerHTML = '';
-            caja?.slice(0,5).forEach(r => {
-                tbody.innerHTML += `<tr><td>${new Date(r.created_at).toLocaleDateString()}</td><td>${r.concepto}</td><td style="color:${r.tipo==='entrada'?'var(--accent)':'var(--error)'}">$${r.monto}</td></tr>`;
-            });
-            if(!caja || caja.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#8892a4">Sin movimientos recientes</td></tr>';
-            } else {
-                caja.slice(0,5).forEach(r => {
-                    tbody.innerHTML += `<tr><td>${new Date(r.created_at).toLocaleDateString()}</td><td>${r.concepto}</td><td style="color:${r.tipo==='entrada'?'var(--accent)':'var(--error)'}">$${r.monto.toFixed(2)}</td></tr>`;
-                });
-            }
+async function savePrestamo(){
+    const cid=document.getElementById('pres-cliente').value;
+    const monto=parseFloat(document.getElementById('pres-monto').value);
+    const interes=parseFloat(document.getElementById('pres-interes').value)/100;
+    if(!cid||!monto){alert('Completa los campos');return;}
+    const clienteNombre=document.getElementById('pres-cliente').options[document.getElementById('pres-cliente').selectedIndex].text;
+    await sb.from('caja').insert({tipo:'salida',monto:monto,concepto:'Préstamo a '+clienteNombre});
+    await sb.from('prestamos').insert({cliente_id:cid,monto_original:monto,saldo_actual:monto,interes_mensual:interes,estatus:'activo'});
+    closeModal('modal-pres');loadPrestamos();loadDashboard();alert('Préstamo creado');
+}
 
-            // Préstamos
-            const {data:pres} = await sb.from('prestamos').select('estatus');
-            const {data:pres, error:errPres} = await sb.from('prestamos').select('estatus, saldo_actual');
-            if(errPres) console.error(errPres);
-            document.getElementById('stat-pres').innerText = pres?.filter(p=>p.estatus==='activo').length || 0;
-            
-            let cap = 0;
-            pres?.forEach(p => { if(p.estatus==='activo') cap += parseFloat(p.saldo_actual||0); });
-            document.getElementById('stat-cap').innerText = '$'+cap.toFixed(2);
+async function saveCliente(){
+    const nombre=document.getElementById('cli-nombre').value;
+    if(!nombre){alert('Nombre obligatorio');return;}
+    await sb.from('clientes').insert({nombre,telefono:document.getElementById('cli-tel').value,direccion:document.getElementById('cli-dir').value});
+    closeModal('modal-cli');loadClientes();alert('Cliente guardado');
+}
 
-            // Socios
-            const {data:soc} = await sb.from('socios').select('id');
-            const {data:soc, error:errSoc} = await sb.from('socios').select('id');
-            if(errSoc) console.error(errSoc);
-            document.getElementById('stat-soc').innerText = soc?.length || 0;
-        }
+async function saveSocio(){
+    const nombre=document.getElementById('soc-nombre').value;
+    if(!nombre){alert('Nombre obligatorio');return;}
+    await sb.from('socios').insert({nombre,porcentaje:document.getElementById('soc-porcentaje').value});
+    closeModal('modal-soc');loadSocios();loadDashboard();alert('Socio guardado');
+}
 
-        async function loadPrestamos() {
-            const {data} = await sb.from('prestamos').select(`*, clientes(nombre)`).order('created_at',{ascending:false});
-            const {data, error} = await sb.from('prestamos').select(`*, clientes(nombre)`).order('created_at',{ascending:false});
-            if(error) { console.error(error); return; }
-            
-            const tbody = document.querySelector('#table-prestamos tbody');
-            tbody.innerHTML = '';
-            data?.forEach(p => {
-            
-            if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#8892a4">No hay préstamos registrados</td></tr>';
-                return;
-            }
+async function saveCaja(){
+    const monto=parseFloat(document.getElementById('caja-monto').value);
+    if(!monto){alert('Monto obligatorio');return;}
+    await sb.from('caja').insert({tipo:document.getElementById('caja-tipo').value,monto:monto,concepto:document.getElementById('caja-concepto').value});
+    closeModal('modal-caja');loadCaja();loadDashboard();alert('Movimiento registrado');
+}
 
-            data.forEach(p => {
-                const saldo = parseFloat(p.saldo_actual||0);
-                const color = saldo < 0 ? 'var(--error)' : 'var(--accent)';
-                const color = saldo < 0 ? 'var(--error)' : (saldo === 0 ? '#8892a4' : 'var(--accent)');
-                const isActivo = p.estatus === 'activo';
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${p.clientes?.nombre||'Sin nombre'}</td>
-                        <td>$${p.monto_original}</td>
-                        <td style="color:${color}">$${saldo.toFixed(2)}</td>
-                        <td>${p.interes_mensual*100}%</td>
-                        <td><span class="badge ${p.estatus==='activo'?'badge-act':'badge-pag'}">${p.estatus.toUpperCase()}</span></td>
-                        <td>${p.estatus==='activo' ? `<button class="btn-add" style="padding:4px 8px;font-size:0.7rem" onclick="abonarPrestamo('${p.id}', ${saldo})">Abonar</button>` : '-'}</td>
-                        <td><strong>${p.clientes?.nombre||'Sin nombre'}</strong></td>
-                        <td>$${parseFloat(p.monto_original).toFixed(2)}</td>
-                        <td style="color:${color}; font-weight:bold">$${saldo.toFixed(2)}</td>
-                        <td>${(p.interes_mensual*100).toFixed(0)}%</td>
-                        <td><span class="badge ${isActivo?'badge-act':'badge-pag'}">${p.estatus.toUpperCase()}</span></td>
-                        <td>
-                            ${isActivo ? `<button class="btn-sm btn-pay" onclick="abonarPrestamo('${p.id}', ${saldo}, '${p.clientes?.nombre||'Cliente'}')">Abonar</button>` : '-'}
-                            <button class="btn-sm btn-del" onclick="deleteRow('prestamos','${p.id}')">🗑️</button>
-                        </td>
-                    </tr>`;
-            });
-        }
+async function abonarPrestamo(id,saldoActual,nombreCliente){
+    const monto=prompt('Abono para: '+nombreCliente+'\nSaldo: $'+saldoActual.toFixed(2)+'\n¿Monto?');
+    if(!monto)return;
+    const val=parseFloat(monto);
+    const nuevoSaldo=saldoActual-val;
+    await sb.from('prestamos').update({saldo_actual:nuevoSaldo,estatus:nuevoSaldo<=0?'pagado':'activo'}).eq('id',id);
+    await sb.from('caja').insert({tipo:'entrada',monto:val,concepto:'Abono '+nombreCliente});
+    loadPrestamos();loadDashboard();alert('Abono registrado');
+}
 
-        async function loadClientes() {
-            const {data} = await sb.from('clientes').select('*').order('created_at',{ascending:false});
-            const {data, error} = await sb.from('clientes').select('*').order('created_at',{ascending:false});
-            if(error) { console.error(error); return; }
-            
-            const tbody = document.querySelector('#table-clientes tbody');
-            tbody.innerHTML = '';
-            data?.forEach(c => {
-                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${c.telefono||'-'}</td><td>${c.direccion||'-'}</td><td><button class="btn-add" style="background:var(--error);padding:4px 8px;font-size:0.7rem" onclick="deleteRow('clientes','${c.id}')">Borrar</button></td></tr>`;
-            if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#8892a4">No hay clientes registrados</td></tr>';
-                return;
-            }
-            data.forEach(c => {
-                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${c.telefono||'-'}</td><td>${c.direccion||'-'}</td><td><button class="btn-sm btn-del" onclick="deleteRow('clientes','${c.id}')">🗑️</button></td></tr>`;
-            });
-        }
+async function deleteRow(table,id){
+    if(!confirm('¿Eliminar este registro?'))return;
+    await sb.from(table).delete().eq('id',id);
+    if(table==='clientes')loadClientes();
+    if(table==='socios')loadSocios();
+    if(table==='prestamos')loadPrestamos();
+    if(table==='caja')loadCaja();
+    loadDashboard();
+}
 
-        async function loadSocios() {
-            const {data} = await sb.from('socios').select('*').order('created_at',{ascending:false});
-            const {data, error} = await sb.from('socios').select('*').order('created_at',{ascending:false});
-            if(error) { console.error(error); return; }
-            
-            const tbody = document.querySelector('#table-socios tbody');
-            tbody.innerHTML = '';
-            data?.forEach(s => {
-                tbody.innerHTML += `<tr><td>${s.nombre}</td><td>${s.porcentaje}%</td><td>${s.activo?'Activo':'Inactivo'}</td><td><button class="btn-add" style="background:var(--error);padding:4px 8px;font-size:0.7rem" onclick="deleteRow('socios','${s.id}')">Borrar</button></td></tr>`;
-            if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#8892a4">No hay socios registrados</td></tr>';
-                return;
-            }
-            data.forEach(s => {
-                tbody.innerHTML += `<tr><td>${s.nombre}</td><td>${s.porcentaje}%</td><td>${s.activo?'Activo':'Inactivo'}</td><td><button class="btn-sm btn-del" onclick="deleteRow('socios','${s.id}')">🗑️</button></td></tr>`;
-            });
-        }
-
-        async function loadCaja() {
-            const {data} = await sb.from('caja').select('*').order('created_at',{ascending:false});
-            const {data, error} = await sb.from('caja').select('*').order('created_at',{ascending:false});
-            if(error) { console.error(error); return; }
-            
-            const tbody = document.querySelector('#table-caja tbody');
-            tbody.innerHTML = '';
-            data?.forEach(r => {
-                tbody.innerHTML += `<tr><td>${new Date(r.created_at).toLocaleDateString()}</td><td>${r.tipo}</td><td>${r.concepto}</td><td style="color:${r.tipo==='entrada'?'var(--accent)':'var(--error)'}">$${r.monto}</td></tr>`;
-            if(!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px; color:#8892a4">Sin movimientos en caja</td></tr>';
-                return;
-            }
-            data.forEach(r => {
-                tbody.innerHTML += `<tr><td>${new Date(r.created_at).toLocaleDateString()}</td><td>${r.tipo==='entrada'?'💰 Entrada':'💸 Salida'}</td><td>${r.concepto}</td><td style="color:${r.tipo==='entrada'?'var(--accent)':'var(--error)'}">$${r.monto.toFixed(2)}</td><td><button class="btn-sm btn-del" onclick="deleteRow('caja','${r.id}')">🗑️</button></td></tr>`;
-            });
-        }
-
-        // GUARDAR DATOS
-        async function savePrestamo() {
-            const cid = document.getElementById('pres-cliente').value;
-            const monto = parseFloat(document.getElementById('pres-monto').value);
-            const interes = parseFloat(document.getElementById('pres-interes').value)/100;
-            const clienteNombre = document.getElementById('pres-cliente').options[document.getElementById('pres-cliente').selectedIndex].text;
-
-            if(!cid || !monto) { alert('Completa todos los campos'); return; }
-
-            // Registrar en Caja (Salida)
-            await sb.from('caja').insert({ tipo:'salida', monto:monto, concepto:`Préstamo a ${document.getElementById('pres-cliente').options[document.getElementById('pres-cliente').selectedIndex].text}` });
-            // Registrar en Caja (Salida de dinero)
-            await sb.from('caja').insert({ tipo:'salida', monto:monto, concepto:`Préstamo otorgado a ${clienteNombre}` });
-
-            // Crear Préstamo
-            await sb.from('prestamos').insert({ cliente_id:cid, monto_original:monto, saldo_actual:monto, interes_mensual:interes, estatus:'activo' });
-            await sb.from('prestamos').insert({ 
-                cliente_id:cid, 
-                monto_original:monto, 
-                saldo_actual:monto, 
-                interes_mensual:interes, 
-                estatus:'activo' 
-            });
-
-            closeModal('modal-pres');
-            loadPrestamos(); loadDashboard();
-            loadPrestamos(); 
-            loadDashboard();
-            alert('✅ Préstamo creado correctamente');
-        }
-
-        async function saveCliente() {
-            const nombre = document.getElementById('cli-nombre').value;
-            if(!nombre) { alert('El nombre es obligatorio'); return; }
-
-            await sb.from('clientes').insert({
-                nombre: document.getElementById('cli-nombre').value,
-                nombre: nombre,
-                telefono: document.getElementById('cli-tel').value,
-                direccion: document.getElementById('cli-dir').value
-            });
-            closeModal('modal-cli'); loadClientes();
-            closeModal('modal-cli'); 
-            loadClientes();
-            alert('✅ Cliente registrado');
-        }
-
-        async function saveSocio() {
-            const nombre = document.getElementById('soc-nombre').value;
-            if(!nombre) { alert('El nombre es obligatorio'); return; }
-
-            await sb.from('socios').insert({
-                nombre: document.getElementById('soc-nombre').value,
-                nombre: nombre,
-                porcentaje: document.getElementById('soc-porcentaje').value
-            });
-            closeModal('modal-soc'); loadSocios(); loadDashboard();
-            closeModal('modal-soc'); 
-            loadSocios(); 
-            loadDashboard();
-            alert('✅ Socio registrado');
-        }
-
-        async function saveCaja() {
-            const monto = parseFloat(document.getElementById('caja-monto').value);
-            const concepto = document.getElementById('caja-concepto').value;
-            if(!monto || !concepto) { alert('Completa monto y concepto'); return; }
-
-            await sb.from('caja').insert({
-                tipo: document.getElementById('caja-tipo').value,
-                monto: document.getElementById('caja-monto').value,
-                concepto: document.getElementById('caja-concepto').value
-                monto: monto,
-                concepto: concepto
-            });
-            closeModal('modal-caja'); loadCaja(); loadDashboard();
-            closeModal('modal-caja'); 
-            loadCaja(); 
-            loadDashboard();
-            alert('✅ Movimiento registrado');
-        }
-
-        async function abonarPrestamo(id, saldoActual) {
-            const monto = prompt(`Saldo actual: $${saldoActual.toFixed(2)}\n¿Cuánto abona?`);
-            if(!monto) return;
-        async function abonarPrestamo(id, saldoActual, nombreCliente) {
-            const monto = prompt(`Abono para: ${nombreCliente}\nSaldo actual: $${saldoActual.toFixed(2)}\n\n¿Cuánto abona el cliente?`);
-            if(!monto || isNaN(monto)) return;
-            
-            const val = parseFloat(monto);
-            if(val <= 0) { alert('Monto inválido'); return; }
-
-            const nuevoSaldo = saldoActual - val;
-            const estatus = nuevoSaldo <= 0 ? 'pagado' : 'activo';
-
-            // Actualizar préstamo
-            await sb.from('prestamos').update({ saldo_actual: nuevoSaldo, estatus: estatus }).eq('id', id);
-            await sb.from('prestamos').update({ 
-                saldo_actual: nuevoSaldo, 
-                estatus: estatus 
-            }).eq('id', id);
-
-            // Registrar en Caja (Entrada)
-            await sb.from('caja').insert({ tipo:'entrada', monto:val, concepto:`Abono préstamo ${id}` });
-            await sb.from('caja').insert({ 
-                tipo:'entrada', 
-                monto:val, 
-                concepto:`Abono préstamo - ${nombreCliente}` 
-            });
-
-            loadPrestamos(); loadDashboard();
-            loadPrestamos(); 
-            loadDashboard();
-            alert(`✅ Abono de $${val.toFixed(2)} registrado.\nNuevo saldo: $${nuevoSaldo.toFixed(2)}`);
-        }
-
-        async function deleteRow(table, id) {
-            if(confirm('¿Seguro que deseas eliminar este registro?')) {
-                await sb.from(table).delete().eq('id', id);
-            if(confirm('⚠️ ¿Estás seguro de eliminar este registro?\nEsta acción no se puede deshacer.')) {
-                const { error } = await sb.from(table).delete().eq('id', id);
-                if(error) { alert('Error al eliminar: ' + error.message); return; }
-                
-                if(table==='clientes') loadClientes();
-                if(table==='socios') loadSocios();
-                if(table==='prestamos') loadPrestamos();
-                if(table==='caja') loadCaja();
-                loadDashboard();
-            }
-        }
-
-        // UTILS
-        async function loadClientesSelect() {
-            const {data} = await sb.from('clientes').select('id,nombre');
-            const sel = document.getElementById('pres-cliente');
-            sel.innerHTML = '';
-            data?.forEach(c => {
-            if(!data || data.length === 0) {
-                sel.innerHTML = '<option value="">No hay clientes</option>';
-                return;
-            }
-            data.forEach(c => {
-                sel.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
-            });
-        }
-
-        function exportTable(tableId) {
-            let csv = [];
-            let rows = document.querySelectorAll(`#${tableId} tr`);
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-                for (let j = 0; j < cols.length - 1; j++) // Ignorar columna de acciones
-                // Ignorar última columna (acciones)
-                for (let j = 0; j < cols.length - 1; j++) 
-                    row.push(cols[j].innerText);
-                csv.push(row.join(","));
-            }
-            let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-            let link = document.createElement("a");
-            link.download = `reporte_${tableId}.csv`;
-            link.download = `reporte_${tableId}_${new Date().toISOString().slice(0,10)}.csv`;
-            link.href = window.URL.createObjectURL(csvFile);
-            link.style.display = "none";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
+async function loadClientesSelect(){
+    const{data}=await sb.from('clientes').select('id,nombre');
+    const sel=document.getElementById('pres-cliente');sel.innerHTML='';
+    if(!data||data.length===0){sel.innerHTML='<option>Sin clientes</option>';return;}
+    data.forEach(c=>{sel.innerHTML+='<option value="'+c.id+'">'+c.nombre+'</option>';});
+}
+</script>
 </body>
 </html>
