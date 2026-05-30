@@ -1,6 +1,3 @@
-bash
-
-cat > /mnt/user-data/outputs/sistema-godin.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -461,18 +458,39 @@ tbody tr:hover{background:var(--surface2)}
       <div class="form-group"><label class="form-label">Monto *</label><input type="number" class="form-input" id="pres-monto" placeholder="0.00" min="0" step="0.01" oninput="updatePresPreview()"></div>
       <div class="form-group"><label class="form-label">Interés mensual (%)</label><input type="number" class="form-input" id="pres-interes" value="10" min="0" max="100" oninput="updatePresPreview()"></div>
     </div>
-    <div class="form-group"><label class="form-label">Periodicidad de pago</label>
-      <select class="form-select" id="pres-periodicidad" onchange="updatePresPreview()">
-        <option value="quincenal">Quincenal (QNA)</option>
-        <option value="mensual" selected>Mensual</option>
-      </select>
-      <div class="form-hint">Define cada cuánto se realizan los abonos</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Periodicidad de pago</label>
+        <select class="form-select" id="pres-periodicidad" onchange="updatePresPreview()">
+          <option value="quincenal">Quincenal (QNA)</option>
+          <option value="mensual" selected>Mensual</option>
+        </select>
+        <div class="form-hint">Define cada cuánto se realizan los abonos</div>
+      </div>
+      <div class="form-group"><label class="form-label">Plazo del préstamo</label>
+        <select class="form-select" id="pres-plazo" onchange="updatePresPreview()">
+          <option value="1">1 mes</option>
+          <option value="2">2 meses</option>
+          <option value="3">3 meses</option>
+          <option value="4">4 meses</option>
+          <option value="5">5 meses</option>
+          <option value="6" selected>6 meses</option>
+          <option value="7">7 meses</option>
+          <option value="8">8 meses</option>
+          <option value="9">9 meses</option>
+          <option value="10">10 meses</option>
+          <option value="11">11 meses</option>
+          <option value="12">12 meses</option>
+        </select>
+        <div class="form-hint">Duración total del préstamo</div>
+      </div>
     </div>
     <div id="pres-preview" style="margin-top:8px;display:none">
       <div class="preview-row"><span class="preview-label">Monto a prestar</span><span class="preview-value" id="prev-monto">-</span></div>
       <div class="preview-row"><span class="preview-label">Interés mensual</span><span class="preview-value" id="prev-int">-</span></div>
       <div class="preview-row"><span class="preview-label" id="prev-pago-label">Pago mensual estimado</span><span class="preview-value" id="prev-pago">-</span></div>
-      <div class="preview-row"><span class="preview-label">Número de pagos estimados</span><span class="preview-value" id="prev-npagos">-</span></div>
+      <div class="preview-row"><span class="preview-label">Plazo</span><span class="preview-value" id="prev-plazo">-</span></div>
+      <div class="preview-row"><span class="preview-label">Número de pagos</span><span class="preview-value" id="prev-npagos">-</span></div>
+      <div class="preview-row"><span class="preview-label">Total a pagar (aprox)</span><span class="preview-value" id="prev-total" style="color:var(--amber)">-</span></div>
     </div>
     <div class="form-error" id="pres-error"></div>
     <div class="modal-footer">
@@ -585,7 +603,7 @@ const SB_KEY='sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
 const sb=supabase.createClient(SB_URL,SB_KEY,{db:{schema:'public'},auth:{persistSession:false}});
 
 /* ============================================================  AUTH */
-const ALLOWED_USERS=['tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com','itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com'];
+const ALLOWED_USERS=['tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com','itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com','viacp_1110@hotmail.com'];
 let currentUser='';
 
 function getPass(){return localStorage.getItem('GODIN_PASS')||'Prestamos123';}
@@ -699,20 +717,16 @@ function emptyRow(colspan,msg='Sin registros',icon='◈'){
   return `<tr><td colspan="${colspan}"><div class="empty-state"><div class="empty-state-icon">${icon}</div><p>${msg}</p></div></td></tr>`;
 }
 
-/* Cálculo de pagos según periodicidad */
-function calcPago(monto,interesMensual,periodicidad){
+/* Cálculo de pagos según periodicidad y plazo */
+function calcPago(monto,interesMensual,periodicidad,plazoMeses){
+  plazoMeses=plazoMeses||12;
+  // número de períodos según periodicidad
+  const n=periodicidad==='quincenal'?plazoMeses*2:plazoMeses;
   // interés por período
   const intPeriodo=periodicidad==='quincenal'?interesMensual/2:interesMensual;
-  const pago=monto*intPeriodo; // pago mínimo de interés
-  // cuota fija simplificada: capital / periodos + interés del saldo
-  // retornamos pago de interés del período y cuántos períodos para liquidar
-  // Suponemos que cada pago = capital/n + intereses sobre saldo pendiente
-  // Usamos la fórmula de anualidad: pago = P * i / (1-(1+i)^-n) con n=12 (mensual) o 24 (qna)
-  const n=periodicidad==='quincenal'?24:12;
-  const i=intPeriodo;
   let cuota;
-  if(i===0){cuota=monto/n;}
-  else{cuota=monto*i/(1-Math.pow(1+i,-n));}
+  if(intPeriodo===0){cuota=monto/n;}
+  else{cuota=monto*intPeriodo/(1-Math.pow(1+intPeriodo,-n));}
   return {cuota,intPeriodo,n};
 }
 
@@ -830,7 +844,8 @@ function renderPrestamosTable(items){
       const saldo=safeNum(p.saldo_actual);
       const intMensual=safeNum(p.interes_mensual);
       const periodo=p.periodicidad||'mensual';
-      const {cuota}=calcPago(safeNum(p.monto_original),intMensual,periodo);
+      const plazoMeses=p.plazo_meses||12;
+      const {cuota}=calcPago(safeNum(p.monto_original),intMensual,periodo,plazoMeses);
       const badge=p.estatus==='activo'
         ?'<span class="badge badge-green"><span class="badge-dot"></span>Activo</span>'
         :'<span class="badge badge-blue"><span class="badge-dot"></span>Pagado</span>';
@@ -872,15 +887,18 @@ function updatePresPreview(){
   const monto=safeNum(document.getElementById('pres-monto').value);
   const interes=safeNum(document.getElementById('pres-interes').value)/100;
   const periodo=document.getElementById('pres-periodicidad').value;
+  const plazo=parseInt(document.getElementById('pres-plazo').value)||6;
   const preview=document.getElementById('pres-preview');
   if(monto>0){
     preview.style.display='block';
-    const{cuota,intPeriodo,n}=calcPago(monto,interes,periodo);
+    const{cuota,n}=calcPago(monto,interes,periodo,plazo);
     document.getElementById('prev-monto').textContent=fmtMoney(monto);
     document.getElementById('prev-int').textContent=(interes*100).toFixed(1)+'% mensual';
     document.getElementById('prev-pago-label').textContent=periodo==='quincenal'?'Pago quincenal estimado':'Pago mensual estimado';
     document.getElementById('prev-pago').textContent=fmtMoney(cuota);
+    document.getElementById('prev-plazo').textContent=plazo+' mes'+(plazo===1?'':'es');
     document.getElementById('prev-npagos').textContent=n+' pagos ('+periodo+')';
+    document.getElementById('prev-total').textContent=fmtMoney(cuota*n);
   }else{preview.style.display='none';}
 }
 
@@ -889,6 +907,7 @@ async function savePrestamo(){
   const monto=safeNum(document.getElementById('pres-monto').value);
   const interes=safeNum(document.getElementById('pres-interes').value)/100;
   const periodo=document.getElementById('pres-periodicidad').value;
+  const plazo=parseInt(document.getElementById('pres-plazo').value)||6;
   const errEl=document.getElementById('pres-error');
   if(!cid){errEl.textContent='Selecciona un cliente.';return;}
   if(!monto||monto<=0){errEl.textContent='El monto debe ser mayor a cero.';return;}
@@ -896,14 +915,14 @@ async function savePrestamo(){
   try{
     const clienteNombre=document.getElementById('pres-cliente').options[document.getElementById('pres-cliente').selectedIndex].text;
     await sb.from('caja').insert({tipo:'salida',monto,concepto:'Préstamo a '+clienteNombre});
-    // Guardamos periodicidad en el campo disponible (si la columna existe, si no se ignora)
     const presData={cliente_id:cid,monto_original:monto,saldo_actual:monto,interes_mensual:interes,estatus:'activo'};
     try{presData.periodicidad=periodo;}catch(e){}
+    try{presData.plazo_meses=plazo;}catch(e){}
     await sb.from('prestamos').insert(presData);
     closeModal('modal-pres');
     document.getElementById('pres-monto').value='';
     document.getElementById('pres-preview').style.display='none';
-    toast('success','Préstamo creado',fmtMoney(monto)+' — '+periodo);
+    toast('success','Préstamo creado',fmtMoney(monto)+' — '+plazo+' mes'+(plazo===1?'':'es')+' ('+periodo+')');
     loadPrestamos();loadDashboard();
   }catch(err){errEl.textContent='Error: '+err.message;}
 }
@@ -923,7 +942,8 @@ async function verDetallePrestamo(presId){
     const intMensual=safeNum(p.interes_mensual);
     const saldoActual=safeNum(p.saldo_actual);
     const periodo=p.periodicidad||'mensual';
-    const{cuota,n}=calcPago(monto,intMensual,periodo);
+    const plazoMeses=p.plazo_meses||12;
+    const{cuota,n}=calcPago(monto,intMensual,periodo,plazoMeses);
     // Construir plan de pagos
     const abonosArr=abonos||[];
     const totalAbonado=abonosArr.reduce((a,r)=>a+safeNum(r.monto),0);
@@ -1154,59 +1174,67 @@ async function loadSocios(){
     const[{data:soc},{data:pres},{data:caja}]=await Promise.all([
       sb.from('socios').select('*').order('created_at',{ascending:false}).limit(100),
       sb.from('prestamos').select('monto_original,saldo_actual,interes_mensual,estatus,created_at'),
-      sb.from('caja').select('monto,tipo')
+      sb.from('caja').select('monto,tipo,concepto,updated_at').order('updated_at',{ascending:true})
     ]);
     sociosAll=soc||[];
     prestamosParaSocios=pres||[];
-    // Calcular capital total en el sistema y ganancias (intereses cobrados)
-    const{totalCapital,totalInteresGanado}=calcularCapitalIntereses(pres||[],caja||[]);
-    filterSocios(totalCapital,totalInteresGanado);
+    const{capitalInicial,totalInteresGanado}=calcularCapitalIntereses(pres||[],caja||[]);
+    filterSocios(capitalInicial,totalInteresGanado);
   }catch(err){document.getElementById('socios-grid').innerHTML=`<p style="color:var(--red)">Error: ${sanitize(err.message)}</p>`;}
 }
 
 function calcularCapitalIntereses(pres,caja){
-  // Capital total en el sistema = entradas - salidas (saldo de caja)
-  const entradas=caja.filter(r=>r.tipo==='entrada').reduce((a,r)=>a+safeNum(r.monto),0);
-  const salidas=caja.filter(r=>r.tipo==='salida').reduce((a,r)=>a+safeNum(r.monto),0);
-  const saldoCaja=entradas-salidas;
-  // Capital prestado aún activo
-  const capitalPrestadoActivo=pres.filter(p=>p.estatus==='activo').reduce((a,p)=>a+safeNum(p.saldo_actual),0);
-  // Capital total en el negocio = saldo caja + capital activo prestado
-  const totalCapital=saldoCaja+capitalPrestadoActivo;
-  // Interés ganado = lo que se ha recibido como abonos - capital original de esos préstamos
-  // Aproximación: por cada préstamo activo, el interés ganado = monto_original - saldo_actual (ya pagado en capital)
-  // + por préstamos pagados: diferencia entre total abonado y el monto original
-  // Simplificamos: intereses acumulados = suma de interés mensual * meses transcurridos para activos
+  // Capital inicial = entrada registrada como "Capital inicial" en caja (concepto exacto)
+  // Si no existe ese registro, usamos la suma de todas las entradas menos salidas de préstamos
+  const entradaCapital=caja.find(r=>
+    r.tipo==='entrada' &&
+    (r.concepto||'').toLowerCase().includes('capital inicial')
+  );
+
+  let capitalInicial=0;
+  if(entradaCapital){
+    capitalInicial=safeNum(entradaCapital.monto); // ej: 52500
+  } else {
+    // Fallback: suma de entradas que NO son abonos
+    capitalInicial=caja
+      .filter(r=>r.tipo==='entrada'&&!(r.concepto||'').toLowerCase().includes('abono'))
+      .reduce((a,r)=>a+safeNum(r.monto),0);
+  }
+
+  // Interés ganado real = todos los abonos recibidos - capital que se recuperó
+  // = total abonado - (capital_original - saldo_actual) para préstamos activos
+  // + para pagados: total abonado - capital_original
+  // Simplificado: suma de (monto_original * interes_mensual * meses_transcurridos) para cada préstamo
   let totalInteresGanado=0;
   const ahora=Date.now();
   pres.forEach(p=>{
     const intMensual=safeNum(p.interes_mensual);
     const monto=safeNum(p.monto_original);
-    const meses=Math.max(1,(ahora-new Date(p.created_at))/(1000*60*60*24*30));
-    // Para pagados: el interés ya cobrado es aprox la diferencia entre lo pagado y el capital
+    const meses=Math.max(0,(ahora-new Date(p.created_at))/(1000*60*60*24*30));
     if(p.estatus==='pagado'){
-      const interesAprox=monto*intMensual*Math.round(meses);
-      totalInteresGanado+=Math.min(interesAprox,monto*0.5); // cap razonable
+      // Interés total cobrado en el plazo estimado
+      totalInteresGanado+=monto*intMensual*Math.max(1,Math.round(meses));
     }else{
-      // Para activos: interés cobrado hasta ahora = monto_original - saldo_actual (lo que se ha reducido del saldo)
-      const capitalPagado=monto-safeNum(p.saldo_actual);
-      // El interés está embebido en lo que ya se abonó
-      const interesAprox=(capitalPagado)*intMensual*meses;
-      totalInteresGanado+=Math.max(0,Math.min(interesAprox,capitalPagado*0.6));
+      // Interés ya cobrado = capital reducido × tasa (los abonos contienen capital + interés)
+      const capitalRecuperado=monto-safeNum(p.saldo_actual);
+      const proporcionRecuperada=monto>0?capitalRecuperado/monto:0;
+      totalInteresGanado+=monto*intMensual*Math.max(1,Math.round(meses))*proporcionRecuperada;
     }
   });
-  return{totalCapital,totalInteresGanado};
+
+  return{capitalInicial,totalInteresGanado};
 }
 
-function filterSocios(totalCapital,totalInteresGanado){
+function filterSocios(capitalInicial,totalInteresGanado){
   const q=document.getElementById('soc-search').value.toLowerCase();
   const items=q?sociosAll.filter(s=>(s.nombre||'').toLowerCase().includes(q)):sociosAll;
   const grid=document.getElementById('socios-grid');
   if(!items.length){grid.innerHTML='<p style="color:var(--text2);padding:20px">Sin socios</p>';return;}
-  const totalPct=items.reduce((a,s)=>a+safeNum(s.porcentaje),0);
   grid.innerHTML=items.map(s=>{
     const pct=safeNum(s.porcentaje);
-    const capitalSocio=totalCapital*(pct/100);
+    // Capital real del socio = su % del capital inicial aportado
+    const capitalSocio=capitalInicial*(pct/100);
+    // Interés ganado proporcional a su participación
     const interesSocio=totalInteresGanado*(pct/100);
     const badge=s.activo!==false
       ?'<span class="badge badge-green"><span class="badge-dot"></span>Activo</span>'
@@ -1218,7 +1246,7 @@ function filterSocios(totalCapital,totalInteresGanado){
       </div>
       <div class="socio-stats">
         <div class="socio-stat-row">
-          <span class="socio-stat-label">Capital estimado</span>
+          <span class="socio-stat-label">Capital inicial aportado</span>
           <span class="socio-stat-val" style="color:var(--green)">${fmtMoney(capitalSocio)}</span>
         </div>
         <div class="socio-stat-row">
