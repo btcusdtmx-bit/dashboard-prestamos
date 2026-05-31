@@ -294,7 +294,7 @@ tbody tr:hover{background:var(--surface2)}
       <div class="nav-item" onclick="switchPage('caja',this)"><span class="nav-icon">▣</span> Caja</div>
     </nav>
     <div class="sidebar-footer">
-      <button class="btn-changepass" onclick="openModal('modal-changepass')">🔑 Cambiar contraseña</button>
+      <button class="btn-changepass" onclick="openModal('modal-changepass')"> Cambiar contraseña</button>
       <button class="btn-logout" onclick="logout()">↩ Cerrar sesión</button>
     </div>
   </aside>
@@ -314,7 +314,7 @@ tbody tr:hover{background:var(--surface2)}
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon">◈</div><div class="stat-label">Saldo Caja</div><div class="stat-value green" id="s-caja"><span class="skeleton" style="width:100px;height:26px"></span></div></div>
+        <div class="stat-card"><div class="stat-icon"></div><div class="stat-label">Saldo Caja</div><div class="stat-value green" id="s-caja"><span class="skeleton" style="width:100px;height:26px"></span></div></div>
         <div class="stat-card blue"><div class="stat-icon">◎</div><div class="stat-label">Capital Prestado</div><div class="stat-value blue" id="s-capital"><span class="skeleton" style="width:100px;height:26px"></span></div></div>
         <div class="stat-card"><div class="stat-icon">◉</div><div class="stat-label">Préstamos Activos</div><div class="stat-value" id="s-activos">—</div></div>
         <div class="stat-card"><div class="stat-icon">✦</div><div class="stat-label">Préstamos Pagados</div><div class="stat-value" id="s-pagados">—</div></div>
@@ -351,7 +351,7 @@ tbody tr:hover{background:var(--surface2)}
         </div>
       </div>
       <div class="toolbar">
-        <div class="search-wrap"><span class="search-icon">⌕</span>
+        <div class="search-wrap"><span class="search-icon"></span>
           <input type="text" class="search-input" id="pres-search" placeholder="Buscar cliente…" oninput="filterPrestamos()">
         </div>
         <select class="filter-select" id="pres-filter-estado" onchange="filterPrestamos()">
@@ -468,18 +468,10 @@ tbody tr:hover{background:var(--surface2)}
       </div>
       <div class="form-group"><label class="form-label">Plazo del préstamo</label>
         <select class="form-select" id="pres-plazo" onchange="updatePresPreview()">
-          <option value="1">1 mes</option>
-          <option value="2">2 meses</option>
-          <option value="3">3 meses</option>
-          <option value="4">4 meses</option>
-          <option value="5">5 meses</option>
-          <option value="6" selected>6 meses</option>
-          <option value="7">7 meses</option>
-          <option value="8">8 meses</option>
-          <option value="9">9 meses</option>
-          <option value="10">10 meses</option>
-          <option value="11">11 meses</option>
-          <option value="12">12 meses</option>
+          <option value="1">1 mes</option><option value="2">2 meses</option><option value="3">3 meses</option>
+          <option value="4">4 meses</option><option value="5">5 meses</option><option value="6" selected>6 meses</option>
+          <option value="7">7 meses</option><option value="8">8 meses</option><option value="9">9 meses</option>
+          <option value="10">10 meses</option><option value="11">11 meses</option><option value="12">12 meses</option>
         </select>
         <div class="form-hint">Duración total del préstamo</div>
       </div>
@@ -503,7 +495,7 @@ tbody tr:hover{background:var(--surface2)}
 <!-- Nuevo Cliente -->
 <div class="modal-overlay" id="modal-cli">
   <div class="modal-box">
-    <div class="modal-header"><span class="modal-title">Nuevo Cliente</span><button class="modal-close" onclick="closeModal('modal-cli')">✕</button></div>
+    <div class="modal-header"><span class="modal-title">Nuevo Cliente</span><button class="modal-close" onclick="closeModal('modal-cli')"></button></div>
     <div class="form-group"><label class="form-label">Nombre completo *</label><input type="text" class="form-input" id="cli-nombre" placeholder="Juan García López"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" id="cli-tel" placeholder="555-000-0000"></div>
@@ -603,7 +595,11 @@ const SB_KEY='sb_publishable_F2qFK5tKBDtTJR6p7bg0bA_e1nlqPIL';
 const sb=supabase.createClient(SB_URL,SB_KEY,{db:{schema:'public'},auth:{persistSession:false}});
 
 /* ============================================================  AUTH */
-const ALLOWED_USERS=['tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com','itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com','viacp_1110@hotmail.com'];
+const ALLOWED_USERS=[
+  'tony_bravo@hotmail.com','axlj31@gmail.com','enrique_sabori@hotmail.com',
+  'itzel_riv93@hotmail.com','memsnena1005@hotmail.com','patty_walter25@hotmail.com',
+  'viacp_1110@hotmail.com'
+];
 let currentUser='';
 
 function getPass(){return localStorage.getItem('GODIN_PASS')||'Prestamos123';}
@@ -720,9 +716,7 @@ function emptyRow(colspan,msg='Sin registros',icon='◈'){
 /* Cálculo de pagos según periodicidad y plazo */
 function calcPago(monto,interesMensual,periodicidad,plazoMeses){
   plazoMeses=plazoMeses||12;
-  // número de períodos según periodicidad
   const n=periodicidad==='quincenal'?plazoMeses*2:plazoMeses;
-  // interés por período
   const intPeriodo=periodicidad==='quincenal'?interesMensual/2:interesMensual;
   let cuota;
   if(intPeriodo===0){cuota=monto/n;}
@@ -813,7 +807,6 @@ async function loadPrestamos(){
     const{data,error}=await sb.from('prestamos').select('*,clientes(nombre)').order('created_at',{ascending:false}).limit(500);
     if(error)throw error;
     prestamosAll=data||[];
-    // totales
     const activos=prestamosAll.filter(p=>p.estatus==='activo');
     const totalDeuda=activos.reduce((a,p)=>a+safeNum(p.saldo_actual),0);
     document.getElementById('total-deuda-val').textContent=fmtMoney(totalDeuda);
@@ -844,7 +837,7 @@ function renderPrestamosTable(items){
       const saldo=safeNum(p.saldo_actual);
       const intMensual=safeNum(p.interes_mensual);
       const periodo=p.periodicidad||'mensual';
-      const plazoMeses=p.plazo_meses||12;
+      const plazoMeses=p.plazo_meses||6;
       const {cuota}=calcPago(safeNum(p.monto_original),intMensual,periodo,plazoMeses);
       const badge=p.estatus==='activo'
         ?'<span class="badge badge-green"><span class="badge-dot"></span>Activo</span>'
@@ -915,9 +908,15 @@ async function savePrestamo(){
   try{
     const clienteNombre=document.getElementById('pres-cliente').options[document.getElementById('pres-cliente').selectedIndex].text;
     await sb.from('caja').insert({tipo:'salida',monto,concepto:'Préstamo a '+clienteNombre});
-    const presData={cliente_id:cid,monto_original:monto,saldo_actual:monto,interes_mensual:interes,estatus:'activo'};
-    try{presData.periodicidad=periodo;}catch(e){}
-    try{presData.plazo_meses=plazo;}catch(e){}
+    const presData={
+      cliente_id:cid,
+      monto_original:monto,
+      saldo_actual:monto,
+      interes_mensual:interes,
+      estatus:'activo',
+      periodicidad:periodo,
+      plazo_meses:plazo
+    };
     await sb.from('prestamos').insert(presData);
     closeModal('modal-pres');
     document.getElementById('pres-monto').value='';
@@ -934,7 +933,6 @@ async function verDetallePrestamo(presId){
   try{
     const{data:p,error}=await sb.from('prestamos').select('*,clientes(nombre,telefono)').eq('id',presId).single();
     if(error)throw error;
-    // Buscar abonos en caja del cliente
     const clienteNombre=p.clientes?.nombre||'Cliente';
     const{data:abonos}=await sb.from('caja').select('*').ilike('concepto','%Abono '+clienteNombre+'%').order('updated_at',{ascending:true});
     document.getElementById('detalle-pres-title').textContent='Préstamo — '+sanitize(clienteNombre);
@@ -942,13 +940,10 @@ async function verDetallePrestamo(presId){
     const intMensual=safeNum(p.interes_mensual);
     const saldoActual=safeNum(p.saldo_actual);
     const periodo=p.periodicidad||'mensual';
-    const plazoMeses=p.plazo_meses||12;
+    const plazoMeses=p.plazo_meses||6;
     const{cuota,n}=calcPago(monto,intMensual,periodo,plazoMeses);
-    // Construir plan de pagos
     const abonosArr=abonos||[];
     const totalAbonado=abonosArr.reduce((a,r)=>a+safeNum(r.monto),0);
-    const interesTotal=monto*intMensual*(periodo==='quincenal'?24:12); // aprox total interés
-    // Plan de pagos proyectado
     let planRows='';
     let saldoPlan=monto;
     const intPer=periodo==='quincenal'?intMensual/2:intMensual;
@@ -1001,7 +996,6 @@ function openAbono(id,saldo,nombre,periodo,intMensual,montoOriginal){
   document.getElementById('abono-monto').value='';
   document.getElementById('abono-new-saldo-row').style.display='none';
   document.getElementById('abono-error').textContent='';
-  // Sugerir pago
   const{cuota}=calcPago(safeNum(montoOriginal),safeNum(intMensual),periodo||'mensual');
   document.getElementById('abono-sugerido').textContent=fmtMoney(cuota);
   document.getElementById('abono-sugerido-desc').textContent='Cuota '+(periodo==='quincenal'?'quincenal':'mensual')+' calculada sobre el monto original';
@@ -1094,7 +1088,6 @@ async function verDetalleCliente(clienteId){
     const pagados=presList.filter(p=>p.estatus==='pagado');
     const deudaTotal=activos.reduce((a,p)=>a+safeNum(p.saldo_actual),0);
     const totalPrestado=presList.reduce((a,p)=>a+safeNum(p.monto_original),0);
-    // Buscar abonos del cliente en caja
     const{data:abonosCaja}=await sb.from('caja').select('monto,concepto,updated_at').ilike('concepto','%Abono '+cli.nombre+'%').order('updated_at',{ascending:false});
     const abonosArr=abonosCaja||[];
     const totalAbonado=abonosArr.reduce((a,r)=>a+safeNum(r.monto),0);
@@ -1127,7 +1120,6 @@ async function verDetalleCliente(clienteId){
         </div>`;
       }).join('');
     }
-    // Historial de abonos
     let abonosHTML='';
     if(!abonosArr.length){abonosHTML='<p style="color:var(--text2);font-size:.85rem;padding:12px 0">Sin abonos registrados</p>';}
     else{
@@ -1167,75 +1159,40 @@ async function saveCliente(){
 }
 
 /* ============================================================  SOCIOS */
-let sociosAll=[],prestamosParaSocios=[];
+let sociosAll=[],sociosPage=1;
+const SOC_PER_PAGE=10;
 
 async function loadSocios(){
   try{
-    const[{data:soc},{data:pres},{data:caja}]=await Promise.all([
-      sb.from('socios').select('*').order('created_at',{ascending:false}).limit(100),
-      sb.from('prestamos').select('monto_original,saldo_actual,interes_mensual,estatus,created_at'),
-      sb.from('caja').select('monto,tipo,concepto,updated_at').order('updated_at',{ascending:true})
+    const[{data:soc},{data:dist},{data:caja}]=await Promise.all([
+      sb.from('socios').select('*').order('created_at',{ascending:false}),
+      sb.from('distribuciones').select('socio_id,monto'),
+      sb.from('caja').select('monto').eq('tipo','entrada').ilike('concepto','%Capital inicial%')
     ]);
     sociosAll=soc||[];
-    prestamosParaSocios=pres||[];
-    const{capitalInicial,totalInteresGanado}=calcularCapitalIntereses(pres||[],caja||[]);
-    filterSocios(capitalInicial,totalInteresGanado);
+    const capitalTotal=safeNum(caja?.[0]?.monto)||52500;
+    sociosPage=1;filterSocios(capitalTotal,dist||[]);
   }catch(err){document.getElementById('socios-grid').innerHTML=`<p style="color:var(--red)">Error: ${sanitize(err.message)}</p>`;}
 }
 
-function calcularCapitalIntereses(pres,caja){
-  // Capital inicial = entrada registrada como "Capital inicial" en caja (concepto exacto)
-  // Si no existe ese registro, usamos la suma de todas las entradas menos salidas de préstamos
-  const entradaCapital=caja.find(r=>
-    r.tipo==='entrada' &&
-    (r.concepto||'').toLowerCase().includes('capital inicial')
-  );
-
-  let capitalInicial=0;
-  if(entradaCapital){
-    capitalInicial=safeNum(entradaCapital.monto); // ej: 52500
-  } else {
-    // Fallback: suma de entradas que NO son abonos
-    capitalInicial=caja
-      .filter(r=>r.tipo==='entrada'&&!(r.concepto||'').toLowerCase().includes('abono'))
-      .reduce((a,r)=>a+safeNum(r.monto),0);
-  }
-
-  // Interés ganado real = todos los abonos recibidos - capital que se recuperó
-  // = total abonado - (capital_original - saldo_actual) para préstamos activos
-  // + para pagados: total abonado - capital_original
-  // Simplificado: suma de (monto_original * interes_mensual * meses_transcurridos) para cada préstamo
-  let totalInteresGanado=0;
-  const ahora=Date.now();
-  pres.forEach(p=>{
-    const intMensual=safeNum(p.interes_mensual);
-    const monto=safeNum(p.monto_original);
-    const meses=Math.max(0,(ahora-new Date(p.created_at))/(1000*60*60*24*30));
-    if(p.estatus==='pagado'){
-      // Interés total cobrado en el plazo estimado
-      totalInteresGanado+=monto*intMensual*Math.max(1,Math.round(meses));
-    }else{
-      // Interés ya cobrado = capital reducido × tasa (los abonos contienen capital + interés)
-      const capitalRecuperado=monto-safeNum(p.saldo_actual);
-      const proporcionRecuperada=monto>0?capitalRecuperado/monto:0;
-      totalInteresGanado+=monto*intMensual*Math.max(1,Math.round(meses))*proporcionRecuperada;
-    }
-  });
-
-  return{capitalInicial,totalInteresGanado};
-}
-
-function filterSocios(capitalInicial,totalInteresGanado){
+function filterSocios(capitalTotal,distribuciones){
   const q=document.getElementById('soc-search').value.toLowerCase();
   const items=q?sociosAll.filter(s=>(s.nombre||'').toLowerCase().includes(q)):sociosAll;
+  
+  // Agrupar ganancias por socio
+  const gananciasPorSocio={};
+  distribuciones.forEach(d=>{
+    if(!gananciasPorSocio[d.socio_id])gananciasPorSocio[d.socio_id]=0;
+    gananciasPorSocio[d.socio_id]+=safeNum(d.monto);
+  });
+
   const grid=document.getElementById('socios-grid');
   if(!items.length){grid.innerHTML='<p style="color:var(--text2);padding:20px">Sin socios</p>';return;}
+  
   grid.innerHTML=items.map(s=>{
     const pct=safeNum(s.porcentaje);
-    // Capital real del socio = su % del capital inicial aportado
-    const capitalSocio=capitalInicial*(pct/100);
-    // Interés ganado proporcional a su participación
-    const interesSocio=totalInteresGanado*(pct/100);
+    const capitalSocio=capitalTotal*(pct/100);
+    const interesSocio=gananciasPorSocio[s.id]||0;
     const badge=s.activo!==false
       ?'<span class="badge badge-green"><span class="badge-dot"></span>Activo</span>'
       :'<span class="badge badge-red"><span class="badge-dot"></span>Inactivo</span>';
@@ -1250,7 +1207,7 @@ function filterSocios(capitalInicial,totalInteresGanado){
           <span class="socio-stat-val" style="color:var(--green)">${fmtMoney(capitalSocio)}</span>
         </div>
         <div class="socio-stat-row">
-          <span class="socio-stat-label">Interés ganado (aprox)</span>
+          <span class="socio-stat-label">Ganancias acumuladas</span>
           <span class="socio-stat-val" style="color:var(--amber)">${fmtMoney(interesSocio)}</span>
         </div>
         <div class="socio-stat-row">
@@ -1366,11 +1323,9 @@ function initApp(){
   loadDashboard();
 }
 
-// Backdrop click cierra modales
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{
   overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
 });
-// Cierra sidebar en mobile al click fuera
 document.addEventListener('click',e=>{
   const sidebar=document.getElementById('sidebar');
   const hamburger=document.querySelector('.hamburger');
