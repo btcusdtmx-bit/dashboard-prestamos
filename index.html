@@ -32,7 +32,6 @@ input,select,textarea,button{font-family:var(--sans)}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
-/* LOGIN */
 #loginSection{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,229,160,.07) 0%,transparent 70%)}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;max-width:420px;width:100%;box-shadow:0 0 80px rgba(0,229,160,.06),var(--shadow);animation:fadeUp .5s ease both}
 .login-logo{font-size:2.4rem;font-weight:800;color:var(--green);letter-spacing:-1px;text-align:center;margin-bottom:4px}
@@ -45,7 +44,6 @@ input,select,textarea,button{font-family:var(--sans)}
 .btn-primary:active{transform:scale(.98)}
 .err-msg{color:var(--red);font-size:.85rem;margin-top:12px;text-align:center;min-height:20px}
 
-/* APP SHELL */
 #appSection{display:none;min-height:100vh}
 #appSection.visible{display:flex}
 .sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s ease}
@@ -61,6 +59,8 @@ input,select,textarea,button{font-family:var(--sans)}
 .sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .btn-logout{width:100%;padding:10px;background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,106,.2);border-radius:var(--radius);cursor:pointer;font-weight:600;font-size:.85rem;transition:background .2s;font-family:var(--sans)}
 .btn-logout:hover{background:rgba(255,77,106,.2)}
+.btn-changepass{width:100%;padding:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-weight:600;font-size:.85rem;transition:background .2s;font-family:var(--sans)}
+.btn-changepass:hover{background:var(--surface3);color:var(--text)}
 .main-content{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:40;background:rgba(7,10,16,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
 .topbar-title{font-size:1.1rem;font-weight:700;color:var(--text)}
@@ -71,7 +71,6 @@ input,select,textarea,button{font-family:var(--sans)}
 .page{display:none;padding:28px;animation:fadeUp .3s ease both}
 .page.active{display:block}
 
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:28px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
 .stat-card:hover{border-color:var(--border2);transform:translateY(-1px)}
@@ -89,18 +88,15 @@ input,select,textarea,button{font-family:var(--sans)}
 .stat-value.amber{color:var(--amber)}
 .stat-value.purple{color:var(--purple)}
 
-/* CHARTS */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px}
 .chart-card h4{font-size:.8rem;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
 .chart-wrap{position:relative;height:180px}
 
-/* SECTION HEADER */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .section-title{font-size:1.2rem;font-weight:700}
 .section-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
-/* TOOLBAR */
 .toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .search-wrap{position:relative;flex:1;min-width:180px}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.9rem;pointer-events:none}
@@ -109,7 +105,6 @@ input,select,textarea,button{font-family:var(--sans)}
 .filter-select{padding:9px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:.88rem;outline:none;cursor:pointer}
 .filter-select:focus{border-color:var(--green)}
 
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius);border:none;cursor:pointer;font-family:var(--sans);font-weight:600;font-size:.85rem;transition:all .15s;white-space:nowrap}
 .btn-green{background:var(--green);color:#020d08}
 .btn-green:hover{background:#00ffb0;box-shadow:0 0 12px rgba(0,229,160,.25)}
@@ -122,7 +117,6 @@ input,select,textarea,button{font-family:var(--sans)}
 .btn-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,184,48,.2)}
 .btn-sm{padding:5px 10px;font-size:.78rem}
 
-/* TABLE */
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
 .table-scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
@@ -135,7 +129,6 @@ tbody tr:hover{background:var(--surface2)}
 .td-mono{font-family:var(--mono)}
 .td-muted{color:var(--text2)}
 
-/* BADGES */
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.04em}
 .badge-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,229,160,.2)}
 .badge-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(77,158,255,.2)}
@@ -145,12 +138,10 @@ tbody tr:hover{background:var(--surface2)}
 .badge-gray{background:var(--gray-dim);color:var(--gray);border:1px solid rgba(107,114,128,.2)}
 .badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block}
 
-/* EMPTY STATE */
 .empty-state{text-align:center;padding:56px 20px;color:var(--text3)}
 .empty-state-icon{font-size:2.5rem;margin-bottom:12px}
 .empty-state p{font-size:.9rem}
 
-/* MODALS */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;z-index:200;padding:20px}
 .modal-overlay.open{display:flex}
 .modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:scaleIn .2s ease both}
@@ -172,7 +163,6 @@ tbody tr:hover{background:var(--surface2)}
 .preview-label{font-size:.78rem;color:var(--text2)}
 .preview-value{font-family:var(--mono);font-weight:500}
 
-/* TOAST */
 #toastContainer{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:999}
 .toast{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow);min-width:280px;max-width:360px;animation:slideIn .3s ease;font-size:.88rem}
 .toast.toast-success{border-left:3px solid var(--green)}
@@ -187,7 +177,6 @@ tbody tr:hover{background:var(--surface2)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:none}}
 
-/* SOCIO CARD */
 .socios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .socio-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;transition:border-color .2s,transform .2s}
 .socio-card:hover{border-color:var(--border2);transform:translateY(-1px)}
@@ -199,7 +188,6 @@ tbody tr:hover{background:var(--surface2)}
 .socio-stat-label{font-size:.75rem;color:var(--text2)}
 .socio-stat-val{font-family:var(--mono);font-size:.9rem;font-weight:500}
 
-/* PLAN DE PAGOS */
 .plan-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:16px}
 .plan-table th{padding:8px 12px;background:var(--surface3);color:var(--text3);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;text-align:left}
 .plan-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
@@ -207,7 +195,6 @@ tbody tr:hover{background:var(--surface2)}
 .plan-row-current{background:rgba(255,184,48,.06)}
 .plan-row-pending{opacity:.6}
 
-/* RESPONSIVE */
 @media(max-width:900px){.charts-row{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){:root{--sidebar-w:0px}.sidebar{transform:translateX(-240px);width:240px}.sidebar.open{transform:none}.main-content{margin-left:0}.hamburger{display:block}.topbar{padding:12px 16px}.page{padding:16px}.stats-grid{grid-template-columns:1fr 1fr}.modal-box{padding:22px}.modal-footer{flex-direction:column}.form-row{grid-template-columns:1fr}}
 </style>
@@ -216,7 +203,6 @@ tbody tr:hover{background:var(--surface2)}
 
 <div id="toastContainer"></div>
 
-<!-- LOGIN -->
 <div id="loginSection">
   <div class="login-box">
     <div class="login-logo">GODIN</div>
@@ -230,7 +216,6 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
-<!-- APP -->
 <div id="appSection">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -247,7 +232,8 @@ tbody tr:hover{background:var(--surface2)}
       <div class="nav-item" onclick="switchPage('caja',this)"><span class="nav-icon">▣</span> Caja</div>
     </nav>
     <div class="sidebar-footer">
-      <button class="btn-logout" onclick="logout()">↩ Cerrar sesión</button>
+      <button class="btn-changepass" onclick="openModal('modal-changepass')">🔑 Cambiar contraseña</button>
+      <button class="btn-logout" onclick="logout()"> Cerrar sesión</button>
     </div>
   </aside>
 
@@ -265,15 +251,14 @@ tbody tr:hover{background:var(--surface2)}
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-icon">◎</div><div class="stat-label">Cartera Activa</div><div class="stat-value blue" id="s-cartera">—</div></div>
         <div class="stat-card"><div class="stat-icon">◉</div><div class="stat-label">Préstamos Vigentes</div><div class="stat-value" id="s-vigentes">—</div></div>
-        <div class="stat-card amber"><div class="stat-icon">⬡</div><div class="stat-label">Total Socios</div><div class="stat-value amber" id="s-socios">—</div></div>
+        <div class="stat-card amber"><div class="stat-icon"></div><div class="stat-label">Total Socios</div><div class="stat-value amber" id="s-socios">—</div></div>
         <div class="stat-card purple"><div class="stat-icon">◉</div><div class="stat-label">Total Clientes</div><div class="stat-value purple" id="s-clientes">—</div></div>
         <div class="stat-card"><div class="stat-icon">✓</div><div class="stat-label">Liquidados</div><div class="stat-value green" id="s-liquidados">—</div></div>
-        <div class="stat-card red"><div class="stat-icon">⚠</div><div class="stat-label">Vencidos</div><div class="stat-value red" id="s-vencidos">—</div></div>
+        <div class="stat-card red"><div class="stat-icon"></div><div class="stat-label">Vencidos</div><div class="stat-value red" id="s-vencidos">—</div></div>
       </div>
       <div class="charts-row">
         <div class="chart-card"><h4>Capital por Inversionista</h4><div class="chart-wrap"><canvas id="chart-socios"></canvas></div></div>
@@ -286,7 +271,6 @@ tbody tr:hover{background:var(--surface2)}
       </div></div>
     </div>
 
-    <!-- PRÉSTAMOS -->
     <div class="page" id="page-prestamos">
       <div class="section-header">
         <h3 class="section-title">Préstamos</h3>
@@ -308,7 +292,6 @@ tbody tr:hover{background:var(--surface2)}
       </div></div>
     </div>
 
-    <!-- CLIENTES -->
     <div class="page" id="page-clientes">
       <div class="section-header">
         <h3 class="section-title">Clientes</h3>
@@ -323,7 +306,6 @@ tbody tr:hover{background:var(--surface2)}
       </div></div>
     </div>
 
-    <!-- SOCIOS -->
     <div class="page" id="page-socios">
       <div class="section-header">
         <h3 class="section-title">Socios / Inversionistas</h3>
@@ -331,7 +313,6 @@ tbody tr:hover{background:var(--surface2)}
       <div class="socios-grid" id="socios-grid"><p style="color:var(--text2);padding:20px">Cargando…</p></div>
     </div>
 
-    <!-- CAJA -->
     <div class="page" id="page-caja">
       <div class="section-header">
         <h3 class="section-title">Caja / Movimientos</h3>
@@ -345,8 +326,20 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
-<!-- MODALS -->
-<!-- Nuevo Préstamo -->
+<div class="modal-overlay" id="modal-changepass">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-title">🔑 Cambiar Contraseña</span><button class="modal-close" onclick="closeModal('modal-changepass')">✕</button></div>
+    <div class="form-group"><label class="form-label">Contraseña actual</label><input type="password" class="form-input" id="cp-actual" placeholder="••••••••"></div>
+    <div class="form-group"><label class="form-label">Nueva contraseña</label><input type="password" class="form-input" id="cp-nueva" placeholder="Mínimo 8 caracteres"></div>
+    <div class="form-group"><label class="form-label">Confirmar nueva contraseña</label><input type="password" class="form-input" id="cp-confirma" placeholder="Repite la contraseña"></div>
+    <div class="form-error" id="cp-error"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-changepass')">Cancelar</button>
+      <button class="btn btn-green" onclick="changePassword()">Guardar cambio</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-pres">
   <div class="modal-box">
     <div class="modal-header"><span class="modal-title">Nuevo Préstamo</span><button class="modal-close" onclick="closeModal('modal-pres')">✕</button></div>
@@ -378,7 +371,6 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
-<!-- Nuevo Cliente -->
 <div class="modal-overlay" id="modal-cli">
   <div class="modal-box">
     <div class="modal-header"><span class="modal-title">Nuevo Cliente</span><button class="modal-close" onclick="closeModal('modal-cli')">✕</button></div>
@@ -410,7 +402,6 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
-<!-- Caja -->
 <div class="modal-overlay" id="modal-caja">
   <div class="modal-box">
     <div class="modal-header"><span class="modal-title">Movimiento de Caja</span><button class="modal-close" onclick="closeModal('modal-caja')">✕</button></div>
@@ -425,15 +416,13 @@ tbody tr:hover{background:var(--surface2)}
   </div>
 </div>
 
-<!-- Detalle Préstamo -->
 <div class="modal-overlay" id="modal-detalle">
   <div class="modal-box modal-lg">
-    <div class="modal-header"><span class="modal-title" id="detalle-title">Detalle del Préstamo</span><button class="modal-close" onclick="closeModal('modal-detalle')">✕</button></div>
+    <div class="modal-header"><span class="modal-title" id="detalle-title">Historial de Pagos</span><button class="modal-close" onclick="closeModal('modal-detalle')">✕</button></div>
     <div id="detalle-content"><div class="empty-state"><p>Cargando…</p></div></div>
   </div>
 </div>
 
-<!-- Abono -->
 <div class="modal-overlay" id="modal-abono">
   <div class="modal-box">
     <div class="modal-header"><span class="modal-title">Registrar Abono</span><button class="modal-close" onclick="closeModal('modal-abono')">✕</button></div>
@@ -450,12 +439,10 @@ tbody tr:hover{background:var(--surface2)}
 </div>
 
 <script>
-/* ============================================================  SUPABASE */
 const SB_URL='https://ehcfrserpdqthkdqizsz.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoY2Zyc2VycGRxdGhrZHFpenN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMDMzNTgsImV4cCI6MjA5NDg3OTM1OH0.deHdXTIYPv19FcwXG2qY8HV1UHg6yuTk-LBg1UX7Bik';
 const sb=supabase.createClient(SB_URL,SB_KEY,{db:{schema:'public'}});
 
-/* ============================================================  AUTH & ROLES */
 const ROLE_MAP = {
   'tony_bravo@hotmail.com': 'admin',
   'memsnena1005@hotmail.com': 'tesorero_operativo',
@@ -488,7 +475,20 @@ function doLogin(){
 document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 function logout(){ location.reload(); }
 
-/* ============================================================  NAV */
+function changePassword(){
+  const actual = document.getElementById('cp-actual').value;
+  const nueva = document.getElementById('cp-nueva').value;
+  const confirma = document.getElementById('cp-confirma').value;
+  const errEl = document.getElementById('cp-error');
+  if(actual !== DEFAULT_PASS){ errEl.textContent='La contraseña actual es incorrecta.'; return; }
+  if(nueva.length < 8){ errEl.textContent='La nueva contraseña debe tener mínimo 8 caracteres.'; return; }
+  if(nueva !== confirma){ errEl.textContent='Las contraseñas no coinciden.'; return; }
+  localStorage.setItem('GODIN_PASS', nueva);
+  closeModal('modal-changepass');
+  ['cp-actual','cp-nueva','cp-confirma'].forEach(id => document.getElementById(id).value='');
+  toast('success','Contraseña actualizada','Tu contraseña ha sido cambiada exitosamente');
+}
+
 const PAGE_TITLES = { dashboard:'Resumen', prestamos:'Préstamos', clientes:'Clientes', socios:'Socios', caja:'Caja' };
 function switchPage(id, el){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -505,7 +505,6 @@ function switchPage(id, el){
 }
 function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
 
-/* ============================================================  MODALS & TOAST */
 function openModal(id){
   document.getElementById(id).classList.add('open');
   if(id==='modal-pres') loadSelectsPres();
@@ -525,14 +524,12 @@ function toast(type, title, sub=''){
   setTimeout(() => { t.style.animation='fadeOut .3s ease forwards'; setTimeout(() => t.remove(), 300); }, 3500);
 }
 
-/* ============================================================  UTILS */
 function sanitize(str){ if(typeof str !== 'string') return ''; return str.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
 function safeNum(val, fb=0){ const n = parseFloat(val); return isNaN(n) ? fb : n; }
 function fmtMoney(n){ return '$' + safeNum(n).toLocaleString('es-MX', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
 function fmtDate(str){ if(!str) return '—'; try { return new Date(str).toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }); } catch { return '—'; } }
 function emptyRow(colspan, msg='Sin registros'){ return `<tr><td colspan="${colspan}"><div class="empty-state"><p>${msg}</p></div></td></tr>`; }
 
-/* ============================================================  DASHBOARD */
 async function loadDashboard(){
   try{
     const [{ data: vista }, { data: socios }, { data: clientes }] = await Promise.all([
@@ -553,7 +550,6 @@ async function loadDashboard(){
     document.getElementById('s-socios').textContent = socios?.length || 0;
     document.getElementById('s-clientes').textContent = clientes?.length || 0;
     
-    // Gráfico de socios
     const sociosData = {};
     (vista || []).forEach(v => {
       const inv = v.Inversionista;
@@ -563,7 +559,6 @@ async function loadDashboard(){
     renderChartSocios(sociosData);
     renderChartEstados(vigentes.length, liquidados.length, vencidos.length);
     
-    // Próximos pagos (15 días)
     const hoy = new Date();
     const en15 = new Date(hoy.getTime() + 15*86400000);
     const { data: proximos } = await sb.from('pagos_programados')
@@ -611,7 +606,6 @@ function renderChartEstados(vig, liq, venc){
   });
 }
 
-/* ============================================================  PRÉSTAMOS (VISTA DINÁMICA) */
 let prestamosAll = [];
 async function loadPrestamos(){
   try{
@@ -669,9 +663,9 @@ async function verDetalle(clienteId, nombre){
     </div>`;
     
     html += `<table class="plan-table"><thead><tr><th>#</th><th>Fecha</th><th>Interés</th><th>Capital</th><th>Total</th><th>Estatus</th></tr></thead><tbody>`;
+    const hoy = new Date();
     (programados || []).forEach(p => {
       const fecha = new Date(p.fecha_programada);
-      const hoy = new Date();
       const pagado = (realizados || []).some(r => Math.abs(new Date(r.fecha_pago) - fecha) < 86400000*3);
       const vencido = !pagado && fecha < hoy;
       const clase = pagado ? 'plan-row-paid' : vencido ? 'plan-row-pending' : 'plan-row-current';
@@ -705,10 +699,8 @@ async function savePrestamo(){
   errEl.textContent = '';
   
   try{
-    // Actualizar inversionista del cliente
     await sb.from('clientes').update({ inversionista_id: inversionistaId, capital_inicial: monto }).eq('id', clienteId);
     
-    // Generar pagos programados
     const hoy = new Date();
     const nPagos = periodicidad === 'quincenal' ? plazo * 2 : plazo;
     const intPerPago = interes * monto / nPagos;
@@ -739,7 +731,6 @@ async function savePrestamo(){
   } catch(err){ errEl.textContent = 'Error: ' + err.message; }
 }
 
-/* ============================================================  ABONO */
 let abonoState = { clienteId: null, nombre: '', saldo: 0 };
 function openAbono(clienteId, nombre, saldo){
   abonoState = { clienteId, nombre, saldo };
@@ -771,7 +762,6 @@ async function saveAbono(){
   } catch(err){ errEl.textContent = 'Error: ' + err.message; }
 }
 
-/* ============================================================  CLIENTES */
 let clientesAll = [];
 async function loadClientes(){
   try{
@@ -840,7 +830,6 @@ async function deleteCliente(id){
   } catch(err){ toast('error', 'Error', err.message); }
 }
 
-/* ============================================================  SOCIOS */
 async function loadSocios(){
   try{
     const [{ data: socios }, { data: vista }] = await Promise.all([
@@ -869,7 +858,6 @@ async function loadSocios(){
   } catch(err){ document.getElementById('socios-grid').innerHTML = `<p style="color:var(--red)">Error: ${sanitize(err.message)}</p>`; }
 }
 
-/* ============================================================  CAJA */
 async function loadCaja(){
   try{
     const { data } = await sb.from('caja').select('*').order('updated_at', { ascending: false }).limit(200);
@@ -911,7 +899,6 @@ async function deleteCaja(id){
   } catch(err){ toast('error', 'Error', err.message); }
 }
 
-/* ============================================================  INIT */
 function initApp(){
   document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   loadDashboard();
