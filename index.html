@@ -107,6 +107,7 @@ input,select,textarea,button{font-family:var(--sans)}
 .search-input{width:100%;padding:9px 12px 9px 34px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:.88rem;outline:none;transition:border-color .2s}
 .search-input:focus{border-color:var(--green)}
 .filter-select{padding:9px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);font-size:.88rem;outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--green)}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius);border:none;cursor:pointer;font-family:var(--sans);font-weight:600;font-size:.85rem;transition:all .15s;white-space:nowrap}
@@ -451,7 +452,7 @@ tbody tr:hover{background:var(--surface2)}
 <script>
 /* ============================================================  SUPABASE */
 const SB_URL='https://ehcfrserpdqthkdqizsz.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoY2Zyc2VycGRxdGhrZHFpenN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc2MzQ4MDB9.XXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // ⚠️ REEMPLAZAR CON TU CLAVE ANON REAL
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoY2Zyc2VycGRxdGhrZHFpenN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMDMzNTgsImV4cCI6MjA5NDg3OTM1OH0.deHdXTIYPv19FcwXG2qY8HV1UHg6yuTk-LBg1UX7Bik';
 const sb=supabase.createClient(SB_URL,SB_KEY,{db:{schema:'public'}});
 
 /* ============================================================  AUTH & ROLES */
