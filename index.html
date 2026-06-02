@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema GODIN</title>
+<title>Sistema GODIN — Gestión de Préstamos</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -47,8 +47,10 @@ input,select,textarea,button{font-family:var(--sans)}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:.9rem;font-weight:600;margin-bottom:2px}
 .nav-item:hover{background:var(--surface3);color:var(--text)}
 .nav-item.active{background:var(--green-dim);color:var(--green)}
-.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border)}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .btn-logout{width:100%;padding:10px;background:var(--red-dim);color:var(--red);border:1px solid rgba(255,77,106,.2);border-radius:var(--radius);cursor:pointer;font-weight:600}
+.btn-changepass{width:100%;padding:10px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-weight:600}
+.btn-changepass:hover{background:var(--surface3);color:var(--text)}
 .main-content{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:40;background:rgba(7,10,16,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;justify-content:space-between;align-items:center}
 .user-pill{font-family:var(--mono);font-size:.72rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px}
@@ -137,7 +139,8 @@ td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:.88rem}
       <div class="nav-item" onclick="switchPage('caja',this)"> Caja</div>
     </nav>
     <div class="sidebar-footer">
-      <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+      <button class="btn-changepass" onclick="openModal('modal-changepass')">🔑 Cambiar contraseña</button>
+      <button class="btn-logout" onclick="logout()"> Cerrar sesión</button>
     </div>
   </aside>
 
@@ -165,7 +168,7 @@ td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:.88rem}
       <div style="display:flex;justify-content:space-between;margin-bottom:18px">
         <h3 style="font-size:1.2rem;font-weight:700">Próximos Pagos (15 días)</h3>
       </div>
-      <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Inversionista</th><th>Total</th><th>Estatus</th></tr></thead><tbody id="tbody-proximos"></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Inversionista</th><th>Total</th><th>Estatus</th><th>Acción</th></tr></thead><tbody id="tbody-proximos"></tbody></table></div>
     </div>
 
     <div class="page" id="page-prestamos">
@@ -204,6 +207,18 @@ td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:.88rem}
       </div>
       <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Monto</th></tr></thead><tbody id="tbody-caja"></tbody></table></div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+<div class="modal-overlay" id="modal-changepass">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-title">🔑 Cambiar Contraseña</span><button class="modal-close" onclick="closeModal('modal-changepass')">✕</button></div>
+    <div class="form-group"><label class="form-label">Contraseña actual</label><input type="password" class="form-input" id="cp-actual" placeholder="••••••••"></div>
+    <div class="form-group"><label class="form-label">Nueva contraseña</label><input type="password" class="form-input" id="cp-nueva" placeholder="Mínimo 8 caracteres"></div>
+    <div class="form-group"><label class="form-label">Confirmar nueva contraseña</label><input type="password" class="form-input" id="cp-confirma" placeholder="Repite la contraseña"></div>
+    <div class="form-error" id="cp-error" style="color:var(--red);font-size:.85rem;margin-bottom:10px"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-changepass')">Cancelar</button><button class="btn btn-green" onclick="changePassword()">Guardar cambio</button></div>
   </div>
 </div>
 
@@ -280,15 +295,21 @@ const ROLE_MAP = {
   'patty_walter25@hotmail.com': 'socio',
   'viacp_1110@hotmail.com': 'socio'
 };
-const DEFAULT_PASS = 'Prestamos123';
+
+function getPassword(){ return localStorage.getItem('GODIN_PASS') || 'Prestamos123'; }
+
 let currentUser = '';
 let currentUserRole = 'socio';
 
 function doLogin(){
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const pass = document.getElementById('loginPass').value;
-  if(!ROLE_MAP[email] || pass !== DEFAULT_PASS){ document.getElementById('loginErr').textContent='Credenciales incorrectas.'; return; }
-  currentUser = email; currentUserRole = ROLE_MAP[email];
+  if(!ROLE_MAP[email] || pass !== getPassword()){ 
+    document.getElementById('loginErr').textContent='Credenciales incorrectas.'; 
+    return; 
+  }
+  currentUser = email; 
+  currentUserRole = ROLE_MAP[email];
   document.getElementById('loginSection').style.display='none';
   document.getElementById('appSection').style.display='flex';
   document.getElementById('appSection').classList.add('visible');
@@ -296,6 +317,33 @@ function doLogin(){
   initApp();
 }
 function logout(){ location.reload(); }
+
+function changePassword(){
+  const actual = document.getElementById('cp-actual').value;
+  const nueva = document.getElementById('cp-nueva').value;
+  const confirma = document.getElementById('cp-confirma').value;
+  const errEl = document.getElementById('cp-error');
+  
+  if(actual !== getPassword()){ 
+    errEl.textContent='La contraseña actual es incorrecta.'; 
+    return; 
+  }
+  if(nueva.length < 8){ 
+    errEl.textContent='La nueva contraseña debe tener mínimo 8 caracteres.'; 
+    return; 
+  }
+  if(nueva !== confirma){ 
+    errEl.textContent='Las contraseñas no coinciden.'; 
+    return; 
+  }
+  
+  localStorage.setItem('GODIN_PASS', nueva);
+  closeModal('modal-changepass');
+  document.getElementById('cp-actual').value = '';
+  document.getElementById('cp-nueva').value = '';
+  document.getElementById('cp-confirma').value = '';
+  toast('success', 'Contraseña actualizada correctamente');
+}
 
 function switchPage(id, el){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -311,11 +359,18 @@ function switchPage(id, el){
   if(id==='caja') loadCaja();
 }
 
-function openModal(id){ document.getElementById(id).classList.add('open'); if(id==='modal-pres') loadSelectsPres(); if(id==='modal-cli') loadSelectsCli(); if(id==='modal-notif') loadNotificaciones(); }
+function openModal(id){ 
+  document.getElementById(id).classList.add('open'); 
+  if(id==='modal-pres') loadSelectsPres(); 
+  if(id==='modal-cli') loadSelectsCli(); 
+  if(id==='modal-notif') loadNotificaciones(); 
+}
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
 function toast(type, msg){
-  const t = document.createElement('div'); t.className = `toast toast-${type}`; t.textContent = msg;
+  const t = document.createElement('div'); 
+  t.className = `toast toast-${type}`; 
+  t.textContent = msg;
   document.getElementById('toastContainer').appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
@@ -324,35 +379,23 @@ function fmtMoney(n){ return '$' + parseFloat(n||0).toLocaleString('es-MX', {min
 function fmtDate(str){ if(!str) return '—'; return new Date(str).toLocaleDateString('es-MX', {day:'2-digit', month:'short', year:'numeric'}); }
 function sanitize(str){ return str ? str.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])) : ''; }
 
-// ========== DASHBOARD ==========
 async function loadDashboard(){
   try{
-    // Caja
     const {data: caja} = await sb.from('caja').select('tipo,monto');
     let entradas = 0, salidas = 0;
     (caja||[]).forEach(r => r.tipo === 'entrada' ? entradas += parseFloat(r.monto) : salidas += parseFloat(r.monto));
     
-    // Vista de saldos
     const {data: vista} = await sb.from('vista_saldos_dinamica').select('*');
-    
-    // Socios y clientes
     const {count: countSocios} = await sb.from('socios').select('*', {count:'exact', head:true});
     const {count: countClientes} = await sb.from('clientes').select('*', {count:'exact', head:true});
     
-    // Próximos pagos (15 días)
     const hoy = new Date().toISOString().split('T')[0];
     const en15 = new Date(Date.now() + 15*86400000).toISOString().split('T')[0];
-    const {data: proximos} = await sb.from('pagos_programados')
-      .select('fecha_programada, total_pago, clientes(nombre, inversionistas(nombre))')
-      .gte('fecha_programada', hoy)
-      .lte('fecha_programada', en15)
-      .order('fecha_programada');
+    const {data: proximos} = await sb.from('vista_proximos_pagos').select('*');
     
-    // Calcular cartera activa (solo vigentes)
     const vigentes = (vista||[]).filter(v => v.Estatus === 'VIGENTE');
     const cartera = vigentes.reduce((a, v) => a + parseFloat(v['Saldo Real Pendiente']||0), 0);
     
-    // Intereses ganados (aproximado: total pagado - capital original de liquidados)
     const liquidados = (vista||[]).filter(v => v.Estatus === 'LIQUIDADO');
     const intereses = liquidados.reduce((a, v) => {
       const pagado = parseFloat(v['Total Pagado (Real)']||0);
@@ -360,10 +403,8 @@ async function loadDashboard(){
       return a + Math.max(0, pagado - capital);
     }, 0);
     
-    // Pagos pendientes hoy
-    const pagosHoy = (proximos||[]).filter(p => p.fecha_programada === hoy).length;
+    const pagosHoy = (proximos||[]).filter(p => p.Fecha === hoy).length;
     
-    // Actualizar UI
     document.getElementById('s-caja').textContent = fmtMoney(entradas - salidas);
     document.getElementById('s-cartera').textContent = fmtMoney(cartera);
     document.getElementById('s-intereses').textContent = fmtMoney(intereses);
@@ -371,18 +412,18 @@ async function loadDashboard(){
     document.getElementById('s-socios').textContent = countSocios || 0;
     document.getElementById('s-clientes').textContent = countClientes || 0;
     
-    // Tabla de próximos pagos
     const tbody = document.getElementById('tbody-proximos');
     if(!proximos || proximos.length===0){ 
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text2)">Sin próximos pagos en 15 días</td></tr>'; 
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text2)">Sin próximos pagos en 15 días</td></tr>'; 
     } else {
       tbody.innerHTML = proximos.map(p => `
         <tr>
-          <td class="td-mono">${fmtDate(p.fecha_programada)}</td>
-          <td><b>${sanitize(p.clientes?.nombre||'—')}</b></td>
-          <td>${sanitize(p.clientes?.inversionistas?.nombre||'—')}</td>
-          <td class="td-mono">${fmtMoney(p.total_pago)}</td>
-          <td><span class="badge badge-amber">Pendiente</span></td>
+          <td class="td-mono">${fmtDate(p.Fecha)}</td>
+          <td><b>${sanitize(p.Cliente)}</b></td>
+          <td>${sanitize(p.Inversionista)}</td>
+          <td class="td-mono">${fmtMoney(p.Total)}</td>
+          <td><span class="badge ${p.Estatus==='PAGADO'?'badge-green':p.Estatus==='VENCIDO'?'badge-red':'badge-amber'}">${p.Estatus}</span></td>
+          <td>${p.Estatus==='PENDIENTE' ? `<button class="btn btn-green btn-sm" onclick="registrarPagoManual('${p.pago_id}','${sanitize(p.Cliente)}',${p.Total})">Registrar</button>` : '—'}</td>
         </tr>`).join('');
     }
     
@@ -390,7 +431,6 @@ async function loadDashboard(){
   } catch(err){ console.error('Error dashboard:', err); }
 }
 
-// ========== PRÉSTAMOS ==========
 async function loadPrestamos(){
   const {data} = await sb.from('vista_saldos_dinamica').select('*').order('Saldo Real Pendiente', {ascending:false});
   const tbody = document.getElementById('tbody-prestamos');
@@ -406,7 +446,6 @@ async function loadPrestamos(){
     </tr>`).join('');
 }
 
-// ========== SOLICITUDES ==========
 async function loadSolicitudes(){
   const {data} = await sb.from('vista_solicitudes').select('*').order('fecha_solicitud', {ascending:false});
   const tbody = document.getElementById('tbody-solicitudes');
@@ -493,7 +532,6 @@ async function saveSolicitud(){
   } catch(err){ alert(err.message); }
 }
 
-// ========== CLIENTES ==========
 async function loadClientes(){
   const {data} = await sb.from('clientes').select('*,inversionistas(nombre)').order('nombre');
   const tbody = document.getElementById('tbody-clientes');
@@ -501,28 +539,47 @@ async function loadClientes(){
   tbody.innerHTML = data.map(c => `<tr><td><b>${sanitize(c.nombre)}</b></td><td>${sanitize(c.inversionistas?.nombre)}</td><td class="td-mono">${fmtMoney(c.capital_inicial)}</td><td><button class="btn btn-danger btn-sm" onclick="deleteCliente('${c.id}')"></button></td></tr>`).join('');
 }
 
-// ========== SOCIOS ==========
 async function loadSocios(){
-  const {data} = await sb.from('socios').select('*').order('nombre');
-  const {data: vista} = await sb.from('vista_saldos_dinamica').select('*');
+  // Datos fijos del Excel - todos iguales
+  const sociosData = [
+    {nombre:'VIANEY', email:'viacp_1110@hotmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88},
+    {nombre:'PEDRO', email:'tony_bravo@hotmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88},
+    {nombre:'PATY', email:'patty_walter25@hotmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88},
+    {nombre:'MARU', email:'memsnena1005@hotmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88},
+    {nombre:'KIKE', email:'enrique_sabori@hotmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88},
+    {nombre:'AXEL', email:'axlj31@gmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88},
+    {nombre:'ITZEL', email:'itzel_riv93@hotmail.com', participacion:14.3, capital:7500.00, intereses:6600.07, retorno:88}
+  ];
+  
   const grid = document.getElementById('socios-grid');
-  if(!data||!data.length){ grid.innerHTML = '<p style="color:var(--text2);padding:20px">Sin socios</p>'; return; }
-  grid.innerHTML = data.map(s => {
-    const carteraSocio = (vista||[]).filter(v => v.Inversionista === s.nombre).reduce((a, v) => a + parseFloat(v['Saldo Real Pendiente']||0), 0);
-    const clientesSocio = (vista||[]).filter(v => v.Inversionista === s.nombre).length;
-    return `<div class="stat-card">
-      <div class="stat-label">${sanitize(s.nombre)}</div>
-      <div style="font-size:.85rem;color:var(--text2);margin-bottom:10px">${s.email}</div>
-      <div style="margin-bottom:8px"><span class="badge badge-green">${s.porcentaje}% participación</span></div>
-      <div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">Clientes activos</div>
-      <div style="font-family:var(--mono);font-size:1.2rem;color:var(--blue);margin-bottom:12px">${clientesSocio}</div>
-      <div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">Cartera activa</div>
-      <div style="font-family:var(--mono);font-size:1.2rem;color:var(--green)">${fmtMoney(carteraSocio)}</div>
-    </div>`;
-  }).join('');
+  grid.innerHTML = sociosData.map(s => `
+    <div class="stat-card">
+      <div class="stat-label" style="font-size:1.2rem;font-weight:800;color:var(--text);margin-bottom:8px">${s.nombre}</div>
+      <div style="font-size:.8rem;color:var(--text2);margin-bottom:16px;font-family:var(--mono)">${s.email}</div>
+      
+      <div style="margin-bottom:12px;padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
+        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE CAPITAL</div>
+        <div style="font-size:1.3rem;font-weight:700;color:var(--green)">${s.participacion}%</div>
+      </div>
+      
+      <div style="margin-bottom:12px;padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
+        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL 2026</div>
+        <div style="font-size:1.3rem;font-weight:700;color:var(--blue)">${fmtMoney(s.capital)}</div>
+      </div>
+      
+      <div style="margin-bottom:12px;padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
+        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS</div>
+        <div style="font-size:1.3rem;font-weight:700;color:var(--amber)">${fmtMoney(s.intereses)}</div>
+      </div>
+      
+      <div style="padding:12px;background:var(--surface3);border-radius:8px;border-top:2px solid var(--border)">
+        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE INT. GANADO S/CAPITAL APORTADO</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${s.retorno}%</div>
+      </div>
+    </div>
+  `).join('');
 }
 
-// ========== CAJA ==========
 async function loadCaja(){
   const {data} = await sb.from('caja').select('*').order('created_at', {ascending:false});
   const tbody = document.getElementById('tbody-caja');
@@ -543,7 +600,6 @@ async function saveCaja(){
   loadCaja(); loadDashboard();
 }
 
-// ========== SELECTS ==========
 async function loadSelectsPres(){
   const [{data:clis},{data:invs}] = await Promise.all([sb.from('clientes').select('id,nombre'), sb.from('inversionistas').select('id,nombre')]);
   document.getElementById('pres-cliente').innerHTML = clis.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
@@ -598,7 +654,37 @@ async function openAbono(cid, nombre, saldo){
   loadPrestamos(); loadDashboard();
 }
 
-// ========== NOTIFICACIONES ==========
+async function registrarPagoManual(pagoId, cliente, monto){
+  if(!confirm(`¿Registrar pago de ${fmtMoney(monto)} para ${cliente}?`)) return;
+  
+  try{
+    // Obtener el cliente_id desde el pago
+    const {data: pagoData} = await sb.from('pagos_programados').select('cliente_id').eq('id', pagoId).single();
+    if(!pagoData) throw new Error('Pago no encontrado');
+    
+    // Registrar el pago realizado
+    await sb.from('pagos_realizados').insert({
+      cliente_id: pagoData.cliente_id,
+      fecha_pago: new Date().toISOString().split('T')[0],
+      monto_pagado: monto,
+      observaciones: 'Pago manual registrado desde dashboard'
+    });
+    
+    // Registrar en caja
+    await sb.from('caja').insert({
+      tipo: 'entrada',
+      monto: monto,
+      concepto: `Pago de ${cliente}`
+    });
+    
+    toast('success', `Pago de ${fmtMoney(monto)} registrado correctamente`);
+    loadDashboard();
+    loadPrestamos();
+  } catch(err){
+    toast('error', 'Error al registrar pago: ' + err.message);
+  }
+}
+
 async function loadNotificaciones(){
   const {data} = await sb.from('notificaciones').select('*').eq('usuario_email', currentUser).eq('leido', false).order('created_at', {ascending:false});
   const list = document.getElementById('notif-list');
