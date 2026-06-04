@@ -24,7 +24,6 @@ input,select,textarea,button{font-family:var(--font)}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
-/* LOGIN */
 #loginSection{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,var(--bg) 0%,var(--surface) 100%)}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px;max-width:420px;width:100%;box-shadow:0 25px 50px -12px rgba(0,0,0,.5)}
 .login-logo{font-size:2.5rem;font-weight:800;color:var(--green);text-align:center;margin-bottom:8px;letter-spacing:-1px}
@@ -36,10 +35,9 @@ input,select,textarea,button{font-family:var(--font)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 25px -5px rgba(16,185,129,.4)}
 .err-msg{color:var(--red);font-size:.85rem;margin-top:12px;text-align:center}
 
-/* APP */
 #appSection{display:none;min-height:100vh}
 #appSection.visible{display:flex}
-.sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .3s}
+.sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
 .sidebar-header{padding:24px 20px;border-bottom:1px solid var(--border)}
 .sidebar-logo{font-size:1.8rem;font-weight:800;color:var(--green);letter-spacing:-1px}
 .sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto}
@@ -50,20 +48,17 @@ input,select,textarea,button{font-family:var(--font)}
 .nav-item.active{background:var(--green-dim);color:var(--green);font-weight:600}
 .nav-icon{font-size:1.1rem;width:24px;text-align:center}
 .sidebar-footer{padding:16px;border-top:1px solid var(--border)}
-.btn-logout{width:100%;padding:10px;background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem;transition:all .2s}
-.btn-logout:hover{background:rgba(239,68,68,.2)}
-.btn-changepass{width:100%;padding:10px;margin-bottom:8px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem;transition:all .2s}
-.btn-changepass:hover{background:var(--border);color:var(--text)}
+.btn-logout{width:100%;padding:10px;background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem}
+.btn-changepass{width:100%;padding:10px;margin-bottom:8px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem}
 .main-content{margin-left:260px;flex:1;display:flex;flex-direction:column;min-height:100vh}
 .topbar{position:sticky;top:0;z-index:40;background:rgba(17,24,39,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;justify-content:space-between;align-items:center}
-.topbar-title{font-size:1.25rem;font-weight:700;color:var(--text)}
+.topbar-title{font-size:1.25rem;font-weight:700}
 .topbar-subtitle{font-size:.8rem;color:var(--text3);margin-top:2px}
 .user-pill{font-size:.8rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-weight:500}
 .page{display:none;padding:32px;animation:fadeIn .3s}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:32px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s}
 .stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
@@ -74,9 +69,8 @@ input,select,textarea,button{font-family:var(--font)}
 .stat-value.amber{color:var(--amber)}
 .stat-value.red{color:var(--red)}
 
-/* TABLES */
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.section-title{font-size:1.5rem;font-weight:700;color:var(--text)}
+.section-title{font-size:1.5rem;font-weight:700}
 .btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:.9rem;transition:all .2s}
 .btn-green{background:var(--green);color:#000}
 .btn-green:hover{transform:translateY(-1px);box-shadow:0 10px 25px -5px rgba(16,185,129,.4)}
@@ -84,6 +78,7 @@ input,select,textarea,button{font-family:var(--font)}
 .btn-blue:hover{transform:translateY(-1px);box-shadow:0 10px 25px -5px rgba(59,130,246,.4)}
 .btn-sm{padding:6px 12px;font-size:.8rem}
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table-scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{padding:14px 20px;text-align:left;font-size:.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--surface2)}
 td{padding:16px 20px;border-bottom:1px solid var(--border);font-size:.9rem}
@@ -94,35 +89,35 @@ tr:hover td{background:var(--surface2)}
 .badge-amber{background:var(--amber-dim);color:var(--amber)}
 .badge-red{background:var(--red-dim);color:var(--red)}
 .badge-blue{background:var(--blue-dim);color:var(--blue)}
+.td-mono{font-family:monospace;font-weight:600}
 
-/* MODALS */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
-.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px -12px rgba(0,0,0,.5)}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.modal-title{font-size:1.25rem;font-weight:700;color:var(--text)}
-.modal-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.5rem;line-height:1}
+.modal-title{font-size:1.25rem;font-weight:700}
+.modal-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.5rem}
 .form-group{margin-bottom:20px}
 .form-label{display:block;font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:8px}
-.form-input,.form-select{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:.95rem;outline:none;transition:all .2s}
+.form-input,.form-select{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:.95rem;outline:none}
 .form-input:focus,.form-select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
 .modal-footer{display:flex;gap:12px;margin-top:28px}
 .modal-footer .btn{flex:1}
 
-/* TOAST */
 #toastContainer{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:12px}
-.toast{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;min-width:300px;animation:slideIn .3s;box-shadow:0 10px 25px -5px rgba(0,0,0,.3)}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;min-width:300px;animation:slideIn .3s}
 .toast-success{border-left:4px solid var(--green)}
 .toast-error{border-left:4px solid var(--red)}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* HISTORY */
-.history-section{margin-top:24px;padding:20px;background:var(--surface2);border-radius:12px}
-.history-title{font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--text)}
-.history-item{display:flex;justify-content:space-between;padding:12px 16px;background:var(--surface);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--green)}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surface2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--green)}
 .history-item.pending{border-left-color:var(--amber)}
-.history-date{font-size:.8rem;color:var(--text3)}
-.history-amount{font-weight:700;font-family:monospace;font-size:1.1rem}
+.history-date{font-size:.8rem;color:var(--text3);margin-top:2px}
+.history-amount{font-weight:700;font-family:monospace;font-size:1.1rem;color:var(--green)}
+
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:20px;background:var(--surface2);border-radius:12px;margin-bottom:24px}
+.info-item-label{font-size:.75rem;color:var(--text3);margin-bottom:4px;text-transform:uppercase}
+.info-item-value{font-size:1.1rem;font-weight:700}
 
 @media(max-width:768px){
   .sidebar{transform:translateX(-260px)}
@@ -136,7 +131,6 @@ tr:hover td{background:var(--surface2)}
 
 <div id="toastContainer"></div>
 
-<!-- LOGIN -->
 <div id="loginSection">
   <div class="login-box">
     <div class="login-logo">GODIN</div>
@@ -150,7 +144,6 @@ tr:hover td{background:var(--surface2)}
   </div>
 </div>
 
-<!-- APP -->
 <div id="appSection">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -160,27 +153,22 @@ tr:hover td{background:var(--surface2)}
       <div class="nav-section">
         <div class="nav-section-title">Principal</div>
         <div class="nav-item active" onclick="switchPage('dashboard',this)">
-          <span class="nav-icon">◈</span>
-          <span>Resumen</span>
+          <span class="nav-icon">◈</span><span>Resumen</span>
         </div>
         <div class="nav-item" onclick="switchPage('prestamos',this)">
-          <span class="nav-icon">◎</span>
-          <span>Préstamos</span>
+          <span class="nav-icon">◎</span><span>Préstamos</span>
         </div>
         <div class="nav-item" onclick="switchPage('clientes',this)">
-          <span class="nav-icon">◉</span>
-          <span>Clientes</span>
+          <span class="nav-icon">◉</span><span>Clientes</span>
         </div>
       </div>
       <div class="nav-section">
         <div class="nav-section-title">Gestión</div>
         <div class="nav-item" onclick="switchPage('socios',this)">
-          <span class="nav-icon">⬡</span>
-          <span>Socios</span>
+          <span class="nav-icon">⬡</span><span>Socios</span>
         </div>
         <div class="nav-item" onclick="switchPage('caja',this)">
-          <span class="nav-icon">▣</span>
-          <span>Caja</span>
+          <span class="nav-icon">▣</span><span>Caja</span>
         </div>
       </div>
     </nav>
@@ -194,12 +182,11 @@ tr:hover td{background:var(--surface2)}
     <div class="topbar">
       <div>
         <div class="topbar-title" id="topbar-title">Dashboard</div>
-        <div class="topbar-subtitle" id="topbar-date">jueves, 4 de junio de 2026</div>
+        <div class="topbar-subtitle" id="topbar-date"></div>
       </div>
       <div class="user-pill" id="user-pill">—</div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="stats-grid">
         <div class="stat-card">
@@ -207,7 +194,7 @@ tr:hover td{background:var(--surface2)}
           <div class="stat-value green" id="s-caja">$0.00</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Cartera Activa</div>
+          <div class="stat-label">Cartera Activa (Pendiente)</div>
           <div class="stat-value blue" id="s-cartera">$0.00</div>
         </div>
         <div class="stat-card">
@@ -222,40 +209,46 @@ tr:hover td{background:var(--surface2)}
           <div class="stat-label">Total Clientes</div>
           <div class="stat-value" id="s-clientes">0</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-label">Préstamos Liquidados</div>
+          <div class="stat-value green" id="s-liquidados">0</div>
+        </div>
       </div>
 
       <div class="section-header">
-        <h2 class="section-title">Próximos Pagos</h2>
+        <h2 class="section-title">Pagos Pendientes</h2>
       </div>
       <div class="table-wrap">
+        <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>Fecha</th>
               <th>Cliente</th>
               <th>Inversionista</th>
-              <th>Total</th>
+              <th>Saldo Pendiente</th>
               <th>Estatus</th>
               <th>Acción</th>
             </tr>
           </thead>
           <tbody id="tbody-proximos"></tbody>
         </table>
+        </div>
       </div>
     </div>
 
-    <!-- PRÉSTAMOS -->
     <div class="page" id="page-prestamos">
       <div class="section-header">
         <h2 class="section-title">Historial de Préstamos</h2>
       </div>
       <div class="table-wrap">
+        <div class="table-scroll">
         <table>
           <thead>
             <tr>
               <th>Cliente</th>
               <th>Inversionista</th>
               <th>Capital</th>
+              <th>Total a Pagar</th>
               <th>Total Pagado</th>
               <th>Saldo</th>
               <th>Estatus</th>
@@ -264,44 +257,60 @@ tr:hover td{background:var(--surface2)}
           </thead>
           <tbody id="tbody-prestamos"></tbody>
         </table>
+        </div>
       </div>
     </div>
 
-    <!-- CLIENTES -->
     <div class="page" id="page-clientes">
       <div class="section-header">
         <h2 class="section-title">Directorio de Clientes</h2>
       </div>
       <div class="table-wrap">
+        <div class="table-scroll">
         <table>
           <thead>
             <tr>
               <th>Nombre</th>
               <th>Inversionista</th>
               <th>Teléfono</th>
-              <th>Cuenta/CLABE</th>
+              <th>CLABE/Cuenta</th>
               <th>Capital</th>
+              <th>Fecha Inicio</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody id="tbody-clientes"></tbody>
         </table>
+        </div>
       </div>
     </div>
 
-    <!-- SOCIOS -->
     <div class="page" id="page-socios">
       <h2 class="section-title" style="margin-bottom:24px">Socios / Inversionistas</h2>
       <div class="stats-grid" id="socios-grid"></div>
     </div>
 
-    <!-- CAJA -->
     <div class="page" id="page-caja">
       <div class="section-header">
         <h2 class="section-title">Movimientos de Caja</h2>
         <button class="btn btn-green" onclick="openModal('modal-caja')">+ Movimiento</button>
       </div>
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card">
+          <div class="stat-label">Total Entradas</div>
+          <div class="stat-value green" id="c-entradas">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Salidas</div>
+          <div class="stat-value red" id="c-salidas">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Saldo Actual</div>
+          <div class="stat-value blue" id="c-saldo">$0.00</div>
+        </div>
+      </div>
       <div class="table-wrap">
+        <div class="table-scroll">
         <table>
           <thead>
             <tr>
@@ -314,12 +323,12 @@ tr:hover td{background:var(--surface2)}
           </thead>
           <tbody id="tbody-caja"></tbody>
         </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL CAMBIAR CONTRASEÑA -->
 <div class="modal-overlay" id="modal-changepass">
   <div class="modal-box">
     <div class="modal-header">
@@ -328,36 +337,34 @@ tr:hover td{background:var(--surface2)}
     </div>
     <div class="form-group">
       <label class="form-label">Contraseña actual</label>
-      <input type="password" class="form-input" id="cp-actual" placeholder="••••••••">
+      <input type="password" class="form-input" id="cp-actual">
     </div>
     <div class="form-group">
       <label class="form-label">Nueva contraseña</label>
-      <input type="password" class="form-input" id="cp-nueva" placeholder="Mínimo 8 caracteres">
+      <input type="password" class="form-input" id="cp-nueva">
     </div>
     <div class="form-group">
       <label class="form-label">Confirmar nueva contraseña</label>
-      <input type="password" class="form-input" id="cp-confirma" placeholder="Repite la contraseña">
+      <input type="password" class="form-input" id="cp-confirma">
     </div>
     <div id="cp-error" style="color:var(--red);font-size:.85rem;margin-bottom:10px"></div>
     <div class="modal-footer">
       <button class="btn" style="background:var(--surface2);color:var(--text)" onclick="closeModal('modal-changepass')">Cancelar</button>
-      <button class="btn btn-green" onclick="changePassword()">Guardar cambio</button>
+      <button class="btn btn-green" onclick="changePassword()">Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL HISTORIAL DE PAGO -->
 <div class="modal-overlay" id="modal-historial">
   <div class="modal-box" style="max-width:800px">
     <div class="modal-header">
-      <span class="modal-title" id="historial-title">Historial de Pagos</span>
+      <span class="modal-title" id="historial-title">Historial</span>
       <button class="modal-close" onclick="closeModal('modal-historial')">✕</button>
     </div>
     <div id="historial-content"></div>
   </div>
 </div>
 
-<!-- MODAL REGISTRAR PAGO -->
 <div class="modal-overlay" id="modal-pago">
   <div class="modal-box">
     <div class="modal-header">
@@ -369,11 +376,15 @@ tr:hover td{background:var(--surface2)}
       <input type="text" class="form-input" id="pago-cliente" readonly>
     </div>
     <div class="form-group">
-      <label class="form-label">Monto a pagar</label>
-      <input type="number" class="form-input" id="pago-monto" step="0.01">
+      <label class="form-label">Saldo Pendiente</label>
+      <input type="text" class="form-input" id="pago-saldo" readonly>
     </div>
     <div class="form-group">
-      <label class="form-label">Período</label>
+      <label class="form-label">Monto a pagar *</label>
+      <input type="number" class="form-input" id="pago-monto" step="0.01" placeholder="0.00">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Período del Pago</label>
       <select class="form-select" id="pago-periodo">
         <option value="PAGO 0">PAGO 0 (15/12/2025)</option>
         <option value="PAGO 1">PAGO 1 (31/12/2025)</option>
@@ -390,6 +401,10 @@ tr:hover td{background:var(--surface2)}
         <option value="PAGO 12">PAGO 12 (15/06/2026)</option>
       </select>
     </div>
+    <div class="form-group">
+      <label class="form-label">Observaciones</label>
+      <input type="text" class="form-input" id="pago-obs" placeholder="Opcional">
+    </div>
     <div class="modal-footer">
       <button class="btn" style="background:var(--surface2);color:var(--text)" onclick="closeModal('modal-pago')">Cancelar</button>
       <button class="btn btn-green" onclick="confirmarPago()">Registrar Pago</button>
@@ -397,7 +412,6 @@ tr:hover td{background:var(--surface2)}
   </div>
 </div>
 
-<!-- MODAL MOVIMIENTO CAJA -->
 <div class="modal-overlay" id="modal-caja">
   <div class="modal-box">
     <div class="modal-header">
@@ -412,16 +426,16 @@ tr:hover td{background:var(--surface2)}
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Monto</label>
+      <label class="form-label">Monto *</label>
       <input type="number" class="form-input" id="caja-monto" step="0.01">
     </div>
     <div class="form-group">
-      <label class="form-label">Concepto</label>
-      <input type="text" class="form-input" id="caja-concepto" placeholder="Descripción del movimiento">
+      <label class="form-label">Concepto *</label>
+      <input type="text" class="form-input" id="caja-concepto">
     </div>
     <div class="form-group">
       <label class="form-label">Período (opcional)</label>
-      <input type="text" class="form-input" id="caja-periodo" placeholder="Ej: PAGO 5">
+      <input type="text" class="form-input" id="caja-periodo">
     </div>
     <div class="modal-footer">
       <button class="btn" style="background:var(--surface2);color:var(--text)" onclick="closeModal('modal-caja')">Cancelar</button>
@@ -474,16 +488,16 @@ function changePassword(){
   const confirma=document.getElementById('cp-confirma').value;
   const errEl=document.getElementById('cp-error');
   
-  if(actual!==getPassword()){errEl.textContent='La contraseña actual es incorrecta.';return;}
-  if(nueva.length<8){errEl.textContent='La nueva contraseña debe tener mínimo 8 caracteres.';return;}
-  if(nueva!==confirma){errEl.textContent='Las contraseñas no coinciden.';return;}
+  if(actual!==getPassword()){errEl.textContent='Contraseña actual incorrecta.';return;}
+  if(nueva.length<8){errEl.textContent='Mínimo 8 caracteres.';return;}
+  if(nueva!==confirma){errEl.textContent='No coinciden.';return;}
   
   localStorage.setItem('GODIN_PASS',nueva);
   closeModal('modal-changepass');
   document.getElementById('cp-actual').value='';
   document.getElementById('cp-nueva').value='';
   document.getElementById('cp-confirma').value='';
-  toast('success','Contraseña actualizada correctamente');
+  toast('success','Contraseña actualizada');
 }
 
 function switchPage(id,el){
@@ -491,7 +505,13 @@ function switchPage(id,el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(el)el.classList.add('active');
-  document.getElementById('topbar-title').textContent=id.charAt(0).toUpperCase()+id.slice(1);
+  document.getElementById('topbar-title').textContent={
+    dashboard:'Dashboard',
+    prestamos:'Préstamos',
+    clientes:'Clientes',
+    socios:'Socios',
+    caja:'Caja'
+  }[id];
   if(id==='dashboard')loadDashboard();
   if(id==='prestamos')loadPrestamos();
   if(id==='clientes')loadClientes();
@@ -512,7 +532,7 @@ function toast(type,msg){
 
 function fmtMoney(n){return'$'+parseFloat(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtDate(str){if(!str)return'—';return new Date(str).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});}
-function sanitize(str){return str?str.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])):'';}
+function sanitize(str){return str?String(str).replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])):'';}
 
 async function loadDashboard(){
   try{
@@ -521,118 +541,242 @@ async function loadDashboard(){
     const {count:countSocios}=await sb.from('inversionistas').select('*',{count:'exact',head:true});
     const {count:countClientes}=await sb.from('inversiones').select('*',{count:'exact',head:true});
     
-    const capitalTotal=inversiones.reduce((a,v)=>a+parseFloat(v['Capital Original']||0),0);
-    const interesesTotal=inversiones.reduce((a,v)=>a+parseFloat(v['Interés Total']||0),0);
     const carteraActiva=inversiones.filter(v=>v.Estatus!=='LIQUIDADO').reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
-    const totalInteresesGanados=inversiones.filter(v=>v.Estatus==='LIQUIDADO').reduce((a,v)=>a+parseFloat(v['Total Pagado']||0)-parseFloat(v['Capital Original']||0),0);
+    const totalPagado=inversiones.reduce((a,v)=>a+parseFloat(v['Total Pagado']||0),0);
+    const totalCapital=inversiones.reduce((a,v)=>a+parseFloat(v['Capital Original']||0),0);
+    const interesesGanados=totalPagado-totalCapital;
+    const liquidados=inversiones.filter(v=>v.Estatus==='LIQUIDADO').length;
     
     document.getElementById('s-caja').textContent=fmtMoney(cajaData?.saldo_caja||0);
     document.getElementById('s-cartera').textContent=fmtMoney(carteraActiva);
-    document.getElementById('s-intereses').textContent=fmtMoney(totalInteresesGanados);
+    document.getElementById('s-intereses').textContent=fmtMoney(Math.max(0,interesesGanados));
     document.getElementById('s-socios').textContent=countSocios||0;
     document.getElementById('s-clientes').textContent=countClientes||0;
+    document.getElementById('s-liquidados').textContent=liquidados;
     
-    // Próximos pagos (solo los que tienen saldo pendiente)
-    const proximos=inversiones.filter(v=>parseFloat(v['Saldo Pendiente'])>0).slice(0,10);
+    const pendientes=inversiones.filter(v=>parseFloat(v['Saldo Pendiente'])>0);
     const tbody=document.getElementById('tbody-proximos');
-    if(!proximos.length){
-      tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text2)">Sin próximos pagos</td></tr>';
+    if(!pendientes.length){
+      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text2)">Todos los préstamos están liquidados</td></tr>';
     }else{
-      tbody.innerHTML=proximos.map(p=>`
+      tbody.innerHTML=pendientes.map(p=>`
         <tr>
-          <td>${fmtDate(new Date().toISOString())}</td>
           <td><b>${sanitize(p.Cliente)}</b></td>
           <td>${sanitize(p.Inversionista)}</td>
-          <td class="td-mono" style="font-family:monospace">${fmtMoney(p['Saldo Pendiente'])}</td>
+          <td class="td-mono" style="color:var(--amber)">${fmtMoney(p['Saldo Pendiente'])}</td>
           <td><span class="badge ${p.Estatus==='LIQUIDADO'?'badge-green':'badge-amber'}">${p.Estatus}</span></td>
-          <td><button class="btn btn-green btn-sm" onclick="openPagoModal('${p.cliente_id}','${sanitize(p.Cliente)}',${p['Saldo Pendiente']})">Registrar Pago</button></td>
+          <td>
+            <button class="btn btn-green btn-sm" onclick="openPagoModal(${p.cliente_id},'${sanitize(p.Cliente)}',${p['Saldo Pendiente']})">💰 Registrar Pago</button>
+          </td>
         </tr>
       `).join('');
     }
-  }catch(err){console.error('Error dashboard:',err);}
+  }catch(err){console.error('Error dashboard:',err);toast('error','Error: '+err.message);}
 }
 
 async function loadPrestamos(){
   const {data}=await sb.from('vista_saldos_dinamica').select('*').order('Saldo Pendiente',{ascending:false});
   const tbody=document.getElementById('tbody-prestamos');
   if(!data||!data.length){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px">Sin préstamos</td></tr>';
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px">Sin préstamos</td></tr>';
     return;
   }
   tbody.innerHTML=data.map(p=>`
     <tr>
       <td><b>${sanitize(p.Cliente)}</b></td>
       <td>${sanitize(p.Inversionista)}</td>
-      <td class="td-mono" style="font-family:monospace">${fmtMoney(p['Capital Original'])}</td>
-      <td class="td-mono" style="font-family:monospace;color:var(--green)">${fmtMoney(p['Total Pagado'])}</td>
-      <td class="td-mono" style="font-family:monospace;color:${p['Saldo Pendiente']>0?'var(--amber)':'var(--text2)'}">${fmtMoney(p['Saldo Pendiente'])}</td>
-      <td><span class="badge ${p.Estatus==='LIQUIDADO'?'badge-green':p.Estatus==='VENCIDO'?'badge-red':'badge-amber'}">${p.Estatus}</span></td>
-      <td><button class="btn btn-blue btn-sm" onclick="verHistorial('${p.cliente_id}','${sanitize(p.Cliente)}')">Ver Historial</button></td>
+      <td class="td-mono">${fmtMoney(p['Capital Original'])}</td>
+      <td class="td-mono">${fmtMoney(p['Total a Pagar'])}</td>
+      <td class="td-mono" style="color:var(--green)">${fmtMoney(p['Total Pagado'])}</td>
+      <td class="td-mono" style="color:${p['Saldo Pendiente']>0?'var(--amber)':'var(--green)'}">${fmtMoney(p['Saldo Pendiente'])}</td>
+      <td><span class="badge ${p.Estatus==='LIQUIDADO'?'badge-green':'badge-amber'}">${p.Estatus}</span></td>
+      <td>
+        <button class="btn btn-blue btn-sm" onclick="verHistorial(${p.cliente_id},'${sanitize(p.Cliente)}')">📋 Historial</button>
+        ${p['Saldo Pendiente']>0?`<button class="btn btn-green btn-sm" onclick="openPagoModal(${p.cliente_id},'${sanitize(p.Cliente)}',${p['Saldo Pendiente']})">💰 Pagar</button>`:''}
+      </td>
     </tr>
   `).join('');
+}
+
+async function verHistorial(clienteId,cliente){
+  const {data:pagos}=await sb.from('pagos_realizados').select('*').eq('inversion_id',clienteId).order('fecha_pago',{ascending:true});
+  const {data:inversion}=await sb.from('inversiones').select('*,inversionistas(nombre)').eq('id',clienteId).single();
+  const {data:vista}=await sb.from('vista_saldos_dinamica').select('*').eq('cliente_id',clienteId).single();
+  
+  document.getElementById('historial-title').textContent=`Historial - ${cliente}`;
+  
+  const totalPagado=(pagos||[]).reduce((a,p)=>a+parseFloat(p.monto||0),0);
+  
+  let content=`
+    <div class="info-grid">
+      <div>
+        <div class="info-item-label">Cliente</div>
+        <div class="info-item-value">${sanitize(cliente)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Inversionista</div>
+        <div class="info-item-value">${sanitize(inversion?.inversionistas?.nombre||'—')}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Capital</div>
+        <div class="info-item-value" style="color:var(--blue)">${fmtMoney(inversion?.capital||0)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Interés</div>
+        <div class="info-item-value" style="color:var(--amber)">${fmtMoney(inversion?.interes||0)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Total a Pagar</div>
+        <div class="info-item-value">${fmtMoney((inversion?.capital||0)+(inversion?.interes||0))}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Total Pagado</div>
+        <div class="info-item-value" style="color:var(--green)">${fmtMoney(totalPagado)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Saldo Pendiente</div>
+        <div class="info-item-value" style="color:${vista&&vista['Saldo Pendiente']>0?'var(--amber)':'var(--green)'}">${fmtMoney(vista?vista['Saldo Pendiente']:0)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Estatus</div>
+        <div class="info-item-value"><span class="badge ${vista&&vista.Estatus==='LIQUIDADO'?'badge-green':'badge-amber'}">${vista?vista.Estatus:'—'}</span></div>
+      </div>
+    </div>
+    
+    <h3 style="margin-bottom:16px;font-size:1rem">Pagos Realizados (${(pagos||[]).length})</h3>
+  `;
+  
+  if(pagos&&pagos.length){
+    content+=pagos.map(p=>`
+      <div class="history-item">
+        <div>
+          <div style="font-weight:600">${p.periodo||'Pago'}</div>
+          <div class="history-date">${fmtDate(p.fecha_pago)}</div>
+        </div>
+        <div class="history-amount">${fmtMoney(p.monto)}</div>
+      </div>
+    `).join('');
+  }else{
+    content+='<p style="color:var(--text2);text-align:center;padding:20px">Sin pagos registrados</p>';
+  }
+  
+  document.getElementById('historial-content').innerHTML=content;
+  openModal('modal-historial');
+}
+
+function openPagoModal(clienteId,cliente,saldo){
+  currentPagoId=clienteId;
+  document.getElementById('pago-cliente').value=cliente;
+  document.getElementById('pago-saldo').value=fmtMoney(saldo);
+  document.getElementById('pago-monto').value='';
+  document.getElementById('pago-obs').value='';
+  openModal('modal-pago');
+}
+
+async function confirmarPago(){
+  const monto=parseFloat(document.getElementById('pago-monto').value);
+  const periodo=document.getElementById('pago-periodo').value;
+  const obs=document.getElementById('pago-obs').value;
+  const cliente=document.getElementById('pago-cliente').value;
+  
+  if(!monto||monto<=0){toast('error','Ingresa un monto válido');return;}
+  
+  try{
+    const hoy=new Date().toISOString().split('T')[0];
+    
+    await sb.from('pagos_realizados').insert({
+      inversion_id:currentPagoId,
+      fecha_pago:hoy,
+      monto:monto,
+      periodo:periodo
+    });
+    
+    await sb.from('caja').insert({
+      fecha:hoy,
+      tipo:'entrada',
+      concepto:`Pago de ${cliente}${obs?' - '+obs:''}`,
+      monto:monto,
+      periodo:periodo
+    });
+    
+    closeModal('modal-pago');
+    toast('success','Pago registrado: '+fmtMoney(monto));
+    loadDashboard();
+    loadPrestamos();
+  }catch(err){
+    toast('error','Error: '+err.message);
+  }
 }
 
 async function loadClientes(){
   const {data}=await sb.from('inversiones').select('*,inversionistas(nombre)').order('cliente');
   const tbody=document.getElementById('tbody-clientes');
   if(!data||!data.length){
-    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px">Sin clientes</td></tr>';
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px">Sin clientes</td></tr>';
     return;
   }
   tbody.innerHTML=data.map(c=>`
     <tr>
       <td><b>${sanitize(c.cliente)}</b></td>
       <td>${sanitize(c.inversionistas?.nombre||'—')}</td>
-      <td>${c.telefono||'—'}</td>
-      <td>${c.clabe||'—'}</td>
-      <td class="td-mono" style="font-family:monospace">${fmtMoney(c.capital)}</td>
-      <td><button class="btn btn-blue btn-sm" onclick="verDetalleCliente('${c.id}','${sanitize(c.cliente)}')">Ver Detalle</button></td>
+      <td>${c.telefono||'<span style="color:var(--text3)">Sin registrar</span>'}</td>
+      <td>${c.clabe||'<span style="color:var(--text3)">Sin registrar</span>'}</td>
+      <td class="td-mono">${fmtMoney(c.capital)}</td>
+      <td>${fmtDate(c.fecha_inicial)}</td>
+      <td><button class="btn btn-blue btn-sm" onclick="verHistorial(${c.id},'${sanitize(c.cliente)}')">📋 Historial</button></td>
     </tr>
   `).join('');
 }
 
 async function loadSocios(){
-  const sociosData=[
-    {nombre:'VIANEY',email:'viacp_1110@hotmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88},
-    {nombre:'PEDRO',email:'tony_bravo@hotmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88},
-    {nombre:'PATY',email:'patty_walter25@hotmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88},
-    {nombre:'MARU',email:'memsnena1005@hotmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88},
-    {nombre:'KIKE',email:'enrique_sabori@hotmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88},
-    {nombre:'AXEL',email:'axlj31@gmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88},
-    {nombre:'ITZEL',email:'itzel_riv93@hotmail.com',participacion:14.3,capital:7500.00,intereses:6600.07,retorno:88}
-  ];
+  const {data:inversionistas}=await sb.from('inversionistas').select('*').order('nombre');
+  const {data:vista}=await sb.from('vista_saldos_dinamica').select('*');
   
   const grid=document.getElementById('socios-grid');
-  grid.innerHTML=sociosData.map(s=>`
-    <div class="stat-card">
-      <div class="stat-label" style="font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:4px">${s.nombre}</div>
-      <div style="font-size:.8rem;color:var(--text2);margin-bottom:20px;font-family:monospace">${s.email}</div>
-      
-      <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
-        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE CAPITAL</div>
-        <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${s.participacion}%</div>
+  grid.innerHTML=(inversionistas||[]).map(inv=>{
+    const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
+    const carteraSocio=clientesSocio.reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
+    const capitalSocio=clientesSocio.reduce((a,v)=>a+parseFloat(v['Capital Original']||0),0);
+    
+    return `
+      <div class="stat-card">
+        <div style="font-size:1.25rem;font-weight:800;margin-bottom:4px">${sanitize(inv.nombre)}</div>
+        <div style="font-size:.8rem;color:var(--text2);margin-bottom:20px;font-family:monospace">${inv.email||'—'}</div>
+        
+        <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE CAPITAL</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${inv.porcentaje_capital}%</div>
+        </div>
+        
+        <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL TOTAL</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(inv.capital_2026)}</div>
+        </div>
+        
+        <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--amber)">${fmtMoney(inv.intereses_ganados)}</div>
+        </div>
+        
+        <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--text3)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CLIENTES ASIGNADOS</div>
+          <div style="font-size:1.2rem;font-weight:700">${clientesSocio.length}</div>
+          <div style="font-size:.7rem;color:var(--text3);margin:8px 0 4px">CARTERA ACTIVA</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--amber)">${fmtMoney(carteraSocio)}</div>
+        </div>
       </div>
-      
-      <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
-        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL 2026</div>
-        <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(s.capital)}</div>
-      </div>
-      
-      <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
-        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS</div>
-        <div style="font-size:1.5rem;font-weight:700;color:var(--amber)">${fmtMoney(s.intereses)}</div>
-      </div>
-      
-      <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
-        <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE INT. GANADO S/CAPITAL APORTADO</div>
-        <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${s.retorno}%</div>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 async function loadCaja(){
+  const {data:cajaData}=await sb.from('vista_caja').select('*').single();
   const {data}=await sb.from('caja').select('*').order('fecha',{ascending:false});
+  
+  document.getElementById('c-entradas').textContent=fmtMoney(cajaData?.total_entradas||0);
+  document.getElementById('c-salidas').textContent=fmtMoney(cajaData?.total_salidas||0);
+  document.getElementById('c-saldo').textContent=fmtMoney(cajaData?.saldo_caja||0);
+  
   const tbody=document.getElementById('tbody-caja');
   if(!data||!data.length){
     tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px">Sin movimientos</td></tr>';
@@ -641,95 +785,12 @@ async function loadCaja(){
   tbody.innerHTML=data.map(r=>`
     <tr>
       <td>${fmtDate(r.fecha)}</td>
-      <td><span class="badge ${r.tipo==='entrada'?'badge-green':'badge-red'}">${r.tipo==='entrada'?'Entrada':'Salida'}</span></td>
+      <td><span class="badge ${r.tipo==='entrada'?'badge-green':'badge-red'}">${r.tipo==='entrada'?'↑ Entrada':'↓ Salida'}</span></td>
       <td>${sanitize(r.concepto)}</td>
-      <td class="td-mono" style="font-family:monospace;color:${r.tipo==='entrada'?'var(--green)':'var(--red)'}">${fmtMoney(r.monto)}</td>
+      <td class="td-mono" style="color:${r.tipo==='entrada'?'var(--green)':'var(--red)'};font-weight:700">${fmtMoney(r.monto)}</td>
       <td>${r.periodo||'—'}</td>
     </tr>
   `).join('');
-}
-
-async function verHistorial(clienteId,cliente){
-  const {data}=await sb.from('pagos_realizados').select('*').eq('inversion_id',clienteId).order('fecha_pago',{ascending:false});
-  const {data:inversion}=await sb.from('inversiones').select('*').eq('id',clienteId).single();
-  
-  document.getElementById('historial-title').textContent=`Historial de Pagos - ${cliente}`;
-  
-  const content=document.getElementById('historial-content');
-  content.innerHTML=`
-    <div style="margin-bottom:24px;padding:20px;background:var(--surface2);border-radius:12px">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px">
-        <div>
-          <div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">CLIENTE</div>
-          <div style="font-size:1.1rem;font-weight:700">${sanitize(cliente)}</div>
-        </div>
-        <div>
-          <div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">CAPITAL</div>
-          <div style="font-size:1.1rem;font-weight:700;color:var(--blue)">${fmtMoney(inversion?.capital||0)}</div>
-        </div>
-        <div>
-          <div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">INTERÉS</div>
-          <div style="font-size:1.1rem;font-weight:700;color:var(--amber)">${fmtMoney(inversion?.interes||0)}</div>
-        </div>
-        <div>
-          <div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">TOTAL PAGADO</div>
-          <div style="font-size:1.1rem;font-weight:700;color:var(--green)">${fmtMoney(data.reduce((a,p)=>a+parseFloat(p.monto||0),0))}</div>
-        </div>
-      </div>
-    </div>
-    
-    <h3 style="margin-bottom:16px;font-size:1rem">Pagos Realizados</h3>
-    ${data&&data.length?data.map(p=>`
-      <div class="history-item">
-        <div>
-          <div style="font-weight:600">${p.periodo}</div>
-          <div class="history-date">${fmtDate(p.fecha_pago)}</div>
-        </div>
-        <div class="history-amount" style="color:var(--green)">${fmtMoney(p.monto)}</div>
-      </div>
-    `).join(''):'<p style="color:var(--text2);text-align:center;padding:20px">Sin pagos registrados</p>'}
-  `;
-  
-  openModal('modal-historial');
-}
-
-function openPagoModal(clienteId,cliente,monto){
-  currentPagoId=clienteId;
-  document.getElementById('pago-cliente').value=cliente;
-  document.getElementById('pago-monto').value=monto;
-  openModal('modal-pago');
-}
-
-async function confirmarPago(){
-  const monto=parseFloat(document.getElementById('pago-monto').value);
-  const periodo=document.getElementById('pago-periodo').value;
-  
-  if(!monto||monto<=0){toast('error','Ingresa un monto válido');return;}
-  
-  try{
-    await sb.from('pagos_realizados').insert({
-      inversion_id:currentPagoId,
-      fecha_pago:new Date().toISOString().split('T')[0],
-      monto:monto,
-      periodo:periodo
-    });
-    
-    await sb.from('caja').insert({
-      fecha:new Date().toISOString().split('T')[0],
-      tipo:'entrada',
-      concepto:`Pago de ${document.getElementById('pago-cliente').value}`,
-      monto:monto,
-      periodo:periodo
-    });
-    
-    closeModal('modal-pago');
-    toast('success','Pago registrado correctamente');
-    loadDashboard();
-    loadPrestamos();
-    loadCaja();
-  }catch(err){
-    toast('error','Error al registrar pago: '+err.message);
-  }
 }
 
 async function saveCaja(){
@@ -754,16 +815,12 @@ async function saveCaja(){
     document.getElementById('caja-monto').value='';
     document.getElementById('caja-concepto').value='';
     document.getElementById('caja-periodo').value='';
-    toast('success','Movimiento registrado correctamente');
+    toast('success','Movimiento registrado');
     loadCaja();
     loadDashboard();
   }catch(err){
     toast('error','Error: '+err.message);
   }
-}
-
-function verDetalleCliente(id,cliente){
-  toast('success','Viendo detalle de '+cliente);
 }
 
 function initApp(){
