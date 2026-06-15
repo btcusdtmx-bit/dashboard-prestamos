@@ -1,0 +1,84 @@
+// js/app.js
+
+function getPassword(){
+    return localStorage.getItem('GODIN_PASS')
+        || 'Prestamos123';
+}
+
+let currentUser = '';
+let currentUserRole = 'socio';
+let currentPagoId = null;
+
+function doLogin(){
+
+    const email =
+        document
+        .getElementById('loginEmail')
+        .value
+        .trim()
+        .toLowerCase();
+
+    const pass =
+        document
+        .getElementById('loginPass')
+        .value;
+
+    if(
+        !ROLE_MAP[email]
+        ||
+        pass !== getPassword()
+    ){
+        document
+        .getElementById('loginErr')
+        .textContent =
+        'Credenciales incorrectas.';
+
+        return;
+    }
+
+    currentUser = email;
+    currentUserRole = ROLE_MAP[email];
+
+    document
+        .getElementById('loginSection')
+        .style.display = 'none';
+
+    document
+        .getElementById('appSection')
+        .style.display = 'flex';
+
+    document
+        .getElementById('appSection')
+        .classList
+        .add('visible');
+
+    document
+        .getElementById('user-pill')
+        .textContent =
+        `${email.split('@')[0]} • ${currentUserRole.toUpperCase()}`;
+
+    initApp();
+}
+
+function logout(){
+    location.reload();
+}
+
+function initApp(){
+
+    document
+        .getElementById('topbar-date')
+        .textContent =
+        new Date()
+        .toLocaleDateString(
+            'es-MX',
+            {
+                weekday:'long',
+                day:'numeric',
+                month:'long',
+                year:'numeric'
+            }
+        );
+
+    loadDashboard();
+}
