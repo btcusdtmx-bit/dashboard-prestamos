@@ -436,7 +436,6 @@ tr:hover td{background:var(--surface2)}
   </div>
 </div>
 
-<!-- Modales -->
 <div class="modal-overlay" id="modal-changepass">
   <div class="modal-box">
     <div class="modal-header">
@@ -706,7 +705,6 @@ let currentUserRole='socio';
 let currentPagoId=null;
 let charts={};
 
-// Variables globales para datos
 let dataPrestamos=[];
 let dataClientes=[];
 let dataCaja=[];
@@ -820,25 +818,19 @@ function getCurrentPeriodo(){
 
 async function loadDashboard(){
   try{
-    const {data:cajaData,error:cajaError}=await sb.from('vista_caja').select('*').single();
-    if(cajaError)console.error('Error caja:',cajaError);
-    
-    const {data:inversiones,error:invError}=await sb.from('vista_saldos_dinamica').select('*');
-    if(invError)console.error('Error inversiones:',invError);
-    
-    const {data:inversionistasData,error:invistError}=await sb.from('inversionistas').select('*');
-    if(invistError)console.error('Error inversionistas:',invistError);
-    
+    const {data:cajaData}=await sb.from('vista_caja').select('*').single();
+    const {data:inversiones}=await sb.from('vista_saldos_dinamica').select('*');
+    const {data:inversionistasData}=await sb.from('inversionistas').select('*');
     const {count:countSocios}=await sb.from('inversionistas').select('*',{count:'exact',head:true});
     const {count:countClientes}=await sb.from('inversiones').select('*',{count:'exact',head:true});
     
-    const carteraActiva=(inversiones||[]).filter(v=>v.Estatus!=='LIQUIDADO').reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
-    const liquidados=(inversiones||[]).filter(v=>v.Estatus==='LIQUIDADO').length;
+    const carteraActiva=inversiones.filter(v=>v.Estatus!=='LIQUIDADO').reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
+    const liquidados=inversiones.filter(v=>v.Estatus==='LIQUIDADO').length;
     
     let interesesGanados=0;
-    (inversiones||[]).forEach(inv=>{
+    inversiones.forEach(inv=>{
       if(inv.Estatus==='LIQUIDADO'){
-        interesesGanados+=parseFloat(inv['Interés Total']||0);
+        interesesGanados+=parseFloat(inv['Interés Total']||inv['Interes Total']||0);
       }else{
         const pagado=parseFloat(inv['Total Pagado']||0);
         const capital=parseFloat(inv['Capital Original']||0);
@@ -855,7 +847,7 @@ async function loadDashboard(){
     document.getElementById('s-clientes').textContent=countClientes||0;
     document.getElementById('s-liquidados').textContent=liquidados;
     
-    crearGraficas(inversiones||[],inversionistasData||[]);
+    crearGraficas(inversiones,inversionistasData||[]);
     
   }catch(err){console.error('Error dashboard:',err);toast('error','Error: '+err.message);}
 }
