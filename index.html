@@ -1152,11 +1152,69 @@ async function verHistorialCliente(cliente){
 async function loadSocios(){
   const grid=document.getElementById('socios-grid');
   grid.innerHTML='<p style="padding:20px;color:var(--text3)"><span class="spinner"></span> Cargando…</p>';
-  const{data:socios,error}=await sb.from('inversionistas').select('*').order('nombre');
-  if(error){grid.innerHTML=`<p style="color:var(--red);padding:20px">Error: ${sanitize(error.message)}</p>`;return;}
-  if(!socios||!socios.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">⬡</div><p>Sin socios registrados</p></div>';return;}
-  const{data:invData}=await sb.from('vista_saldos_dinamica').select('*');
-  const inv=invData||[];
+  try{
+    const[{data:inversionistas},{data:vista}]=await Promise.all([
+      sb.from('inversionistas').select('*').order('nombre'),
+      sb.from('vista_saldos_dinamica').select('*'),
+    ]);
+    if(!inversionistas||!inversionistas.length){
+      grid.innerHTML='<p style="padding:20px">No hay socios registrados</p>';
+      return;
+    }
+    
+    // Calcular intereses totales del sistema
+    const interesesTotalesSistema=(vista||[]).reduce((total,v)=>{
+      const pagado=+(v['Total Pagado']||0);
+      const capital=+(v['Capital Original']||0);
+      const interes=+(v['Interés Total']||0);
+      // Si está liquidado, intereses = interés total
+      // Si está vigente, intereses = proporción de lo pagado que es interés
+      if(pagado>=(capital+interes)){
+        return total+interes;
+      }else if(pagado>capital){
+        return total+(pagado-capital);
+      }
+      return total;
+    },0);
+    
+    // Calcular capital total del sistema
+    const capitalTotalSistema=inversionistas.reduce((sum,inv)=>sum+ +(inv.capital_2026||0),0);
+    
+    grid.innerHTML=inversionistas.map(inv=>{
+      const capitalSocio=inv.capital_2026||0;
+      // Calcular intereses proporcionales: (capital_socio / capital_total) * intereses_totales
+      const interesesGanados=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema)*interesesTotalesSistema:0;
+      const rendimiento=capitalSocio>0?((interesesGanados/capitalSocio)*100):0;
+      const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
+      const totalPrestamos=clientesSocio.length;
+      
+      return `
+        <div class="stat-card">
+          <div style="font-size:1.25rem;font-weight:800;margin-bottom:4px">${sanitize(inv.nombre)}</div>
+          <div style="font-size:.8rem;color:var(--text2);margin-bottom:20px;font-family:monospace">${inv.email||'—'}</div>
+          
+          <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
+            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS 2026</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${fmtMoney(interesesGanados)}</div>
+            <div style="font-size:.85rem;color:var(--amber);margin-top:4px;font-weight:600">${rendimiento.toFixed(1)}% rendimiento</div>
+          </div>
+          
+          <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
+            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL INVERTIDO</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(capitalSocio)}</div>
+          </div>
+          
+          <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--purple)">
+            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">PRÉSTAMOS ASIGNADOS</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--purple)">${totalPrestamos}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }catch(err){
+    console.error(err);
+    grid.innerHTML=`<p style="padding:20px;color:var(--red)">Error: ${sanitize(err.message)}</p>`;
+  }
+}
   grid.innerHTML=socios.map(s=>{
     const sockInv=inv.filter(i=>i.Inversionista===s.nombre);
     const cartera=sockInv.filter(i=>i.Estatus!=='LIQUIDADO').reduce((a,i)=>a+ +(i['Saldo Pendiente']||0),0);
