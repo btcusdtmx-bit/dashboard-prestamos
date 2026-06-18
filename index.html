@@ -72,7 +72,7 @@ input,select,textarea,button{font-family:var(--font)}
 .stat-value.red{color:var(--red)}
 .stat-value.purple{color:var(--purple)}
 
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
 .section-title{font-size:1.5rem;font-weight:700}
 .btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:.9rem;transition:all .2s}
 .btn-green{background:var(--green);color:#000}
@@ -80,11 +80,15 @@ input,select,textarea,button{font-family:var(--font)}
 .btn-blue{background:var(--blue);color:#fff}
 .btn-blue:hover{transform:translateY(-1px);box-shadow:0 10px 25px -5px rgba(59,130,246,.4)}
 .btn-red{background:var(--red);color:#fff}
+.btn-outline{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--border2)}
 .btn-sm{padding:6px 12px;font-size:.8rem}
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
 .table-scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{padding:14px 20px;text-align:left;font-size:.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--surface2)}
+th{padding:14px 20px;text-align:left;font-size:.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border);background:var(--surface2);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--text)}
+th .sort-arrow{font-size:.7rem;margin-left:4px;opacity:.6}
 td{padding:16px 20px;border-bottom:1px solid var(--border);font-size:.9rem}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--surface2)}
@@ -95,6 +99,17 @@ tr:hover td{background:var(--surface2)}
 .badge-blue{background:var(--blue-dim);color:var(--blue)}
 .badge-purple{background:var(--purple-dim);color:var(--purple)}
 .td-mono{font-family:monospace;font-weight:600}
+
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.search-box{position:relative;flex:1;min-width:220px;max-width:360px}
+.search-box input{width:100%;padding:10px 14px 10px 36px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:.9rem;outline:none}
+.search-box input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+.search-box::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.85rem;opacity:.6}
+.filter-select{padding:10px 14px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:.85rem;outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--green)}
+.results-count{font-size:.8rem;color:var(--text3);white-space:nowrap}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state-icon{font-size:2rem;margin-bottom:8px;opacity:.5}
 
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
@@ -143,6 +158,7 @@ tr:hover td{background:var(--surface2)}
   .main-content{margin-left:0}
   .stats-grid{grid-template-columns:1fr}
   .charts-grid{grid-template-columns:1fr}
+  .search-box{max-width:none}
 }
 </style>
 </head>
@@ -287,19 +303,34 @@ tr:hover td{background:var(--surface2)}
     <div class="page" id="page-prestamos">
       <div class="section-header">
         <h2 class="section-title">Historial de Préstamos</h2>
+        <button class="btn btn-outline btn-sm" onclick="exportarCSV('prestamos')">⬇ Exportar CSV</button>
+      </div>
+      <div class="toolbar">
+        <div class="search-box">
+          <input type="text" id="search-prestamos" placeholder="Buscar cliente o inversionista..." oninput="filtrarPrestamos()">
+        </div>
+        <select class="filter-select" id="filter-prestamos-estatus" onchange="filtrarPrestamos()">
+          <option value="">Todos los estatus</option>
+          <option value="VIGENTE">Vigente</option>
+          <option value="LIQUIDADO">Liquidado</option>
+        </select>
+        <select class="filter-select" id="filter-prestamos-inversionista" onchange="filtrarPrestamos()">
+          <option value="">Todos los inversionistas</option>
+        </select>
+        <span class="results-count" id="prestamos-count"></span>
       </div>
       <div class="table-wrap">
         <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>Cliente</th>
-              <th>Inversionista</th>
-              <th>Capital</th>
-              <th>Total a Pagar</th>
-              <th>Total Pagado</th>
-              <th>Saldo</th>
-              <th>Estatus</th>
+              <th onclick="ordenarTabla('prestamos','Cliente')">Cliente<span class="sort-arrow" id="arrow-prestamos-Cliente"></span></th>
+              <th onclick="ordenarTabla('prestamos','Inversionista')">Inversionista<span class="sort-arrow" id="arrow-prestamos-Inversionista"></span></th>
+              <th onclick="ordenarTabla('prestamos','Capital Original')">Capital<span class="sort-arrow" id="arrow-prestamos-Capital Original"></span></th>
+              <th onclick="ordenarTabla('prestamos','Total a Pagar')">Total a Pagar<span class="sort-arrow" id="arrow-prestamos-Total a Pagar"></span></th>
+              <th onclick="ordenarTabla('prestamos','Total Pagado')">Total Pagado<span class="sort-arrow" id="arrow-prestamos-Total Pagado"></span></th>
+              <th onclick="ordenarTabla('prestamos','Saldo Pendiente')">Saldo<span class="sort-arrow" id="arrow-prestamos-Saldo Pendiente"></span></th>
+              <th onclick="ordenarTabla('prestamos','Estatus')">Estatus<span class="sort-arrow" id="arrow-prestamos-Estatus"></span></th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -312,18 +343,28 @@ tr:hover td{background:var(--surface2)}
     <div class="page" id="page-clientes">
       <div class="section-header">
         <h2 class="section-title">Directorio de Clientes</h2>
+        <button class="btn btn-outline btn-sm" onclick="exportarCSV('clientes')">⬇ Exportar CSV</button>
+      </div>
+      <div class="toolbar">
+        <div class="search-box">
+          <input type="text" id="search-clientes" placeholder="Buscar cliente, teléfono o cuenta..." oninput="filtrarClientes()">
+        </div>
+        <select class="filter-select" id="filter-clientes-inversionista" onchange="filtrarClientes()">
+          <option value="">Todos los inversionistas</option>
+        </select>
+        <span class="results-count" id="clientes-count"></span>
       </div>
       <div class="table-wrap">
         <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>Nombre</th>
+              <th onclick="ordenarTabla('clientes','cliente')">Nombre<span class="sort-arrow" id="arrow-clientes-cliente"></span></th>
               <th>Inversionista</th>
               <th>Teléfono</th>
               <th>CLABE/Cuenta</th>
-              <th>Capital</th>
-              <th>Fecha Inicio</th>
+              <th onclick="ordenarTabla('clientes','capital')">Capital<span class="sort-arrow" id="arrow-clientes-capital"></span></th>
+              <th onclick="ordenarTabla('clientes','fecha_inicial')">Fecha Inicio<span class="sort-arrow" id="arrow-clientes-fecha_inicial"></span></th>
               <th>Estatus</th>
               <th>Acciones</th>
             </tr>
@@ -342,7 +383,10 @@ tr:hover td{background:var(--surface2)}
     <div class="page" id="page-caja">
       <div class="section-header">
         <h2 class="section-title">Movimientos de Caja</h2>
-        <button class="btn btn-green" onclick="openModal('modal-caja')">+ Movimiento</button>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline btn-sm" onclick="exportarCSV('caja')">⬇ Exportar CSV</button>
+          <button class="btn btn-green" onclick="openModal('modal-caja')">+ Movimiento</button>
+        </div>
       </div>
       <div class="stats-grid" style="margin-bottom:24px">
         <div class="stat-card">
@@ -358,15 +402,28 @@ tr:hover td{background:var(--surface2)}
           <div class="stat-value blue" id="c-saldo">$0.00</div>
         </div>
       </div>
+      <div class="toolbar">
+        <div class="search-box">
+          <input type="text" id="search-caja" placeholder="Buscar por concepto..." oninput="filtrarCaja()">
+        </div>
+        <select class="filter-select" id="filter-caja-tipo" onchange="filtrarCaja()">
+          <option value="">Entradas y Salidas</option>
+          <option value="entrada">Solo Entradas</option>
+          <option value="salida">Solo Salidas</option>
+        </select>
+        <input type="date" class="filter-select" id="filter-caja-desde" onchange="filtrarCaja()" title="Desde">
+        <input type="date" class="filter-select" id="filter-caja-hasta" onchange="filtrarCaja()" title="Hasta">
+        <span class="results-count" id="caja-count"></span>
+      </div>
       <div class="table-wrap">
         <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>Fecha</th>
+              <th onclick="ordenarTabla('caja','fecha')">Fecha<span class="sort-arrow" id="arrow-caja-fecha"></span></th>
               <th>Tipo</th>
               <th>Concepto</th>
-              <th>Monto</th>
+              <th onclick="ordenarTabla('caja','monto')">Monto<span class="sort-arrow" id="arrow-caja-monto"></span></th>
               <th>Período</th>
               <th>Acciones</th>
             </tr>
@@ -648,6 +705,11 @@ let currentUserRole='socio';
 let currentPagoId=null;
 let charts={};
 
+let dataPrestamos=[];
+let dataClientes=[];
+let dataCaja=[];
+let sortState={prestamos:{col:null,dir:1},clientes:{col:null,dir:1},caja:{col:null,dir:1}};
+
 function doLogin(){
   const email=document.getElementById('loginEmail').value.trim().toLowerCase();
   const pass=document.getElementById('loginPass').value;
@@ -768,7 +830,7 @@ async function loadDashboard(){
     let interesesGanados=0;
     inversiones.forEach(inv=>{
       if(inv.Estatus==='LIQUIDADO'){
-        interesesGanados+=parseFloat(inv['Interés Total']||0);
+        interesesGanados+=parseFloat(inv['Interés Total']||inv['Interes Total']||0);
       }else{
         const pagado=parseFloat(inv['Total Pagado']||0);
         const capital=parseFloat(inv['Capital Original']||0);
@@ -874,12 +936,21 @@ async function loadPrestamos(){
     return;
   }
   
-  if(!data||!data.length){
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px">Sin préstamos</td></tr>';
+  dataPrestamos=data||[];
+  poblarFiltroInversionistas('filter-prestamos-inversionista',dataPrestamos,'Inversionista');
+  renderPrestamos(dataPrestamos);
+}
+
+function renderPrestamos(rows){
+  const tbody=document.getElementById('tbody-prestamos');
+  document.getElementById('prestamos-count').textContent=rows.length+' resultado'+(rows.length===1?'':'s');
+  
+  if(!rows||!rows.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">🔍</div>Sin resultados</div></td></tr>';
     return;
   }
   
-  tbody.innerHTML=data.map(p=>`
+  tbody.innerHTML=rows.map(p=>`
     <tr>
       <td><b>${sanitize(p.Cliente)}</b></td>
       <td>${sanitize(p.Inversionista)}</td>
@@ -894,6 +965,22 @@ async function loadPrestamos(){
       </td>
     </tr>
   `).join('');
+}
+
+function filtrarPrestamos(){
+  const q=(document.getElementById('search-prestamos').value||'').toLowerCase().trim();
+  const estatus=document.getElementById('filter-prestamos-estatus').value;
+  const inversionista=document.getElementById('filter-prestamos-inversionista').value;
+  
+  let rows=dataPrestamos.filter(p=>{
+    const matchQ=!q||(p.Cliente||'').toLowerCase().includes(q)||(p.Inversionista||'').toLowerCase().includes(q);
+    const matchEstatus=!estatus||p.Estatus===estatus;
+    const matchInv=!inversionista||p.Inversionista===inversionista;
+    return matchQ&&matchEstatus&&matchInv;
+  });
+  
+  rows=aplicarOrdenSiActivo('prestamos',rows);
+  renderPrestamos(rows);
 }
 
 async function verHistorial(clienteId,cliente){
@@ -1207,12 +1294,21 @@ async function loadClientes(){
     return;
   }
   
-  if(!data||!data.length){
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px">Sin clientes</td></tr>';
+  dataClientes=data||[];
+  poblarFiltroInversionistas('filter-clientes-inversionista',dataClientes,'inversionistas.nombre');
+  renderClientes(dataClientes);
+}
+
+function renderClientes(rows){
+  const tbody=document.getElementById('tbody-clientes');
+  document.getElementById('clientes-count').textContent=rows.length+' resultado'+(rows.length===1?'':'s');
+  
+  if(!rows||!rows.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">🔍</div>Sin resultados</div></td></tr>';
     return;
   }
   
-  tbody.innerHTML=data.map(c=>`
+  tbody.innerHTML=rows.map(c=>`
     <tr>
       <td><b>${sanitize(c.cliente)}</b></td>
       <td>${sanitize(c.inversionistas?.nombre||'—')}</td>
@@ -1224,6 +1320,20 @@ async function loadClientes(){
       <td><button class="btn btn-blue btn-sm" onclick="verHistorialCliente('${sanitize(c.cliente)}')">📋 Historial</button></td>
     </tr>
   `).join('');
+}
+
+function filtrarClientes(){
+  const q=(document.getElementById('search-clientes').value||'').toLowerCase().trim();
+  const inversionista=document.getElementById('filter-clientes-inversionista').value;
+  
+  let rows=dataClientes.filter(c=>{
+    const matchQ=!q||(c.cliente||'').toLowerCase().includes(q)||(c.telefono||'').toLowerCase().includes(q)||(c.clabe||'').toLowerCase().includes(q);
+    const matchInv=!inversionista||c.inversionistas?.nombre===inversionista;
+    return matchQ&&matchInv;
+  });
+  
+  rows=aplicarOrdenSiActivo('clientes',rows);
+  renderClientes(rows);
 }
 
 async function verHistorialCliente(cliente){
@@ -1303,13 +1413,20 @@ async function loadCaja(){
   document.getElementById('c-salidas').textContent=fmtMoney(cajaData?.total_salidas||0);
   document.getElementById('c-saldo').textContent=fmtMoney(cajaData?.saldo_caja||0);
   
+  dataCaja=movimientos||[];
+  renderCaja(dataCaja);
+}
+
+function renderCaja(rows){
   const tbody=document.getElementById('tbody-caja');
-  if(!movimientos||!movimientos.length){
-    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px">Sin movimientos</td></tr>';
+  document.getElementById('caja-count').textContent=rows.length+' movimiento'+(rows.length===1?'':'s');
+  
+  if(!rows||!rows.length){
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">🔍</div>Sin resultados</div></td></tr>';
     return;
   }
   
-  tbody.innerHTML=movimientos.map(r=>`
+  tbody.innerHTML=rows.map(r=>`
     <tr>
       <td>${fmtDate(r.fecha)}</td>
       <td><span class="badge ${r.tipo==='entrada'?'badge-green':'badge-red'}">${r.tipo==='entrada'?'↑ Entrada':'↓ Salida'}</span></td>
@@ -1321,6 +1438,24 @@ async function loadCaja(){
       </td>
     </tr>
   `).join('');
+}
+
+function filtrarCaja(){
+  const q=(document.getElementById('search-caja').value||'').toLowerCase().trim();
+  const tipo=document.getElementById('filter-caja-tipo').value;
+  const desde=document.getElementById('filter-caja-desde').value;
+  const hasta=document.getElementById('filter-caja-hasta').value;
+  
+  let rows=dataCaja.filter(r=>{
+    const matchQ=!q||(r.concepto||'').toLowerCase().includes(q);
+    const matchTipo=!tipo||r.tipo===tipo;
+    const matchDesde=!desde||(r.fecha&&r.fecha>=desde);
+    const matchHasta=!hasta||(r.fecha&&r.fecha<=hasta);
+    return matchQ&&matchTipo&&matchDesde&&matchHasta;
+  });
+  
+  rows=aplicarOrdenSiActivo('caja',rows);
+  renderCaja(rows);
 }
 
 function confirmarEliminarMovimientoCaja(movId,tipo,monto){
@@ -1371,6 +1506,138 @@ async function saveCaja(){
   }catch(err){
     toast('error','Error: '+err.message);
   }
+}
+
+function poblarFiltroInversionistas(selectId,rows,path){
+  const select=document.getElementById(selectId);
+  if(!select)return;
+  const valorActual=select.value;
+  const getVal=(row)=>{
+    if(path==='inversionistas.nombre')return row.inversionistas?.nombre;
+    return row[path];
+  };
+  const nombres=[...new Set(rows.map(getVal).filter(Boolean))].sort();
+  select.innerHTML='<option value="">Todos los inversionistas</option>'+nombres.map(n=>`<option value="${sanitize(n)}">${sanitize(n)}</option>`).join('');
+  if(nombres.includes(valorActual))select.value=valorActual;
+}
+
+function getCellValue(row,col){
+  if(col==='inversionistas.nombre')return row.inversionistas?.nombre||'';
+  return row[col];
+}
+
+function ordenarTabla(tabla,col){
+  const state=sortState[tabla];
+  if(state.col===col){state.dir*=-1;}else{state.col=col;state.dir=1;}
+  
+  document.querySelectorAll(`[id^="arrow-${tabla}-"]`).forEach(el=>el.textContent='');
+  const arrowEl=document.getElementById(`arrow-${tabla}-${col}`);
+  if(arrowEl)arrowEl.textContent=state.dir===1?'▲':'▼';
+  
+  if(tabla==='prestamos')filtrarPrestamos();
+  if(tabla==='clientes')filtrarClientes();
+  if(tabla==='caja')filtrarCaja();
+}
+
+function aplicarOrdenSiActivo(tabla,rows){
+  const state=sortState[tabla];
+  if(!state.col)return rows;
+  const col=state.col;
+  const dir=state.dir;
+  return [...rows].sort((a,b)=>{
+    let va=getCellValue(a,col);
+    let vb=getCellValue(b,col);
+    const na=parseFloat(va);
+    const nb=parseFloat(vb);
+    if(!isNaN(na)&&!isNaN(nb)&&va!==null&&vb!==null&&va!==''&&vb!==''){
+      return (na-nb)*dir;
+    }
+    va=(va||'').toString().toLowerCase();
+    vb=(vb||'').toString().toLowerCase();
+    if(va<vb)return -1*dir;
+    if(va>vb)return 1*dir;
+    return 0;
+  });
+}
+
+function descargarCSV(filename,headers,rows){
+  const escapeCSV=(val)=>{
+    const s=val===null||val===undefined?'':String(val);
+    if(/[",\n]/.test(s))return'"'+s.replace(/"/g,'""')+'"';
+    return s;
+  };
+  const lines=[headers.map(escapeCSV).join(',')];
+  rows.forEach(r=>lines.push(r.map(escapeCSV).join(',')));
+  const csvContent='\uFEFF'+lines.join('\n');
+  const blob=new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportarCSV(tipo){
+  const fecha=new Date().toISOString().split('T')[0];
+  
+  if(tipo==='prestamos'){
+    const q=(document.getElementById('search-prestamos').value||'').toLowerCase().trim();
+    const estatus=document.getElementById('filter-prestamos-estatus').value;
+    const inversionista=document.getElementById('filter-prestamos-inversionista').value;
+    let rows=dataPrestamos.filter(p=>{
+      const matchQ=!q||(p.Cliente||'').toLowerCase().includes(q)||(p.Inversionista||'').toLowerCase().includes(q);
+      const matchEstatus=!estatus||p.Estatus===estatus;
+      const matchInv=!inversionista||p.Inversionista===inversionista;
+      return matchQ&&matchEstatus&&matchInv;
+    });
+    rows=aplicarOrdenSiActivo('prestamos',rows);
+    if(!rows.length){toast('error','No hay datos para exportar');return;}
+    descargarCSV(`prestamos_${fecha}.csv`,
+      ['Cliente','Inversionista','Capital','Total a Pagar','Total Pagado','Saldo Pendiente','Estatus'],
+      rows.map(p=>[p.Cliente,p.Inversionista,p['Capital Original'],p['Total a Pagar'],p['Total Pagado'],p['Saldo Pendiente'],p.Estatus])
+    );
+  }
+  
+  if(tipo==='clientes'){
+    const q=(document.getElementById('search-clientes').value||'').toLowerCase().trim();
+    const inversionista=document.getElementById('filter-clientes-inversionista').value;
+    let rows=dataClientes.filter(c=>{
+      const matchQ=!q||(c.cliente||'').toLowerCase().includes(q)||(c.telefono||'').toLowerCase().includes(q)||(c.clabe||'').toLowerCase().includes(q);
+      const matchInv=!inversionista||c.inversionistas?.nombre===inversionista;
+      return matchQ&&matchInv;
+    });
+    rows=aplicarOrdenSiActivo('clientes',rows);
+    if(!rows.length){toast('error','No hay datos para exportar');return;}
+    descargarCSV(`clientes_${fecha}.csv`,
+      ['Nombre','Inversionista','Teléfono','CLABE/Cuenta','Capital','Fecha Inicio'],
+      rows.map(c=>[c.cliente,c.inversionistas?.nombre||'',c.telefono||'',c.clabe||'',c.capital,c.fecha_inicial])
+    );
+  }
+  
+  if(tipo==='caja'){
+    const q=(document.getElementById('search-caja').value||'').toLowerCase().trim();
+    const filtroTipo=document.getElementById('filter-caja-tipo').value;
+    const desde=document.getElementById('filter-caja-desde').value;
+    const hasta=document.getElementById('filter-caja-hasta').value;
+    let rows=dataCaja.filter(r=>{
+      const matchQ=!q||(r.concepto||'').toLowerCase().includes(q);
+      const matchTipo=!filtroTipo||r.tipo===filtroTipo;
+      const matchDesde=!desde||(r.fecha&&r.fecha>=desde);
+      const matchHasta=!hasta||(r.fecha&&r.fecha<=hasta);
+      return matchQ&&matchTipo&&matchDesde&&matchHasta;
+    });
+    rows=aplicarOrdenSiActivo('caja',rows);
+    if(!rows.length){toast('error','No hay datos para exportar');return;}
+    descargarCSV(`caja_${fecha}.csv`,
+      ['Fecha','Tipo','Concepto','Monto','Período'],
+      rows.map(r=>[r.fecha,r.tipo,r.concepto,r.monto,r.periodo||''])
+    );
+  }
+  
+  toast('success','Archivo CSV descargado');
 }
 
 function initApp(){
