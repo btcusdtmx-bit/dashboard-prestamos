@@ -497,34 +497,34 @@ tr:hover td{background:var(--surface2)}
     </div>
     <div class="form-group">
       <label class="form-label">Período del Pago</label>
-     <select class="form-select" id="pago-rapido-periodo">
-  <option value="PAGO 0">PAGO 0</option>
-  <option value="PAGO 1">PAGO 1</option>
-  <option value="PAGO 2">PAGO 2</option>
-  <option value="PAGO 3">PAGO 3</option>
-  <option value="PAGO 4">PAGO 4</option>
-  <option value="PAGO 5">PAGO 5</option>
-  <option value="PAGO 6">PAGO 6</option>
-  <option value="PAGO 7">PAGO 7</option>
-  <option value="PAGO 8">PAGO 8</option>
-  <option value="PAGO 9">PAGO 9</option>
-  <option value="PAGO 10">PAGO 10</option>
-  <option value="PAGO 11">PAGO 11</option>
-  <option value="PAGO 12">PAGO 12</option>
-  <option value="PAGO 13">PAGO 13</option>
-  <option value="PAGO 14">PAGO 14</option>
-  <option value="PAGO 15">PAGO 15</option>
-  <option value="PAGO 16">PAGO 16</option>
-  <option value="PAGO 17">PAGO 17</option>
-  <option value="PAGO 18">PAGO 18</option>
-  <option value="PAGO 19">PAGO 19</option>
-  <option value="PAGO 20">PAGO 20</option>
-  <option value="PAGO 21">PAGO 21</option>
-  <option value="PAGO 22">PAGO 22</option>
-  <option value="PAGO 23">PAGO 23</option>
-  <option value="PAGO 24">PAGO 24</option>
-  <option value="PAGO 25">PAGO 25</option>
-</select>
+      <select class="form-select" id="pago-periodo">
+        <option value="PAGO 0">PAGO 0 (15/12/2025)</option>
+        <option value="PAGO 1">PAGO 1 (31/12/2025)</option>
+        <option value="PAGO 2">PAGO 2 (15/01/2026)</option>
+        <option value="PAGO 3">PAGO 3 (31/01/2026)</option>
+        <option value="PAGO 4">PAGO 4 (15/02/2026)</option>
+        <option value="PAGO 5">PAGO 5 (28/02/2026)</option>
+        <option value="PAGO 6">PAGO 6 (15/03/2026)</option>
+        <option value="PAGO 7">PAGO 7 (31/03/2026)</option>
+        <option value="PAGO 8">PAGO 8 (15/04/2026)</option>
+        <option value="PAGO 9">PAGO 9 (30/04/2026)</option>
+        <option value="PAGO 10">PAGO 10 (15/05/2026)</option>
+        <option value="PAGO 11">PAGO 11 (31/05/2026)</option>
+        <option value="PAGO 12">PAGO 12 (15/06/2026)</option>
+        <option value="PAGO 13">PAGO 13 (30/06/2026)</option>
+        <option value="PAGO 14">PAGO 14 (15/07/2026)</option>
+        <option value="PAGO 15">PAGO 15 (31/07/2026)</option>
+        <option value="PAGO 16">PAGO 16 (15/08/2026)</option>
+        <option value="PAGO 17">PAGO 17 (31/08/2026)</option>
+        <option value="PAGO 18">PAGO 18 (15/09/2026)</option>
+        <option value="PAGO 19">PAGO 19 (30/09/2026)</option>
+        <option value="PAGO 20">PAGO 20 (15/10/2026)</option>
+        <option value="PAGO 21">PAGO 21 (31/10/2026)</option>
+        <option value="PAGO 22">PAGO 22 (15/11/2026)</option>
+        <option value="PAGO 23">PAGO 23 (30/11/2026)</option>
+        <option value="PAGO 24">PAGO 24 (15/12/2026)</option>
+        <option value="PAGO 25">PAGO 25 (31/12/2026)</option>
+      </select>
     </div>
     <div class="form-group">
       <label class="form-label">Observaciones</label>
@@ -571,6 +571,19 @@ tr:hover td{background:var(--surface2)}
         <option value="PAGO 10">PAGO 10</option>
         <option value="PAGO 11">PAGO 11</option>
         <option value="PAGO 12">PAGO 12</option>
+        <option value="PAGO 13">PAGO 13</option>
+        <option value="PAGO 14">PAGO 14</option>
+        <option value="PAGO 15">PAGO 15</option>
+        <option value="PAGO 16">PAGO 16</option>
+        <option value="PAGO 17">PAGO 17</option>
+        <option value="PAGO 18">PAGO 18</option>
+        <option value="PAGO 19">PAGO 19</option>
+        <option value="PAGO 20">PAGO 20</option>
+        <option value="PAGO 21">PAGO 21</option>
+        <option value="PAGO 22">PAGO 22</option>
+        <option value="PAGO 23">PAGO 23</option>
+        <option value="PAGO 24">PAGO 24</option>
+        <option value="PAGO 25">PAGO 25</option>
       </select>
     </div>
     <div class="modal-footer">
@@ -599,8 +612,8 @@ tr:hover td{background:var(--surface2)}
       <input type="number" class="form-input" id="np-capital" step="0.01">
     </div>
     <div class="form-group">
-      <label class="form-label">Interés *</label>
-      <input type="number" class="form-input" id="np-interes" step="0.01">
+      <label class="form-label">Interés (%) *</label>
+      <input type="number" class="form-input" id="np-interes" step="0.01" placeholder="Ej: 10 para 10%">
     </div>
     <div class="form-group">
       <label class="form-label">Fecha de Inicio *</label>
@@ -814,33 +827,45 @@ function getCurrentPeriodo(){
   const day=today.getDate();
   
   if(year===2025&&month===11&&day>=15)return'PAGO 0';
-  if(year===2025&&month===11&&day===31)return'PAGO 1';
+  if(year===2025&&month===11&&day>=31)return'PAGO 1';
   if(year===2026&&month===0&&day>=15)return'PAGO 2';
-  if(year===2026&&month===0&&day===31)return'PAGO 3';
+  if(year===2026&&month===0&&day>=31)return'PAGO 3';
   if(year===2026&&month===1&&day>=15)return'PAGO 4';
-  if(year===2026&&month===1&&day===28)return'PAGO 5';
+  if(year===2026&&month===1&&day>=28)return'PAGO 5';
   if(year===2026&&month===2&&day>=15)return'PAGO 6';
-  if(year===2026&&month===2&&day===31)return'PAGO 7';
+  if(year===2026&&month===2&&day>=31)return'PAGO 7';
   if(year===2026&&month===3&&day>=15)return'PAGO 8';
-  if(year===2026&&month===3&&day===30)return'PAGO 9';
+  if(year===2026&&month===3&&day>=30)return'PAGO 9';
   if(year===2026&&month===4&&day>=15)return'PAGO 10';
-  if(year===2026&&month===4&&day===31)return'PAGO 11';
+  if(year===2026&&month===4&&day>=31)return'PAGO 11';
   if(year===2026&&month===5&&day>=15)return'PAGO 12';
+  if(year===2026&&month===5&&day>=30)return'PAGO 13';
+  if(year===2026&&month===6&&day>=15)return'PAGO 14';
+  if(year===2026&&month===6&&day>=31)return'PAGO 15';
+  if(year===2026&&month===7&&day>=15)return'PAGO 16';
+  if(year===2026&&month===7&&day>=31)return'PAGO 17';
+  if(year===2026&&month===8&&day>=15)return'PAGO 18';
+  if(year===2026&&month===8&&day>=30)return'PAGO 19';
+  if(year===2026&&month===9&&day>=15)return'PAGO 20';
+  if(year===2026&&month===9&&day>=31)return'PAGO 21';
+  if(year===2026&&month===10&&day>=15)return'PAGO 22';
+  if(year===2026&&month===10&&day>=30)return'PAGO 23';
+  if(year===2026&&month===11&&day>=15)return'PAGO 24';
+  if(year===2026&&month===11&&day>=31)return'PAGO 25';
   
-  return'PAGO 12';
+  return'PAGO 25';
 }
 
 async function loadDashboard(){
   try{
-    const {data:cajaData,error:cajaError}=await sb.from('caja').select('*');
-    if(cajaError)throw cajaError;
-    
-    const totalEntradas=(cajaData||[]).filter(c=>c.tipo==='entrada').reduce((a,c)=>a+parseFloat(c.monto||0),0);
-    const totalSalidas=(cajaData||[]).filter(c=>c.tipo==='salida').reduce((a,c)=>a+parseFloat(c.monto||0),0);
-    const saldoCaja=totalEntradas-totalSalidas;
+    const {data:cajaData,error:cajaError}=await sb.from('vista_caja').select('*').single();
+    if(cajaError)console.error('Error caja:',cajaError);
     
     const {data:inversiones,error:invError}=await sb.from('vista_saldos_dinamica').select('*');
-    if(invError)throw invError;
+    if(invError)console.error('Error inversiones:',invError);
+    
+    const {data:inversionistasData,error:invistError}=await sb.from('inversionistas').select('*');
+    if(invistError)console.error('Error inversionistas:',invistError);
     
     const {count:countSocios}=await sb.from('inversionistas').select('*',{count:'exact',head:true});
     const {count:countClientes}=await sb.from('inversiones').select('*',{count:'exact',head:true});
@@ -861,19 +886,16 @@ async function loadDashboard(){
       }
     });
     
-    document.getElementById('s-caja').textContent=fmtMoney(saldoCaja);
+    document.getElementById('s-caja').textContent=fmtMoney(cajaData?.saldo_caja||0);
     document.getElementById('s-cartera').textContent=fmtMoney(carteraActiva);
     document.getElementById('s-intereses').textContent=fmtMoney(interesesGanados);
     document.getElementById('s-socios').textContent=countSocios||0;
     document.getElementById('s-clientes').textContent=countClientes||0;
     document.getElementById('s-liquidados').textContent=liquidados;
     
-    crearGraficas(inversiones||[],[]);
+    crearGraficas(inversiones||[],inversionistasData||[]);
     
-  }catch(err){
-    console.error('Error dashboard:',err);
-    toast('error','Error: '+err.message);
-  }
+  }catch(err){console.error('Error dashboard:',err);toast('error','Error: '+err.message);}
 }
 
 function crearGraficas(inversiones,inversionistas){
@@ -910,12 +932,10 @@ function crearGraficas(inversiones,inversionistas){
   });
   
   const carteraPorInv={};
-  inversiones.forEach(inv=>{
-    const invista=inv.Inversionista||'Sin asignar';
-    if(!carteraPorInv[invista])carteraPorInv[invista]=0;
-    if(inv.Estatus!=='LIQUIDADO'){
-      carteraPorInv[invista]+=parseFloat(inv['Saldo Pendiente']||0);
-    }
+  inversionistas.forEach(inv=>{
+    carteraPorInv[inv.nombre]=inversiones
+      .filter(v=>v.Inversionista===inv.nombre&&v.Estatus!=='LIQUIDADO')
+      .reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
   });
   
   const ctxInv=document.getElementById('chartInversionistas').getContext('2d');
@@ -953,17 +973,18 @@ function crearGraficas(inversiones,inversionistas){
 }
 
 async function loadPrestamos(){
-  try{
-    const {data,error}=await sb.from('vista_saldos_dinamica').select('*').order('Saldo Pendiente',{ascending:false});
-    if(error)throw error;
-    
-    dataPrestamos=data||[];
-    poblarFiltroInversionistas('filter-prestamos-inversionista',dataPrestamos,'Inversionista');
-    renderPrestamos(dataPrestamos);
-  }catch(err){
-    console.error('Error prestamos:',err);
-    toast('error','Error al cargar préstamos: '+err.message);
+  const {data,error}=await sb.from('vista_saldos_dinamica').select('*').order('Saldo Pendiente',{ascending:false});
+  const tbody=document.getElementById('tbody-prestamos');
+  
+  if(error){
+    console.error('Error cargando préstamos:',error);
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--red)">Error al cargar datos: '+error.message+'</td></tr>';
+    return;
   }
+  
+  dataPrestamos=data||[];
+  poblarFiltroInversionistas('filter-prestamos-inversionista',dataPrestamos,'Inversionista');
+  renderPrestamos(dataPrestamos);
 }
 
 function renderPrestamos(rows){
@@ -1009,87 +1030,80 @@ function filtrarPrestamos(){
 }
 
 async function verHistorial(clienteId,cliente){
-  try{
-    const {data:pagos,error}=await sb.from('pagos_realizados').select('*').eq('inversion_id',clienteId).order('fecha_pago',{ascending:true});
-    if(error)throw error;
+  const {data:pagos,error}=await sb.from('pagos_realizados').select('*').eq('inversion_id',clienteId).order('fecha_pago',{ascending:true});
+  const {data:inversion}=await sb.from('inversiones').select('*,inversionistas(nombre)').eq('id',clienteId).single();
+  const {data:vista}=await sb.from('vista_saldos_dinamica').select('*').eq('cliente_id',clienteId).single();
+  
+  document.getElementById('historial-title').textContent=`Historial - ${cliente}`;
+  
+  const totalPagado=(pagos||[]).reduce((a,p)=>a+parseFloat(p.monto||0),0);
+  
+  let content=`
+    <div class="info-grid">
+      <div>
+        <div class="info-item-label">Cliente</div>
+        <div class="info-item-value">${sanitize(cliente)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Inversionista</div>
+        <div class="info-item-value">${sanitize(inversion?.inversionistas?.nombre||'—')}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Capital</div>
+        <div class="info-item-value" style="color:var(--blue)">${fmtMoney(inversion?.capital||0)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Interés</div>
+        <div class="info-item-value" style="color:var(--amber)">${fmtMoney(inversion?.interes||0)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Total a Pagar</div>
+        <div class="info-item-value">${fmtMoney((inversion?.capital||0)+(inversion?.interes||0))}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Total Pagado</div>
+        <div class="info-item-value" style="color:var(--green)">${fmtMoney(totalPagado)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Saldo Pendiente</div>
+        <div class="info-item-value" style="color:${vista&&vista['Saldo Pendiente']>0?'var(--amber)':'var(--green)'}">${fmtMoney(vista?vista['Saldo Pendiente']:0)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Estatus</div>
+        <div class="info-item-value"><span class="badge ${vista&&vista.Estatus==='LIQUIDADO'?'badge-green':'badge-amber'}">${vista?vista.Estatus:'—'}</span></div>
+      </div>
+      <div>
+        <div class="info-item-label">Fecha Inicio</div>
+        <div class="info-item-value">${fmtDate(inversion?.fecha_inicial)}</div>
+      </div>
+      <div>
+        <div class="info-item-label">Total Pagos</div>
+        <div class="info-item-value">${(pagos||[]).length} pagos</div>
+      </div>
+    </div>
     
-    const {data:inversion}=await sb.from('inversiones').select('*,inversionistas(nombre)').eq('id',clienteId).single();
-    const {data:vista}=await sb.from('vista_saldos_dinamica').select('*').eq('cliente_id',clienteId).single();
-    
-    document.getElementById('historial-title').textContent=`Historial - ${cliente}`;
-    
-    const totalPagado=(pagos||[]).reduce((a,p)=>a+parseFloat(p.monto||0),0);
-    
-    let content=`
-      <div class="info-grid">
+    <h3 style="margin-bottom:16px;font-size:1rem">Pagos Realizados (${(pagos||[]).length})</h3>
+  `;
+  
+  if(pagos&&pagos.length){
+    content+=pagos.map(p=>`
+      <div class="history-item">
         <div>
-          <div class="info-item-label">Cliente</div>
-          <div class="info-item-value">${sanitize(cliente)}</div>
+          <div style="font-weight:600">${p.periodo||'Pago'} - ${fmtDate(p.fecha_pago)}</div>
+          <div class="history-date">${p.observaciones||''}</div>
         </div>
-        <div>
-          <div class="info-item-label">Inversionista</div>
-          <div class="info-item-value">${sanitize(inversion?.inversionistas?.nombre||'—')}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Capital</div>
-          <div class="info-item-value" style="color:var(--blue)">${fmtMoney(inversion?.capital||0)}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Interés</div>
-          <div class="info-item-value" style="color:var(--amber)">${fmtMoney(inversion?.interes||0)}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Total a Pagar</div>
-          <div class="info-item-value">${fmtMoney((inversion?.capital||0)+(inversion?.interes||0))}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Total Pagado</div>
-          <div class="info-item-value" style="color:var(--green)">${fmtMoney(totalPagado)}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Saldo Pendiente</div>
-          <div class="info-item-value" style="color:${vista&&vista['Saldo Pendiente']>0?'var(--amber)':'var(--green)'}">${fmtMoney(vista?vista['Saldo Pendiente']:0)}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Estatus</div>
-          <div class="info-item-value"><span class="badge ${vista&&vista.Estatus==='LIQUIDADO'?'badge-green':'badge-amber'}">${vista?vista.Estatus:'—'}</span></div>
-        </div>
-        <div>
-          <div class="info-item-label">Fecha Inicio</div>
-          <div class="info-item-value">${fmtDate(inversion?.fecha_inicial)}</div>
-        </div>
-        <div>
-          <div class="info-item-label">Total Pagos</div>
-          <div class="info-item-value">${(pagos||[]).length} pagos</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="history-amount">${fmtMoney(p.monto)}</div>
+          ${ADMIN_ROLES.includes(currentUserRole)?`<button class="btn btn-red btn-sm" onclick="confirmarEliminarPago(${p.id},'${sanitize(p.periodo||'Pago')}',${p.monto})">🗑️</button>`:''}
         </div>
       </div>
-      
-      <h3 style="margin-bottom:16px;font-size:1rem">Pagos Realizados (${(pagos||[]).length})</h3>
-    `;
-    
-    if(pagos&&pagos.length){
-      content+=pagos.map(p=>`
-        <div class="history-item">
-          <div>
-            <div style="font-weight:600">${p.periodo||'Pago'} - ${fmtDate(p.fecha_pago)}</div>
-            <div class="history-date">${p.observaciones||''}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="history-amount">${fmtMoney(p.monto)}</div>
-            ${ADMIN_ROLES.includes(currentUserRole)?`<button class="btn btn-red btn-sm" onclick="confirmarEliminarPago(${p.id},'${sanitize(p.periodo||'Pago')}',${p.monto})">🗑️</button>`:''}
-          </div>
-        </div>
-      `).join('');
-    }else{
-      content+='<p style="color:var(--text2);text-align:center;padding:20px">Sin pagos registrados</p>';
-    }
-    
-    document.getElementById('historial-content').innerHTML=content;
-    openModal('modal-historial');
-  }catch(err){
-    console.error('Error historial:',err);
-    toast('error','Error al cargar historial: '+err.message);
+    `).join('');
+  }else{
+    content+='<p style="color:var(--text2);text-align:center;padding:20px">Sin pagos registrados</p>';
   }
+  
+  document.getElementById('historial-content').innerHTML=content;
+  openModal('modal-historial');
 }
 
 function confirmarEliminarPago(pagoId,periodo,monto){
@@ -1167,47 +1181,39 @@ async function confirmarPago(){
 }
 
 async function loadClientesSelect(){
-  try{
-    const {data,error}=await sb.from('inversiones').select('id,cliente').order('cliente');
-    const select=document.getElementById('pago-rapido-cliente');
-    
-    if(error){
-      console.error('Error cargando clientes:',error);
-      select.innerHTML='<option value="">Error al cargar clientes</option>';
-      return;
-    }
-    
-    if(data&&data.length){
-      select.innerHTML='<option value="">Seleccionar cliente...</option>'+data.map(c=>`<option value="${c.id}">${c.cliente}</option>`).join('');
-    }else{
-      select.innerHTML='<option value="">No hay clientes registrados</option>';
-    }
-    
-    document.getElementById('pago-rapido-fecha').value=new Date().toISOString().split('T')[0];
-    document.getElementById('pago-rapido-periodo').value=getCurrentPeriodo();
-  }catch(err){
-    console.error('Error loadClientesSelect:',err);
+  const {data,error}=await sb.from('inversiones').select('id,cliente').order('cliente');
+  const select=document.getElementById('pago-rapido-cliente');
+  
+  if(error){
+    console.error('Error cargando clientes:',error);
+    select.innerHTML='<option value="">Error al cargar clientes</option>';
+    return;
   }
+  
+  if(data&&data.length){
+    select.innerHTML='<option value="">Seleccionar cliente...</option>'+data.map(c=>`<option value="${c.id}">${c.cliente}</option>`).join('');
+  }else{
+    select.innerHTML='<option value="">No hay clientes registrados</option>';
+  }
+  
+  document.getElementById('pago-rapido-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('pago-rapido-periodo').value=getCurrentPeriodo();
 }
 
 async function loadInversionistasSelect(selectId){
-  try{
-    const {data,error}=await sb.from('inversionistas').select('id,nombre').order('nombre');
-    const select=document.getElementById(selectId);
-    
-    if(error){
-      console.error('Error cargando inversionistas:',error);
-      select.innerHTML='<option value="">Error al cargar</option>';
-      return;
-    }
-    
-    if(data&&data.length){
-      select.innerHTML='<option value="">Seleccionar inversionista...</option>'+data.map(i=>`<option value="${i.id}">${i.nombre}</option>`).join('');
-    }else{
-      select.innerHTML='<option value="">No hay inversionistas</option>';
-    }
-  }catch(err){
-    console.error('Error loadInversionistasSelect:',err);
+  const {data,error}=await sb.from('inversionistas').select('id,nombre').order('nombre');
+  const select=document.getElementById(selectId);
+  
+  if(error){
+    console.error('Error cargando inversionistas:',error);
+    select.innerHTML='<option value="">Error al cargar</option>';
+    return;
+  }
+  
+  if(data&&data.length){
+    select.innerHTML='<option value="">Seleccionar inversionista...</option>'+data.map(i=>`<option value="${i.id}">${i.nombre}</option>`).join('');
+  }else{
+    select.innerHTML='<option value="">No hay inversionistas</option>';
   }
 }
 
@@ -1252,12 +1258,18 @@ async function crearPrestamo(){
   const cliente=document.getElementById('np-cliente').value.trim();
   const inversionistaId=document.getElementById('np-inversionista').value;
   const capital=parseFloat(document.getElementById('np-capital').value);
-  const interes=parseFloat(document.getElementById('np-interes').value);
+  let interes=parseFloat(document.getElementById('np-interes').value);
   const fecha=document.getElementById('np-fecha').value;
   const telefono=document.getElementById('np-telefono').value.trim();
   const clabe=document.getElementById('np-clabe').value.trim();
   
   if(!cliente||!inversionistaId||!capital||!interes||!fecha){toast('error','Completa los campos obligatorios');return;}
+  
+  // CORRECCIÓN: Si el interés es menor a 100, asumimos que es un porcentaje
+  if(interes < 100){
+    interes = capital * (interes / 100);
+    toast('success',`Interés calculado: ${interes.toFixed(2)} (${document.getElementById('np-interes').value}% del capital)`);
+  }
   
   try{
     await sb.from('inversiones').insert({
@@ -1325,23 +1337,18 @@ async function crearCliente(){
 }
 
 async function loadClientes(){
-  try{
-    const {data,error}=await sb.from('inversiones').select('*,inversionistas(nombre)').order('cliente');
-    const tbody=document.getElementById('tbody-clientes');
-    
-    if(error){
-      console.error('Error cargando clientes:',error);
-      tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--red)">Error al cargar: '+error.message+'</td></tr>';
-      return;
-    }
-    
-    dataClientes=data||[];
-    poblarFiltroInversionistas('filter-clientes-inversionista',dataClientes,'inversionistas.nombre');
-    renderClientes(dataClientes);
-  }catch(err){
-    console.error('Error loadClientes:',err);
-    toast('error','Error al cargar clientes: '+err.message);
+  const {data,error}=await sb.from('inversiones').select('*,inversionistas(nombre)').order('cliente');
+  const tbody=document.getElementById('tbody-clientes');
+  
+  if(error){
+    console.error('Error cargando clientes:',error);
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--red)">Error al cargar: '+error.message+'</td></tr>';
+    return;
   }
+  
+  dataClientes=data||[];
+  poblarFiltroInversionistas('filter-clientes-inversionista',dataClientes,'inversionistas.nombre');
+  renderClientes(dataClientes);
 }
 
 function renderClientes(rows){
@@ -1382,102 +1389,84 @@ function filtrarClientes(){
 }
 
 async function verHistorialCliente(cliente){
-  try{
-    const {data:inv}=await sb.from('inversiones').select('id').eq('cliente',cliente).single();
-    if(inv)verHistorial(inv.id,cliente);
-  }catch(err){
-    console.error('Error verHistorialCliente:',err);
-  }
+  const {data:inv}=await sb.from('inversiones').select('id').eq('cliente',cliente).single();
+  if(inv)verHistorial(inv.id,cliente);
 }
 
 async function loadSocios(){
-  try{
-    const {data:inversionistas,error}=await sb.from('inversionistas').select('*').order('nombre');
-    const grid=document.getElementById('socios-grid');
-    
-    if(error){
-      console.error('Error cargando socios:',error);
-      grid.innerHTML='<div style="color:var(--red);padding:20px">Error al cargar socios: '+error.message+'</div>';
-      return;
-    }
-    
-    if(!inversionistas||!inversionistas.length){
-      grid.innerHTML='<div style="padding:20px">No hay socios registrados</div>';
-      return;
-    }
-    
-    const {data:vista}=await sb.from('vista_saldos_dinamica').select('*');
-    
-    grid.innerHTML=inversionistas.map(inv=>{
-      const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
-      const carteraSocio=clientesSocio.reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
-      const capitalSocio=clientesSocio.reduce((a,v)=>a+parseFloat(v['Capital Original']||0),0);
-      const activos=clientesSocio.filter(v=>v.Estatus!=='LIQUIDADO').length;
-      const liquidados=clientesSocio.filter(v=>v.Estatus==='LIQUIDADO').length;
-      
-      return `
-        <div class="stat-card">
-          <div style="font-size:1.25rem;font-weight:800;margin-bottom:4px">${sanitize(inv.nombre)}</div>
-          <div style="font-size:.8rem;color:var(--text2);margin-bottom:20px;font-family:monospace">${inv.email||'—'}</div>
-          
-          <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
-            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE CAPITAL</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${inv.porcentaje_capital}%</div>
-          </div>
-          
-          <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
-            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL TOTAL</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(inv.capital_2026)}</div>
-          </div>
-          
-          <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
-            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--amber)">${fmtMoney(inv.intereses_ganados)}</div>
-          </div>
-          
-          <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--purple)">
-            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CLIENTES ASIGNADOS</div>
-            <div style="font-size:1.2rem;font-weight:700;margin-bottom:8px">${clientesSocio.length} total</div>
-            <div style="display:flex;gap:12px;font-size:.8rem">
-              <span style="color:var(--green)">${activos} activos</span>
-              <span style="color:var(--text3)">${liquidados} liquidados</span>
-            </div>
-            <div style="font-size:.7rem;color:var(--text3);margin:12px 0 4px">CARTERA ACTIVA</div>
-            <div style="font-size:1.1rem;font-weight:700;color:var(--amber)">${fmtMoney(carteraSocio)}</div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }catch(err){
-    console.error('Error loadSocios:',err);
-    toast('error','Error al cargar socios: '+err.message);
+  const {data:inversionistas,error}=await sb.from('inversionistas').select('*').order('nombre');
+  const grid=document.getElementById('socios-grid');
+  
+  if(error){
+    console.error('Error cargando socios:',error);
+    grid.innerHTML='<div style="color:var(--red);padding:20px">Error al cargar socios: '+error.message+'</div>';
+    return;
   }
+  
+  if(!inversionistas||!inversionistas.length){
+    grid.innerHTML='<div style="padding:20px">No hay socios registrados</div>';
+    return;
+  }
+  
+  const {data:vista}=await sb.from('vista_saldos_dinamica').select('*');
+  
+  grid.innerHTML=inversionistas.map(inv=>{
+    const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
+    const carteraSocio=clientesSocio.reduce((a,v)=>a+parseFloat(v['Saldo Pendiente']||0),0);
+    const capitalSocio=clientesSocio.reduce((a,v)=>a+parseFloat(v['Capital Original']||0),0);
+    const activos=clientesSocio.filter(v=>v.Estatus!=='LIQUIDADO').length;
+    const liquidados=clientesSocio.filter(v=>v.Estatus==='LIQUIDADO').length;
+    
+    return `
+      <div class="stat-card">
+        <div style="font-size:1.25rem;font-weight:800;margin-bottom:4px">${sanitize(inv.nombre)}</div>
+        <div style="font-size:.8rem;color:var(--text2);margin-bottom:20px;font-family:monospace">${inv.email||'—'}</div>
+        
+        <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">% DE CAPITAL</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${inv.porcentaje_capital}%</div>
+        </div>
+        
+        <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL TOTAL</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(inv.capital_2026)}</div>
+        </div>
+        
+        <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--amber)">${fmtMoney(inv.intereses_ganados)}</div>
+        </div>
+        
+        <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--purple)">
+          <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CLIENTES ASIGNADOS</div>
+          <div style="font-size:1.2rem;font-weight:700;margin-bottom:8px">${clientesSocio.length} total</div>
+          <div style="display:flex;gap:12px;font-size:.8rem">
+            <span style="color:var(--green)">${activos} activos</span>
+            <span style="color:var(--text3)">${liquidados} liquidados</span>
+          </div>
+          <div style="font-size:.7rem;color:var(--text3);margin:12px 0 4px">CARTERA ACTIVA</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--amber)">${fmtMoney(carteraSocio)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function loadCaja(){
-  try{
-    const {data:movimientos,error}=await sb.from('caja').select('*').order('fecha',{ascending:false});
-    
-    if(error){
-      console.error('Error cargando caja:',error);
-      toast('error','Error al cargar caja: '+error.message);
-      return;
-    }
-    
-    const totalEntradas=(movimientos||[]).filter(c=>c.tipo==='entrada').reduce((a,c)=>a+parseFloat(c.monto||0),0);
-    const totalSalidas=(movimientos||[]).filter(c=>c.tipo==='salida').reduce((a,c)=>a+parseFloat(c.monto||0),0);
-    const saldo=totalEntradas-totalSalidas;
-    
-    document.getElementById('c-entradas').textContent=fmtMoney(totalEntradas);
-    document.getElementById('c-salidas').textContent=fmtMoney(totalSalidas);
-    document.getElementById('c-saldo').textContent=fmtMoney(saldo);
-    
-    dataCaja=movimientos||[];
-    renderCaja(dataCaja);
-  }catch(err){
-    console.error('Error loadCaja:',err);
-    toast('error','Error al cargar caja: '+err.message);
+  const {data:cajaData,error}=await sb.from('vista_caja').select('*').single();
+  const {data:movimientos}=await sb.from('caja').select('*').order('fecha',{ascending:false});
+  
+  if(error){
+    console.error('Error cargando caja:',error);
+    toast('error','Error al cargar caja: '+error.message);
   }
+  
+  document.getElementById('c-entradas').textContent=fmtMoney(cajaData?.total_entradas||0);
+  document.getElementById('c-salidas').textContent=fmtMoney(cajaData?.total_salidas||0);
+  document.getElementById('c-saldo').textContent=fmtMoney(cajaData?.saldo_caja||0);
+  
+  dataCaja=movimientos||[];
+  renderCaja(dataCaja);
 }
 
 function renderCaja(rows){
