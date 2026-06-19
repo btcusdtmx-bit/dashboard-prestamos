@@ -248,7 +248,7 @@
       </div>
     </div>
     <div class="sidebar-footer">
-      <button class="btn-changepass" onclick="openModal('modal-changepass')"> Cambiar contraseña</button>
+      <button class="btn-changepass" onclick="openModal('modal-changepass')">🔑 Cambiar contraseña</button>
       <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
     </div>
   </nav>
@@ -272,17 +272,17 @@
       <section class="page active" id="page-dashboard" aria-label="Resumen general">
         <div class="stats-grid">
           <article class="stat-card"><p class="stat-label">💰 Capital Disponible (Caja)</p><p class="stat-value green" id="s-caja">$0.00</p><p class="stat-sub" id="s-caja-sub">—</p></article>
-          <article class="stat-card"><p class="stat-label">📊 Cartera Activa</p><p class="stat-value blue" id="s-cartera">$0.00</p><p class="stat-sub" id="s-cartera-sub">—</p></article>
+          <article class="stat-card"><p class="stat-label"> Cartera Activa</p><p class="stat-value blue" id="s-cartera">$0.00</p><p class="stat-sub" id="s-cartera-sub">—</p></article>
           <article class="stat-card"><p class="stat-label">📈 Intereses Ganados</p><p class="stat-value amber" id="s-intereses">$0.00</p><p class="stat-sub" id="s-intereses-sub">—</p></article>
           <article class="stat-card"><p class="stat-label">⬡ Total Socios</p><p class="stat-value purple" id="s-socios">0</p><p class="stat-sub" id="s-socios-sub">—</p></article>
-          <article class="stat-card"><p class="stat-label">👤 Total Clientes</p><p class="stat-value" id="s-clientes">0</p><p class="stat-sub" id="s-clientes-sub">—</p></article>
+          <article class="stat-card"><p class="stat-label"> Total Clientes</p><p class="stat-value" id="s-clientes">0</p><p class="stat-sub" id="s-clientes-sub">—</p></article>
           <article class="stat-card"><p class="stat-label">✅ Préstamos Liquidados</p><p class="stat-value green" id="s-liquidados">0</p><p class="stat-sub" id="s-liquidados-sub">—</p></article>
         </div>
 
         <div class="kpi-row">
           <div class="kpi-mini"><span class="kpi-mini-icon">🎯</span><div><p class="kpi-mini-label">Tasa de Cobranza</p><p class="kpi-mini-value green" id="kpi-cobranza">0%</p></div></div>
           <div class="kpi-mini"><span class="kpi-mini-icon">💵</span><div><p class="kpi-mini-label">Promedio por Préstamo</p><p class="kpi-mini-value blue" id="kpi-promedio">$0.00</p></div></div>
-          <div class="kpi-mini"><span class="kpi-mini-icon">⚠️</span><div><p class="kpi-mini-label">Capital en Riesgo</p><p class="kpi-mini-value amber" id="kpi-riesgo">$0.00</p></div></div>
+          <div class="kpi-mini"><span class="kpi-mini-icon">️</span><div><p class="kpi-mini-label">Capital en Riesgo</p><p class="kpi-mini-value amber" id="kpi-riesgo">$0.00</p></div></div>
           <div class="kpi-mini"><span class="kpi-mini-icon">📦</span><div><p class="kpi-mini-label">Total Movimientos</p><p class="kpi-mini-value purple" id="kpi-movimientos">0</p></div></div>
         </div>
 
@@ -340,7 +340,7 @@
       <section class="page" id="page-clientes" aria-label="Directorio de clientes">
         <div class="section-header">
           <h1 class="section-title">Directorio de Clientes</h1>
-          <button class="btn btn-outline btn-sm" onclick="exportarCSV('clientes')">⬇ Exportar CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="exportarCSV('clientes')"> Exportar CSV</button>
         </div>
         <div class="toolbar">
           <div class="search-box"><input type="search" id="search-clientes" placeholder="Buscar nombre, teléfono o cuenta…" oninput="debouncedFiltrarClientes()"></div>
@@ -373,7 +373,7 @@
         <div class="section-header">
           <h1 class="section-title">Movimientos de Caja</h1>
           <div style="display:flex;gap:10px">
-            <button class="btn btn-outline btn-sm" onclick="exportarCSV('caja')">⬇ Exportar CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="exportarCSV('caja')"> Exportar CSV</button>
             <button class="btn btn-green" onclick="openModal('modal-caja')">+ Movimiento</button>
           </div>
         </div>
@@ -457,7 +457,7 @@
 
 <div class="modal-overlay" id="modal-nuevo-prestamo" role="dialog" aria-modal="true">
   <div class="modal-box">
-    <div class="modal-header"><h2 class="modal-title">📄 Nuevo Préstamo</h2><button class="modal-close" onclick="closeModal('modal-nuevo-prestamo')"></button></div>
+    <div class="modal-header"><h2 class="modal-title">📄 Nuevo Préstamo</h2><button class="modal-close" onclick="closeModal('modal-nuevo-prestamo')">✕</button></div>
     <div class="form-group"><label class="form-label">Nombre del Cliente *</label><input type="text" class="form-input" id="np-cliente"></div>
     <div class="form-group"><label class="form-label">Inversionista *</label><select class="form-select" id="np-inversionista"></select></div>
     <div class="form-group"><label class="form-label">Capital *</label><input type="number" class="form-input" id="np-capital" step="0.01" min="0.01"></div>
@@ -471,7 +471,7 @@
     <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" id="np-telefono"></div>
     <div class="form-group"><label class="form-label">CLABE / Cuenta</label><input type="text" class="form-input" id="np-clabe"></div>
     
-    <button type="button" class="btn btn-blue" onclick="generarTablaAmortizacion()" style="width:100%;margin-bottom:12px">📊 Generar Tabla de Amortización</button>
+    <button type="button" class="btn btn-blue" onclick="generarTablaAmortizacion()" style="width:100%;margin-bottom:12px"> Generar Tabla de Amortización</button>
     
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-nuevo-prestamo')">Cancelar</button><button class="btn btn-green" onclick="crearPrestamo()">Crear Préstamo</button></div>
   </div>
@@ -494,11 +494,20 @@
       </div>
     </div>
     
+    <!-- NUEVO: Selector de Tipo de Préstamo -->
+    <div style="margin-bottom:16px">
+      <label class="form-label">Forma de Pago</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn btn-green" onclick="cambiarTipoPago('intereses_final')" id="btn-tipo-intereses">💰 Intereses + Capital al final</button>
+        <button type="button" class="btn btn-outline" onclick="cambiarTipoPago('amortizacion')" id="btn-tipo-amortizacion">📉 Amortización constante</button>
+      </div>
+    </div>
+    
     <div style="margin-bottom:16px">
       <label class="form-label">Frecuencia de Pago</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button type="button" class="btn btn-outline" onclick="cambiarFrecuencia('semanal')" id="btn-semanal">📅 Semanal</button>
-        <button type="button" class="btn btn-outline" onclick="cambiarFrecuencia('quincenal')" id="btn-quincenal"> Quincenal</button>
+        <button type="button" class="btn btn-outline" onclick="cambiarFrecuencia('quincenal')" id="btn-quincenal">📆 Quincenal</button>
         <button type="button" class="btn btn-green" onclick="cambiarFrecuencia('mensual')" id="btn-mensual">📅 Mensual</button>
       </div>
     </div>
@@ -537,7 +546,7 @@
 
 <div class="modal-overlay" id="modal-nuevo-cliente" role="dialog" aria-modal="true">
   <div class="modal-box">
-    <div class="modal-header"><h2 class="modal-title">👤 Nuevo Cliente</h2><button class="modal-close" onclick="closeModal('modal-nuevo-cliente')">✕</button></div>
+    <div class="modal-header"><h2 class="modal-title"> Nuevo Cliente</h2><button class="modal-close" onclick="closeModal('modal-nuevo-cliente')">✕</button></div>
     <div class="form-group"><label class="form-label">Nombre *</label><input type="text" class="form-input" id="nc-cliente"></div>
     <div class="form-group"><label class="form-label">Inversionista *</label><select class="form-select" id="nc-inversionista"></select></div>
     <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" id="nc-telefono"></div>
@@ -559,7 +568,7 @@
 
 <div class="modal-overlay" id="modal-confirmar-eliminacion" role="alertdialog" aria-modal="true">
   <div class="modal-box" style="max-width:400px">
-    <div class="modal-header"><h2 class="modal-title">⚠️ Confirmar Eliminación</h2><button class="modal-close" onclick="closeModal('modal-confirmar-eliminacion')">✕</button></div>
+    <div class="modal-header"><h2 class="modal-title">️ Confirmar Eliminación</h2><button class="modal-close" onclick="closeModal('modal-confirmar-eliminacion')">✕</button></div>
     <p id="confirmar-eliminacion-msg" style="margin-bottom:20px;color:var(--text2);line-height:1.5"></p>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-confirmar-eliminacion')">Cancelar</button><button class="btn btn-red" id="btn-confirmar-eliminar">Eliminar</button></div>
   </div>
@@ -1022,7 +1031,7 @@ async function loadClientes(){
 function renderClientes(rows){
   const tbody=document.getElementById('tbody-clientes');
   setText('clientes-count',rows.length+' resultado'+(rows.length===1?'':'s'));
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">🔍</div><p>Sin resultados</p></div></td></tr>';return;}
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon"></div><p>Sin resultados</p></div></td></tr>';return;}
   const nd='<span style="color:var(--text3)">Sin registrar</span>';
   tbody.innerHTML=rows.map(c=>`
     <tr>
@@ -1147,7 +1156,7 @@ function renderCaja(rows){
       <td><strong>${sanitize(c.concepto)}</strong></td>
       <td class="td-mono" style="color:${c.tipo==='entrada'?'var(--green)':'var(--red)'}">${c.tipo==='entrada'?'+':'-'}${fmtMoney(c.monto)}</td>
       <td>${sanitize(c.periodo||'—')}</td>
-      <td>${ADMIN_ROLES.includes(currentUserRole)?`<button class="btn btn-red btn-sm" onclick="confirmarEliminarMovimiento(${c.id},'${sanitize(c.concepto)}',${c.monto})">🗑️</button>`:'—'}</td>
+      <td>${ADMIN_ROLES.includes(currentUserRole)?`<button class="btn btn-red btn-sm" onclick="confirmarEliminarMovimiento(${c.id},'${sanitize(c.concepto)}',${c.monto})">️</button>`:'—'}</td>
     </tr>`).join('');
 }
 
@@ -1251,7 +1260,7 @@ function exportarCSV(tabla){
   a.click(); URL.revokeObjectURL(url);
 }
 
-/* ── TABLA DE AMORTIZACIÓN ────────────────────────────── */
+/* ── TABLA DE AMORTIZACIÓN CON 2 TIPOS ──────────────────── */
 let amortizacionData = {
   cliente: '',
   capital: 0,
@@ -1259,6 +1268,7 @@ let amortizacionData = {
   tasaMensual: 0,
   plazo: 0,
   frecuencia: 'mensual',
+  tipoPago: 'intereses_final', // 'intereses_final' o 'amortizacion'
   pagos: []
 };
 
@@ -1287,6 +1297,7 @@ function generarTablaAmortizacion(){
     tasaMensual,
     plazo,
     frecuencia: 'mensual',
+    tipoPago: 'intereses_final',
     pagos: []
   };
   
@@ -1295,9 +1306,40 @@ function generarTablaAmortizacion(){
   document.getElementById('am-tasa').textContent = tasaMensual.toFixed(2) + '%';
   document.getElementById('am-plazo').textContent = plazo + ' mes(es)';
   
+  // Resetear botones
+  document.getElementById('btn-tipo-intereses').classList.remove('btn-outline');
+  document.getElementById('btn-tipo-intereses').classList.add('btn-green');
+  document.getElementById('btn-tipo-amortizacion').classList.remove('btn-green');
+  document.getElementById('btn-tipo-amortizacion').classList.add('btn-outline');
+  document.getElementById('btn-mensual').classList.remove('btn-outline');
+  document.getElementById('btn-mensual').classList.add('btn-green');
+  document.getElementById('btn-semanal').classList.remove('btn-green');
+  document.getElementById('btn-semanal').classList.add('btn-outline');
+  document.getElementById('btn-quincenal').classList.remove('btn-green');
+  document.getElementById('btn-quincenal').classList.add('btn-outline');
+  
   calcularAmortizacion('mensual', fechaInicio);
   
   openModal('modal-amortizacion');
+}
+
+function cambiarTipoPago(tipo){
+  amortizacionData.tipoPago = tipo;
+  const fechaInicio = document.getElementById('np-fecha').value;
+  calcularAmortizacion(amortizacionData.frecuencia, fechaInicio);
+  
+  // Actualizar botones
+  if(tipo === 'intereses_final'){
+    document.getElementById('btn-tipo-intereses').classList.remove('btn-outline');
+    document.getElementById('btn-tipo-intereses').classList.add('btn-green');
+    document.getElementById('btn-tipo-amortizacion').classList.remove('btn-green');
+    document.getElementById('btn-tipo-amortizacion').classList.add('btn-outline');
+  }else{
+    document.getElementById('btn-tipo-amortizacion').classList.remove('btn-outline');
+    document.getElementById('btn-tipo-amortizacion').classList.add('btn-green');
+    document.getElementById('btn-tipo-intereses').classList.remove('btn-green');
+    document.getElementById('btn-tipo-intereses').classList.add('btn-outline');
+  }
 }
 
 function cambiarFrecuencia(frecuencia){
@@ -1318,7 +1360,7 @@ function cambiarFrecuencia(frecuencia){
 }
 
 function calcularAmortizacion(frecuencia, fechaInicio){
-  const {capital, tasaMensual, plazo} = amortizacionData;
+  const {capital, tasaMensual, plazo, tipoPago} = amortizacionData;
   const pagos = [];
   let saldo = capital;
   let fecha = new Date(fechaInicio);
@@ -1340,10 +1382,36 @@ function calcularAmortizacion(frecuencia, fechaInicio){
   
   const tasaPeriodo = tasaMensual / divisor;
   
-  // Pagos de solo intereses
-  for(let i = 1; i < numPagos; i++){
-    const interesPago = saldo * (tasaPeriodo / 100);
-    const pago = interesPago;
+  if(tipoPago === 'intereses_final'){
+    // TIPO 1: Solo intereses periódicos, capital al final
+    for(let i = 1; i < numPagos; i++){
+      const interesPago = saldo * (tasaPeriodo / 100);
+      const pago = interesPago;
+      
+      switch(frecuencia){
+        case 'semanal':
+          fecha.setDate(fecha.getDate() + 7);
+          break;
+        case 'quincenal':
+          fecha.setDate(fecha.getDate() + 15);
+          break;
+        default:
+          fecha.setMonth(fecha.getMonth() + 1);
+      }
+      
+      pagos.push({
+        numero: i,
+        fecha: new Date(fecha),
+        interes: interesPago,
+        capital: 0,
+        pago: pago,
+        saldo: saldo
+      });
+    }
+    
+    // Último pago: capital + intereses
+    const interesUltimo = saldo * (tasaPeriodo / 100);
+    const pagoUltimo = saldo + interesUltimo;
     
     switch(frecuencia){
       case 'semanal':
@@ -1357,38 +1425,44 @@ function calcularAmortizacion(frecuencia, fechaInicio){
     }
     
     pagos.push({
-      numero: i,
+      numero: numPagos,
       fecha: new Date(fecha),
-      interes: interesPago,
-      capital: 0,
-      pago: pago,
-      saldo: saldo
+      interes: interesUltimo,
+      capital: saldo,
+      pago: pagoUltimo,
+      saldo: 0
     });
+  }else{
+    // TIPO 2: Amortización constante (capital + interés cada período)
+    const capitalPorPeriodo = capital / numPagos;
+    
+    for(let i = 1; i <= numPagos; i++){
+      const interesPago = saldo * (tasaPeriodo / 100);
+      const pago = capitalPorPeriodo + interesPago;
+      saldo -= capitalPorPeriodo;
+      if(saldo < 0) saldo = 0;
+      
+      switch(frecuencia){
+        case 'semanal':
+          fecha.setDate(fecha.getDate() + 7);
+          break;
+        case 'quincenal':
+          fecha.setDate(fecha.getDate() + 15);
+          break;
+        default:
+          fecha.setMonth(fecha.getMonth() + 1);
+      }
+      
+      pagos.push({
+        numero: i,
+        fecha: new Date(fecha),
+        interes: interesPago,
+        capital: capitalPorPeriodo,
+        pago: pago,
+        saldo: saldo
+      });
+    }
   }
-  
-  // Último pago: capital + intereses
-  const interesUltimo = saldo * (tasaPeriodo / 100);
-  const pagoUltimo = saldo + interesUltimo;
-  
-  switch(frecuencia){
-    case 'semanal':
-      fecha.setDate(fecha.getDate() + 7);
-      break;
-    case 'quincenal':
-      fecha.setDate(fecha.getDate() + 15);
-      break;
-    default:
-      fecha.setMonth(fecha.getMonth() + 1);
-  }
-  
-  pagos.push({
-    numero: numPagos,
-    fecha: new Date(fecha),
-    interes: interesUltimo,
-    capital: saldo,
-    pago: pagoUltimo,
-    saldo: 0
-  });
   
   amortizacionData.pagos = pagos;
   renderizarTablaAmortizacion(pagos);
@@ -1423,13 +1497,14 @@ function renderizarTablaAmortizacion(pagos){
 }
 
 function exportarTablaAmortizacion(){
-  const {cliente, capital, tasaMensual, plazo, frecuencia, pagos} = amortizacionData;
+  const {cliente, capital, tasaMensual, plazo, frecuencia, tipoPago, pagos} = amortizacionData;
   
   let csv = `PRÉSTAMO: ${cliente}\n`;
   csv += `CAPITAL: ${fmtMoney(capital)}\n`;
   csv += `TASA MENSUAL: ${tasaMensual.toFixed(2)}%\n`;
   csv += `PLAZO: ${plazo} mes(es)\n`;
-  csv += `FRECUENCIA: ${frecuencia}\n\n`;
+  csv += `FRECUENCIA: ${frecuencia}\n`;
+  csv += `TIPO: ${tipoPago === 'intereses_final' ? 'Intereses + Capital al final' : 'Amortización constante'}\n\n`;
   csv += 'NUM DE PAGO,FECHA,INTERES,CAPITAL,PAGO,SALDO\n';
   
   pagos.forEach(pago => {
