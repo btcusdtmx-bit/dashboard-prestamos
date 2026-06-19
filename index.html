@@ -248,7 +248,7 @@
       </div>
     </div>
     <div class="sidebar-footer">
-      <button class="btn-changepass" onclick="openModal('modal-changepass')">🔑 Cambiar contraseña</button>
+      <button class="btn-changepass" onclick="openModal('modal-changepass')"> Cambiar contraseña</button>
       <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
     </div>
   </nav>
@@ -297,10 +297,10 @@
         </section>
 
         <div class="charts-grid">
-          <article class="chart-card"><h2 class="chart-title">📊 Distribución de Cartera</h2><div class="chart-container"><canvas id="chartCartera"></canvas></div></article>
-          <article class="chart-card"><h2 class="chart-title">📈 Préstamos por Estatus</h2><div class="chart-container"><canvas id="chartEstatus"></canvas></div></article>
-          <article class="chart-card"><h2 class="chart-title">💵 Cartera por Inversionista</h2><div class="chart-container"><canvas id="chartInversionistas"></canvas></div></article>
-          <article class="chart-card"><h2 class="chart-title">🎯 Top 5 Clientes por Saldo</h2><div class="chart-container"><canvas id="chartTopClientes"></canvas></div></article>
+          <article class="chart-card"><h2 class="chart-title"> Distribución de Cartera</h2><div class="chart-container"><canvas id="chartCartera"></canvas></div></article>
+          <article class="chart-card"><h2 class="chart-title"> Préstamos por Estatus</h2><div class="chart-container"><canvas id="chartEstatus"></canvas></div></article>
+          <article class="chart-card"><h2 class="chart-title"> Cartera por Inversionista</h2><div class="chart-container"><canvas id="chartInversionistas"></canvas></div></article>
+          <article class="chart-card"><h2 class="chart-title"> Top 5 Clientes por Saldo</h2><div class="chart-container"><canvas id="chartTopClientes"></canvas></div></article>
         </div>
       </section>
 
@@ -457,7 +457,7 @@
 
 <div class="modal-overlay" id="modal-nuevo-prestamo" role="dialog" aria-modal="true">
   <div class="modal-box">
-    <div class="modal-header"><h2 class="modal-title">📄 Nuevo Préstamo</h2><button class="modal-close" onclick="closeModal('modal-nuevo-prestamo')">✕</button></div>
+    <div class="modal-header"><h2 class="modal-title">📄 Nuevo Préstamo</h2><button class="modal-close" onclick="closeModal('modal-nuevo-prestamo')"></button></div>
     <div class="form-group"><label class="form-label">Nombre del Cliente *</label><input type="text" class="form-input" id="np-cliente"></div>
     <div class="form-group"><label class="form-label">Inversionista *</label><select class="form-select" id="np-inversionista"></select></div>
     <div class="form-group"><label class="form-label">Capital *</label><input type="number" class="form-input" id="np-capital" step="0.01" min="0.01"></div>
@@ -466,10 +466,72 @@
       <input type="number" class="form-input" id="np-interes" step="0.01" placeholder="Ej: 10 para 10%">
       <p style="font-size:.72rem;color:var(--text3);margin-top:4px">Si ingresas menos de 100, se calcula como porcentaje del capital.</p>
     </div>
+    <div class="form-group"><label class="form-label">Plazo (meses)</label><input type="number" class="form-input" id="np-plazo" placeholder="Ej: 6" min="1"></div>
     <div class="form-group"><label class="form-label">Fecha de Inicio *</label><input type="date" class="form-input" id="np-fecha"></div>
     <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" id="np-telefono"></div>
     <div class="form-group"><label class="form-label">CLABE / Cuenta</label><input type="text" class="form-input" id="np-clabe"></div>
+    
+    <button type="button" class="btn btn-blue" onclick="generarTablaAmortizacion()" style="width:100%;margin-bottom:12px">📊 Generar Tabla de Amortización</button>
+    
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-nuevo-prestamo')">Cancelar</button><button class="btn btn-green" onclick="crearPrestamo()">Crear Préstamo</button></div>
+  </div>
+</div>
+
+<!-- MODAL DE TABLA DE AMORTIZACIÓN -->
+<div class="modal-overlay" id="modal-amortizacion" role="dialog" aria-modal="true">
+  <div class="modal-box" style="max-width:900px">
+    <div class="modal-header">
+      <h2 class="modal-title">📊 Tabla de Amortización</h2>
+      <button class="modal-close" onclick="closeModal('modal-amortizacion')">✕</button>
+    </div>
+    
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;margin-bottom:20px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+        <div><div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">Cliente</div><div style="font-weight:700" id="am-cliente">-</div></div>
+        <div><div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">Capital</div><div style="font-weight:700;color:var(--blue)" id="am-capital">-</div></div>
+        <div><div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">Tasa Mensual</div><div style="font-weight:700;color:var(--amber)" id="am-tasa">-</div></div>
+        <div><div style="font-size:.75rem;color:var(--text3);margin-bottom:4px">Plazo</div><div style="font-weight:700" id="am-plazo">-</div></div>
+      </div>
+    </div>
+    
+    <div style="margin-bottom:16px">
+      <label class="form-label">Frecuencia de Pago</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn btn-outline" onclick="cambiarFrecuencia('semanal')" id="btn-semanal">📅 Semanal</button>
+        <button type="button" class="btn btn-outline" onclick="cambiarFrecuencia('quincenal')" id="btn-quincenal"> Quincenal</button>
+        <button type="button" class="btn btn-green" onclick="cambiarFrecuencia('mensual')" id="btn-mensual">📅 Mensual</button>
+      </div>
+    </div>
+    
+    <div class="table-wrap" style="max-height:400px;overflow-y:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Interés</th>
+            <th>Capital</th>
+            <th>Pago</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody id="amortizacion-body"></tbody>
+      </table>
+    </div>
+    
+    <div style="background:var(--surface2);padding:16px;border-radius:8px;margin-top:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+        <div><div style="font-size:.75rem;color:var(--text3)">Total Intereses</div><div style="font-size:1.25rem;font-weight:700;color:var(--amber)" id="am-total-interes">$0.00</div></div>
+        <div><div style="font-size:.75rem;color:var(--text3)">Total Capital</div><div style="font-size:1.25rem;font-weight:700;color:var(--blue)" id="am-total-capital">$0.00</div></div>
+        <div><div style="font-size:.75rem;color:var(--text3)">Total a Pagar</div><div style="font-size:1.25rem;font-weight:700;color:var(--green)" id="am-total-pago">$0.00</div></div>
+      </div>
+    </div>
+    
+    <div class="modal-footer" style="margin-top:20px">
+      <button class="btn btn-outline" onclick="closeModal('modal-amortizacion')">Cancelar</button>
+      <button class="btn btn-blue" onclick="exportarTablaAmortizacion()">📥 Descargar CSV</button>
+      <button class="btn btn-green" onclick="confirmarPrestamoConTabla()">✅ Crear Préstamo</button>
+    </div>
   </div>
 </div>
 
@@ -904,14 +966,29 @@ async function crearPrestamo(){
   const telefono=document.getElementById('np-telefono').value.trim()||null;
   const clabe=document.getElementById('np-clabe').value.trim()||null;
   if(!cliente||!invId||!capital||!interes||!fecha){toast('error','Completa los campos obligatorios');return;}
-  if(interes<100){interes=capital*(interes/100);toast('success',`Interés calculado: ${fmtMoney(interes)}`);}
+  
+  if(interes<100){
+    interes=capital*(interes/100);
+    toast('success',`Interés calculado: ${fmtMoney(interes)} (${document.getElementById('np-interes').value}% del capital)`);
+  }
+  
   try{
     await Promise.all([
-      sb.from('inversiones').insert({cliente,inversionista_id:invId,capital,interes,fecha_inicial:fecha,telefono,clabe}),
+      sb.from('inversiones').insert({
+        cliente,
+        inversionista_id:invId,
+        capital,
+        interes,
+        fecha_inicial:fecha,
+        telefono,
+        clabe,
+        tipo_interes:'fijo',
+        tasa_mensual:null
+      }),
       sb.from('caja').insert({fecha,tipo:'salida',concepto:`Préstamo a ${cliente}`,monto:capital}),
     ]);
     closeModal('modal-nuevo-prestamo');
-    ['np-cliente','np-capital','np-interes','np-telefono','np-clabe'].forEach(id=>document.getElementById(id).value='');
+    ['np-cliente','np-capital','np-interes','np-plazo','np-telefono','np-clabe'].forEach(id=>document.getElementById(id).value='');
     toast('success',`Préstamo creado para ${cliente}`);
     loadDashboard(); loadPrestamos(); loadClientes();
   }catch(err){toast('error','Error: '+err.message);}
@@ -973,7 +1050,6 @@ async function verHistorialCliente(cliente){
   if(inv)verHistorial(inv.id,cliente);
 }
 
-/* ── SOCIOS: muestra AMBOS tipos de intereses ──────────── */
 async function loadSocios(){
   const grid=document.getElementById('socios-grid');
   grid.innerHTML='<p style="padding:20px;color:var(--text3)"><span class="spinner"></span> Cargando…</p>';
@@ -987,40 +1063,25 @@ async function loadSocios(){
       return;
     }
     
-    // Calcular intereses TOTALES del sistema (todos los préstamos)
-    const interesesTotalesSistema=vista.reduce((total,v)=>{
-      const interesTotal=+(v['Interés Total']||0);
-      return total+interesTotal;
-    },0);
-    
-    // Calcular intereses YA cobrados del sistema
+    const interesesTotalesSistema=vista.reduce((total,v)=>total+ +(v['Interés Total']||0),0);
     const interesesCobradosSistema=vista.reduce((total,v)=>{
       const pagado=+(v['Total Pagado']||0);
       const capital=+(v['Capital Original']||0);
       const interes=+(v['Interés Total']||0);
-      if(pagado>=(capital+interes)){
-        return total+interes;
-      }else if(pagado>capital){
-        return total+(pagado-capital);
-      }
+      if(pagado>=(capital+interes)) return total+interes;
+      else if(pagado>capital) return total+(pagado-capital);
       return total;
     },0);
     
-    // Calcular capital total del sistema
     const capitalTotalSistema=inversionistas.reduce((sum,inv)=>sum+ +(inv.capital_2026||0),0);
     
     grid.innerHTML=inversionistas.map(inv=>{
       const capitalSocio=inv.capital_2026||0;
       const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
       const totalPrestamos=clientesSocio.length;
-      
-      // Calcular % de participación del socio
       const porcentajeParticipacion=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema):0;
-      
-      // Intereses proporcionales para ESTE socio (según su % de capital)
       const interesesTotalesProporcionales=interesesTotalesSistema*porcentajeParticipacion;
       const interesesCobradosProporcionales=interesesCobradosSistema*porcentajeParticipacion;
-      
       const rendimientoTotal=capitalSocio>0?((interesesTotalesProporcionales/capitalSocio)*100):0;
       const rendimientoCobrado=capitalSocio>0?((interesesCobradosProporcionales/capitalSocio)*100):0;
       
@@ -1188,6 +1249,207 @@ function exportarCSV(tabla){
   const a=document.createElement('a');
   a.href=url; a.download=`${tabla}-${new Date().toISOString().split('T')[0]}.csv`;
   a.click(); URL.revokeObjectURL(url);
+}
+
+/* ── TABLA DE AMORTIZACIÓN ────────────────────────────── */
+let amortizacionData = {
+  cliente: '',
+  capital: 0,
+  interes: 0,
+  tasaMensual: 0,
+  plazo: 0,
+  frecuencia: 'mensual',
+  pagos: []
+};
+
+function generarTablaAmortizacion(){
+  const cliente = document.getElementById('np-cliente').value.trim();
+  const capital = parseFloat(document.getElementById('np-capital').value);
+  let interes = parseFloat(document.getElementById('np-interes').value);
+  const plazo = parseInt(document.getElementById('np-plazo').value) || 1;
+  const fechaInicio = document.getElementById('np-fecha').value;
+  
+  if(!cliente || !capital || !interes || !fechaInicio){
+    toast('error','Completa los campos obligatorios primero (Cliente, Capital, Interés, Fecha)');
+    return;
+  }
+  
+  if(interes < 100){
+    interes = capital * (interes / 100);
+  }
+  
+  const tasaMensual = (interes / capital) * 100;
+  
+  amortizacionData = {
+    cliente,
+    capital,
+    interes,
+    tasaMensual,
+    plazo,
+    frecuencia: 'mensual',
+    pagos: []
+  };
+  
+  document.getElementById('am-cliente').textContent = cliente;
+  document.getElementById('am-capital').textContent = fmtMoney(capital);
+  document.getElementById('am-tasa').textContent = tasaMensual.toFixed(2) + '%';
+  document.getElementById('am-plazo').textContent = plazo + ' mes(es)';
+  
+  calcularAmortizacion('mensual', fechaInicio);
+  
+  openModal('modal-amortizacion');
+}
+
+function cambiarFrecuencia(frecuencia){
+  amortizacionData.frecuencia = frecuencia;
+  const fechaInicio = document.getElementById('np-fecha').value;
+  calcularAmortizacion(frecuencia, fechaInicio);
+  
+  ['semanal','quincenal','mensual'].forEach(f=>{
+    const btn = document.getElementById('btn-'+f);
+    if(f === frecuencia){
+      btn.classList.remove('btn-outline');
+      btn.classList.add('btn-green');
+    }else{
+      btn.classList.remove('btn-green');
+      btn.classList.add('btn-outline');
+    }
+  });
+}
+
+function calcularAmortizacion(frecuencia, fechaInicio){
+  const {capital, tasaMensual, plazo} = amortizacionData;
+  const pagos = [];
+  let saldo = capital;
+  let fecha = new Date(fechaInicio);
+  
+  let divisor, numPagos;
+  switch(frecuencia){
+    case 'semanal':
+      divisor = 4.33;
+      numPagos = Math.round(plazo * 4.33);
+      break;
+    case 'quincenal':
+      divisor = 2;
+      numPagos = plazo * 2;
+      break;
+    default:
+      divisor = 1;
+      numPagos = plazo;
+  }
+  
+  const tasaPeriodo = tasaMensual / divisor;
+  
+  // Pagos de solo intereses
+  for(let i = 1; i < numPagos; i++){
+    const interesPago = saldo * (tasaPeriodo / 100);
+    const pago = interesPago;
+    
+    switch(frecuencia){
+      case 'semanal':
+        fecha.setDate(fecha.getDate() + 7);
+        break;
+      case 'quincenal':
+        fecha.setDate(fecha.getDate() + 15);
+        break;
+      default:
+        fecha.setMonth(fecha.getMonth() + 1);
+    }
+    
+    pagos.push({
+      numero: i,
+      fecha: new Date(fecha),
+      interes: interesPago,
+      capital: 0,
+      pago: pago,
+      saldo: saldo
+    });
+  }
+  
+  // Último pago: capital + intereses
+  const interesUltimo = saldo * (tasaPeriodo / 100);
+  const pagoUltimo = saldo + interesUltimo;
+  
+  switch(frecuencia){
+    case 'semanal':
+      fecha.setDate(fecha.getDate() + 7);
+      break;
+    case 'quincenal':
+      fecha.setDate(fecha.getDate() + 15);
+      break;
+    default:
+      fecha.setMonth(fecha.getMonth() + 1);
+  }
+  
+  pagos.push({
+    numero: numPagos,
+    fecha: new Date(fecha),
+    interes: interesUltimo,
+    capital: saldo,
+    pago: pagoUltimo,
+    saldo: 0
+  });
+  
+  amortizacionData.pagos = pagos;
+  renderizarTablaAmortizacion(pagos);
+}
+
+function renderizarTablaAmortizacion(pagos){
+  const tbody = document.getElementById('amortizacion-body');
+  let totalInteres = 0;
+  let totalCapital = 0;
+  let totalPago = 0;
+  
+  tbody.innerHTML = pagos.map(pago => {
+    totalInteres += pago.interes;
+    totalCapital += pago.capital;
+    totalPago += pago.pago;
+    
+    return `
+      <tr>
+        <td>${pago.numero}</td>
+        <td>${fmtDate(pago.fecha.toISOString())}</td>
+        <td style="color:var(--amber);font-weight:600">${fmtMoney(pago.interes)}</td>
+        <td style="color:var(--blue);font-weight:600">${fmtMoney(pago.capital)}</td>
+        <td style="font-weight:700">${fmtMoney(pago.pago)}</td>
+        <td style="color:${pago.saldo > 0 ? 'var(--amber)' : 'var(--green)'};font-weight:600">${fmtMoney(pago.saldo)}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  document.getElementById('am-total-interes').textContent = fmtMoney(totalInteres);
+  document.getElementById('am-total-capital').textContent = fmtMoney(totalCapital);
+  document.getElementById('am-total-pago').textContent = fmtMoney(totalPago);
+}
+
+function exportarTablaAmortizacion(){
+  const {cliente, capital, tasaMensual, plazo, frecuencia, pagos} = amortizacionData;
+  
+  let csv = `PRÉSTAMO: ${cliente}\n`;
+  csv += `CAPITAL: ${fmtMoney(capital)}\n`;
+  csv += `TASA MENSUAL: ${tasaMensual.toFixed(2)}%\n`;
+  csv += `PLAZO: ${plazo} mes(es)\n`;
+  csv += `FRECUENCIA: ${frecuencia}\n\n`;
+  csv += 'NUM DE PAGO,FECHA,INTERES,CAPITAL,PAGO,SALDO\n';
+  
+  pagos.forEach(pago => {
+    csv += `${pago.numero},${pago.fecha.toISOString().split('T')[0]},${pago.interes.toFixed(2)},${pago.capital.toFixed(2)},${pago.pago.toFixed(2)},${pago.saldo.toFixed(2)}\n`;
+  });
+  
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `amortizacion-${cliente.replace(/\s+/g, '_')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  toast('success', 'Tabla descargada');
+}
+
+function confirmarPrestamoConTabla(){
+  closeModal('modal-amortizacion');
+  crearPrestamo();
 }
 </script>
 </body>
