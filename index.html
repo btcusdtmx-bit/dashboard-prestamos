@@ -494,7 +494,6 @@
       </div>
     </div>
     
-    <!-- NUEVO: Selector de Tipo de Préstamo -->
     <div style="margin-bottom:16px">
       <label class="form-label">Forma de Pago</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -1268,7 +1267,7 @@ let amortizacionData = {
   tasaMensual: 0,
   plazo: 0,
   frecuencia: 'mensual',
-  tipoPago: 'intereses_final', // 'intereses_final' o 'amortizacion'
+  tipoPago: 'intereses_final',
   pagos: []
 };
 
@@ -1306,7 +1305,6 @@ function generarTablaAmortizacion(){
   document.getElementById('am-tasa').textContent = tasaMensual.toFixed(2) + '%';
   document.getElementById('am-plazo').textContent = plazo + ' mes(es)';
   
-  // Resetear botones
   document.getElementById('btn-tipo-intereses').classList.remove('btn-outline');
   document.getElementById('btn-tipo-intereses').classList.add('btn-green');
   document.getElementById('btn-tipo-amortizacion').classList.remove('btn-green');
@@ -1328,7 +1326,6 @@ function cambiarTipoPago(tipo){
   const fechaInicio = document.getElementById('np-fecha').value;
   calcularAmortizacion(amortizacionData.frecuencia, fechaInicio);
   
-  // Actualizar botones
   if(tipo === 'intereses_final'){
     document.getElementById('btn-tipo-intereses').classList.remove('btn-outline');
     document.getElementById('btn-tipo-intereses').classList.add('btn-green');
@@ -1381,11 +1378,9 @@ function calcularAmortizacion(frecuencia, fechaInicio){
   }
   
   const tasaPeriodo = tasaMensual / divisor;
-  // Interés fijo sobre capital original
   const interesFijo = capital * (tasaPeriodo / 100);
   
   if(tipoPago === 'intereses_final'){
-    // TIPO 1: Solo intereses periódicos, capital al final
     for(let i = 1; i < numPagos; i++){
       switch(frecuencia){
         case 'semanal':
@@ -1408,7 +1403,6 @@ function calcularAmortizacion(frecuencia, fechaInicio){
       });
     }
     
-    // Último pago: capital + intereses
     switch(frecuencia){
       case 'semanal':
         fecha.setDate(fecha.getDate() + 7);
@@ -1429,7 +1423,6 @@ function calcularAmortizacion(frecuencia, fechaInicio){
       saldo: 0
     });
   }else{
-    // TIPO 2: Amortización constante (capital fijo + interés fijo cada período)
     const capitalPorPeriodo = capital / numPagos;
     
     for(let i = 1; i <= numPagos; i++){
@@ -1453,65 +1446,6 @@ function calcularAmortizacion(frecuencia, fechaInicio){
         interes: interesFijo,
         capital: capitalPorPeriodo,
         pago: capitalPorPeriodo + interesFijo,
-        saldo: saldo
-      });
-    }
-  }
-  
-  amortizacionData.pagos = pagos;
-  renderizarTablaAmortizacion(pagos);
-}
-    
-    // Último pago: capital + intereses
-    const interesUltimo = saldo * (tasaPeriodo / 100);
-    const pagoUltimo = saldo + interesUltimo;
-    
-    switch(frecuencia){
-      case 'semanal':
-        fecha.setDate(fecha.getDate() + 7);
-        break;
-      case 'quincenal':
-        fecha.setDate(fecha.getDate() + 15);
-        break;
-      default:
-        fecha.setMonth(fecha.getMonth() + 1);
-    }
-    
-    pagos.push({
-      numero: numPagos,
-      fecha: new Date(fecha),
-      interes: interesUltimo,
-      capital: saldo,
-      pago: pagoUltimo,
-      saldo: 0
-    });
-  }else{
-    // TIPO 2: Amortización constante (capital + interés cada período)
-    const capitalPorPeriodo = capital / numPagos;
-    
-    for(let i = 1; i <= numPagos; i++){
-      const interesPago = saldo * (tasaPeriodo / 100);
-      const pago = capitalPorPeriodo + interesPago;
-      saldo -= capitalPorPeriodo;
-      if(saldo < 0) saldo = 0;
-      
-      switch(frecuencia){
-        case 'semanal':
-          fecha.setDate(fecha.getDate() + 7);
-          break;
-        case 'quincenal':
-          fecha.setDate(fecha.getDate() + 15);
-          break;
-        default:
-          fecha.setMonth(fecha.getMonth() + 1);
-      }
-      
-      pagos.push({
-        numero: i,
-        fecha: new Date(fecha),
-        interes: interesPago,
-        capital: capitalPorPeriodo,
-        pago: pago,
         saldo: saldo
       });
     }
