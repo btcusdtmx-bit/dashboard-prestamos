@@ -1381,12 +1381,60 @@ function calcularAmortizacion(frecuencia, fechaInicio){
   }
   
   const tasaPeriodo = tasaMensual / divisor;
+  // Interés fijo sobre capital original
+  const interesFijo = capital * (tasaPeriodo / 100);
   
   if(tipoPago === 'intereses_final'){
     // TIPO 1: Solo intereses periódicos, capital al final
     for(let i = 1; i < numPagos; i++){
-      const interesPago = saldo * (tasaPeriodo / 100);
-      const pago = interesPago;
+      switch(frecuencia){
+        case 'semanal':
+          fecha.setDate(fecha.getDate() + 7);
+          break;
+        case 'quincenal':
+          fecha.setDate(fecha.getDate() + 15);
+          break;
+        default:
+          fecha.setMonth(fecha.getMonth() + 1);
+      }
+      
+      pagos.push({
+        numero: i,
+        fecha: new Date(fecha),
+        interes: interesFijo,
+        capital: 0,
+        pago: interesFijo,
+        saldo: saldo
+      });
+    }
+    
+    // Último pago: capital + intereses
+    switch(frecuencia){
+      case 'semanal':
+        fecha.setDate(fecha.getDate() + 7);
+        break;
+      case 'quincenal':
+        fecha.setDate(fecha.getDate() + 15);
+        break;
+      default:
+        fecha.setMonth(fecha.getMonth() + 1);
+    }
+    
+    pagos.push({
+      numero: numPagos,
+      fecha: new Date(fecha),
+      interes: interesFijo,
+      capital: saldo,
+      pago: saldo + interesFijo,
+      saldo: 0
+    });
+  }else{
+    // TIPO 2: Amortización constante (capital fijo + interés fijo cada período)
+    const capitalPorPeriodo = capital / numPagos;
+    
+    for(let i = 1; i <= numPagos; i++){
+      saldo -= capitalPorPeriodo;
+      if(saldo < 0) saldo = 0;
       
       switch(frecuencia){
         case 'semanal':
@@ -1402,12 +1450,17 @@ function calcularAmortizacion(frecuencia, fechaInicio){
       pagos.push({
         numero: i,
         fecha: new Date(fecha),
-        interes: interesPago,
-        capital: 0,
-        pago: pago,
+        interes: interesFijo,
+        capital: capitalPorPeriodo,
+        pago: capitalPorPeriodo + interesFijo,
         saldo: saldo
       });
     }
+  }
+  
+  amortizacionData.pagos = pagos;
+  renderizarTablaAmortizacion(pagos);
+}
     
     // Último pago: capital + intereses
     const interesUltimo = saldo * (tasaPeriodo / 100);
