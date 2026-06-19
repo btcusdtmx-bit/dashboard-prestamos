@@ -987,6 +987,25 @@ async function loadSocios(){
       return;
     }
     
+    // Calcular intereses TOTALES del sistema (todos los préstamos)
+    const interesesTotalesSistema=vista.reduce((total,v)=>{
+      const interesTotal=+(v['Interés Total']||0);
+      return total+interesTotal;
+    },0);
+    
+    // Calcular intereses YA cobrados del sistema
+    const interesesCobradosSistema=vista.reduce((total,v)=>{
+      const pagado=+(v['Total Pagado']||0);
+      const capital=+(v['Capital Original']||0);
+      const interes=+(v['Interés Total']||0);
+      if(pagado>=(capital+interes)){
+        return total+interes;
+      }else if(pagado>capital){
+        return total+(pagado-capital);
+      }
+      return total;
+    },0);
+    
     // Calcular capital total del sistema
     const capitalTotalSistema=inversionistas.reduce((sum,inv)=>sum+ +(inv.capital_2026||0),0);
     
@@ -995,25 +1014,12 @@ async function loadSocios(){
       const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
       const totalPrestamos=clientesSocio.length;
       
-      // Intereses TOTALES generados (como el Excel - incluye pendientes)
-      const interesesTotalesGenerados=clientesSocio.reduce((a,v)=>a+ +(v['Interés Total']||0),0);
+      // Calcular % de participación del socio
+      const porcentajeParticipacion=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema):0;
       
-      // Intereses YA cobrados (solo lo pagado efectivamente)
-      const interesesYaCobrados=clientesSocio.reduce((a,v)=>{
-        const pagado=+(v['Total Pagado']||0);
-        const capital=+(v['Capital Original']||0);
-        const interes=+(v['Interés Total']||0);
-        if(pagado>=(capital+interes)){
-          return a+interes;
-        }else if(pagado>capital){
-          return a+(pagado-capital);
-        }
-        return a;
-      },0);
-      
-      // Intereses proporcionales al % de capital
-      const interesesTotalesProporcionales=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema)*interesesTotalesGenerados:0;
-      const interesesCobradosProporcionales=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema)*interesesYaCobrados:0;
+      // Intereses proporcionales para ESTE socio (según su % de capital)
+      const interesesTotalesProporcionales=interesesTotalesSistema*porcentajeParticipacion;
+      const interesesCobradosProporcionales=interesesCobradosSistema*porcentajeParticipacion;
       
       const rendimientoTotal=capitalSocio>0?((interesesTotalesProporcionales/capitalSocio)*100):0;
       const rendimientoCobrado=capitalSocio>0?((interesesCobradosProporcionales/capitalSocio)*100):0;
@@ -1045,6 +1051,7 @@ async function loadSocios(){
           <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
             <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">PRÉSTAMOS ASIGNADOS</div>
             <div style="font-size:1.5rem;font-weight:700;color:var(--amber)">${totalPrestamos}</div>
+            <div style="font-size:.7rem;color:var(--text3);margin-top:6px">Informativo - no afecta distribución</div>
           </div>
         </div>`;
     }).join('');
