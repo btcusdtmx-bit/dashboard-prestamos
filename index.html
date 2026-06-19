@@ -973,6 +973,7 @@ async function verHistorialCliente(cliente){
   if(inv)verHistorial(inv.id,cliente);
 }
 
+/* ── SOCIOS: muestra AMBOS tipos de intereses ──────────── */
 async function loadSocios(){
   const grid=document.getElementById('socios-grid');
   grid.innerHTML='<p style="padding:20px;color:var(--text3)"><span class="spinner"></span> Cargando…</p>';
@@ -986,29 +987,36 @@ async function loadSocios(){
       return;
     }
     
-    // Calcular intereses totales del sistema
-    const interesesTotalesSistema=(vista||[]).reduce((total,v)=>{
-      const pagado=+(v['Total Pagado']||0);
-      const capital=+(v['Capital Original']||0);
-      const interes=+(v['Interés Total']||0);
-      if(pagado>=(capital+interes)){
-        return total+interes;
-      }else if(pagado>capital){
-        return total+(pagado-capital);
-      }
-      return total;
-    },0);
-    
     // Calcular capital total del sistema
     const capitalTotalSistema=inversionistas.reduce((sum,inv)=>sum+ +(inv.capital_2026||0),0);
     
     grid.innerHTML=inversionistas.map(inv=>{
       const capitalSocio=inv.capital_2026||0;
-      // Calcular intereses proporcionales: (capital_socio / capital_total) * intereses_totales
-      const interesesGanados=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema)*interesesTotalesSistema:0;
-      const rendimiento=capitalSocio>0?((interesesGanados/capitalSocio)*100):0;
       const clientesSocio=(vista||[]).filter(v=>v.Inversionista===inv.nombre);
       const totalPrestamos=clientesSocio.length;
+      
+      // Intereses TOTALES generados (como el Excel - incluye pendientes)
+      const interesesTotalesGenerados=clientesSocio.reduce((a,v)=>a+ +(v['Interés Total']||0),0);
+      
+      // Intereses YA cobrados (solo lo pagado efectivamente)
+      const interesesYaCobrados=clientesSocio.reduce((a,v)=>{
+        const pagado=+(v['Total Pagado']||0);
+        const capital=+(v['Capital Original']||0);
+        const interes=+(v['Interés Total']||0);
+        if(pagado>=(capital+interes)){
+          return a+interes;
+        }else if(pagado>capital){
+          return a+(pagado-capital);
+        }
+        return a;
+      },0);
+      
+      // Intereses proporcionales al % de capital
+      const interesesTotalesProporcionales=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema)*interesesTotalesGenerados:0;
+      const interesesCobradosProporcionales=capitalTotalSistema>0?(capitalSocio/capitalTotalSistema)*interesesYaCobrados:0;
+      
+      const rendimientoTotal=capitalSocio>0?((interesesTotalesProporcionales/capitalSocio)*100):0;
+      const rendimientoCobrado=capitalSocio>0?((interesesCobradosProporcionales/capitalSocio)*100):0;
       
       return `
         <div class="stat-card">
@@ -1016,19 +1024,27 @@ async function loadSocios(){
           <div style="font-size:.8rem;color:var(--text2);margin-bottom:20px;font-family:monospace">${inv.email||'—'}</div>
           
           <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--green)">
-            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES GANADOS 2026</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${fmtMoney(interesesGanados)}</div>
-            <div style="font-size:.85rem;color:var(--amber);margin-top:4px;font-weight:600">${rendimiento.toFixed(1)}% rendimiento</div>
+            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES TOTALES GENERADOS</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--green)">${fmtMoney(interesesTotalesProporcionales)}</div>
+            <div style="font-size:.85rem;color:var(--amber);margin-top:4px;font-weight:600">${rendimientoTotal.toFixed(1)}% rendimiento</div>
+            <div style="font-size:.7rem;color:var(--text3);margin-top:6px">Incluye intereses pendientes</div>
           </div>
           
           <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--blue)">
-            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL INVERTIDO</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(capitalSocio)}</div>
+            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">INTERESES YA COBRADOS</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${fmtMoney(interesesCobradosProporcionales)}</div>
+            <div style="font-size:.85rem;color:var(--green);margin-top:4px;font-weight:600">${rendimientoCobrado.toFixed(1)}% cobrado</div>
+            <div style="font-size:.7rem;color:var(--text3);margin-top:6px">Solo intereses pagados efectivamente</div>
           </div>
           
-          <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--purple)">
+          <div style="margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--purple)">
+            <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">CAPITAL INVERTIDO</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--purple)">${fmtMoney(capitalSocio)}</div>
+          </div>
+          
+          <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
             <div style="font-size:.7rem;color:var(--text3);margin-bottom:4px">PRÉSTAMOS ASIGNADOS</div>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--purple)">${totalPrestamos}</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--amber)">${totalPrestamos}</div>
           </div>
         </div>`;
     }).join('');
