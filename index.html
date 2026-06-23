@@ -1383,99 +1383,76 @@ function calcularAmortizacion(frecuencia, fechaInicio){
     // TIPO 1: Solo intereses periódicos, capital al final
     let tasaPeriodo;
     switch(frecuencia){
-      case 'semanal':
-        tasaPeriodo = tasaMensual / 4.33;
-        break;
-      case 'quincenal':
-        tasaPeriodo = tasaMensual / 2;
-        break;
-      default:
-        tasaPeriodo = tasaMensual;
+      case 'semanal': tasaPeriodo = tasaMensual / 4.33; break;
+      case 'quincenal': tasaPeriodo = tasaMensual / 2; break;
+      default: tasaPeriodo = tasaMensual;
     }
     const interesFijo = capital * (tasaPeriodo / 100);
     
     for(let i = 1; i < numPagos; i++){
       switch(frecuencia){
-        case 'semanal':
-          fecha.setDate(fecha.getDate() + 7);
-          break;
-        case 'quincenal':
-          fecha.setDate(fecha.getDate() + 15);
-          break;
-        default:
-          fecha.setMonth(fecha.getMonth() + 1);
+        case 'semanal': fecha.setDate(fecha.getDate() + 7); break;
+        case 'quincenal': fecha.setDate(fecha.getDate() + 15); break;
+        default: fecha.setMonth(fecha.getMonth() + 1);
       }
-      
-      pagos.push({
-        numero: i,
-        fecha: new Date(fecha),
-        interes: interesFijo,
-        capital: 0,
-        pago: interesFijo,
-        saldo: saldo
-      });
+      pagos.push({numero: i, fecha: new Date(fecha), interes: interesFijo, capital: 0, pago: interesFijo, saldo: saldo});
     }
     
     switch(frecuencia){
-      case 'semanal':
-        fecha.setDate(fecha.getDate() + 7);
-        break;
-      case 'quincenal':
-        fecha.setDate(fecha.getDate() + 15);
-        break;
-      default:
-        fecha.setMonth(fecha.getMonth() + 1);
+      case 'semanal': fecha.setDate(fecha.getDate() + 7); break;
+      case 'quincenal': fecha.setDate(fecha.getDate() + 15); break;
+      default: fecha.setMonth(fecha.getMonth() + 1);
     }
-    
-    const interesUltimo = capital * (tasaPeriodo / 100);
-    pagos.push({
-      numero: numPagos,
-      fecha: new Date(fecha),
-      interes: interesUltimo,
-      capital: saldo,
-      pago: saldo + interesUltimo,
-      saldo: 0
-    });
+    pagos.push({numero: numPagos, fecha: new Date(fecha), interes: interesFijo, capital: saldo, pago: saldo + interesFijo, saldo: 0});
   }else{
     // TIPO 2: Amortización con cálculo MENSUAL del interés sobre saldo
     let pagoActual = 1;
-    let mesActual = 0;
+    let pagosEnMesActual = 0;
     
-    while(pagoActual <= numPagos && mesActual < plazo){
+    while(pagoActual <= numPagos){
       // Calcular interés del mes sobre el saldo actual
       const interesMensual = saldo * (tasaMensual / 100);
       const interesPorPago = interesMensual / pagosPorMes;
       
-      // Generar pagos de este mes
-      for(let p = 0; p < pagosPorMes && pagoActual <= numPagos; p++){
-        const pagoTotal = interesPorPago + capitalPorPago;
-        saldo -= capitalPorPago;
+      // Determinar cuántos pagos hacer en este mes
+      const pagosRestantes = numPagos - pagoActual + 1;
+      const pagosEnEsteMes = Math.min(pagosPorMes - pagosEnMesActual, pagosRestantes);
+      
+      for(let p = 0; p < pagosEnEsteMes && pagoActual <= numPagos; p++){
+        let capitalEstePago = capitalPorPago;
+        
+        // El último pago absorbe el residuo del capital
+        if(pagoActual === numPagos){
+          capitalEstePago = saldo;
+        }
+        
+        const pagoTotal = interesPorPago + capitalEstePago;
+        saldo -= capitalEstePago;
         if(saldo < 0) saldo = 0;
         
         switch(frecuencia){
-          case 'semanal':
-            fecha.setDate(fecha.getDate() + 7);
-            break;
-          case 'quincenal':
-            fecha.setDate(fecha.getDate() + 15);
-            break;
-          default:
-            fecha.setMonth(fecha.getMonth() + 1);
+          case 'semanal': fecha.setDate(fecha.getDate() + 7); break;
+          case 'quincenal': fecha.setDate(fecha.getDate() + 15); break;
+          default: fecha.setMonth(fecha.getMonth() + 1);
         }
         
         pagos.push({
           numero: pagoActual,
           fecha: new Date(fecha),
           interes: interesPorPago,
-          capital: capitalPorPago,
+          capital: capitalEstePago,
           pago: pagoTotal,
           saldo: saldo
         });
         
         pagoActual++;
+        pagosEnMesActual++;
       }
       
-      mesActual++;
+      // Resetear contador de pagos del mes cuando se completa
+      if(pagosEnMesActual >= pagosPorMes){
+        pagosEnMesActual = 0;
+      }
     }
   }
   
