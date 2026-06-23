@@ -1438,18 +1438,31 @@ function calcularAmortizacion(frecuencia, fechaInicio){
     });
   }else{
     // TIPO 2: Amortización con cálculo MENSUAL del interés sobre saldo
+    // Generar TODOS los pagos necesarios
     let pagoActual = 1;
     let mesActual = 0;
+    let pagosEnMesActual = 0;
     
-    while(pagoActual <= numPagos && mesActual < plazo){
+    while(pagoActual <= numPagos){
       // Calcular interés del mes sobre el saldo actual
       const interesMensual = saldo * (tasaMensual / 100);
+      
+      // Determinar cuántos pagos quedan en este mes
+      const pagosRestantes = numPagos - pagoActual + 1;
+      const pagosEnEsteMes = Math.min(pagosPorMes - pagosEnMesActual, pagosRestantes);
+      
       const interesPorPago = interesMensual / pagosPorMes;
       
       // Generar pagos de este mes
-      for(let p = 0; p < pagosPorMes && pagoActual <= numPagos; p++){
-        const pagoTotal = interesPorPago + capitalPorPago;
-        saldo -= capitalPorPago;
+      for(let p = 0; p < pagosEnEsteMes && pagoActual <= numPagos; p++){
+        // El último pago absorbe el residuo del capital
+        let capitalEstePago = capitalPorPago;
+        if(pagoActual === numPagos){
+          capitalEstePago = saldo; // Pagar todo el saldo restante
+        }
+        
+        const pagoTotal = interesPorPago + capitalEstePago;
+        saldo -= capitalEstePago;
         if(saldo < 0) saldo = 0;
         
         switch(frecuencia){
@@ -1467,22 +1480,26 @@ function calcularAmortizacion(frecuencia, fechaInicio){
           numero: pagoActual,
           fecha: new Date(fecha),
           interes: interesPorPago,
-          capital: capitalPorPago,
+          capital: capitalEstePago,
           pago: pagoTotal,
           saldo: saldo
         });
         
         pagoActual++;
+        pagosEnMesActual++;
       }
       
-      mesActual++;
+      // Si completamos un mes, resetear contador y avanzar
+      if(pagosEnMesActual >= pagosPorMes || pagoActual > numPagos){
+        mesActual++;
+        pagosEnMesActual = 0;
+      }
     }
   }
   
   amortizacionData.pagos = pagos;
   renderizarTablaAmortizacion(pagos);
 }
-
 function renderizarTablaAmortizacion(pagos){
   const tbody = document.getElementById('amortizacion-body');
   let totalInteres = 0;
