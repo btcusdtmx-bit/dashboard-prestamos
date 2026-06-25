@@ -1181,39 +1181,49 @@ async function eliminarMovimiento(movId){
     const{data:movimiento,error:fetchError}=await sb.from('caja').select('*').eq('id',movId).single();
     if(fetchError)throw fetchError;
     
-    // Si es un préstamo, buscar y eliminar de inversiones
-    if(movimiento.concepto&&movimiento.concepto.includes('Préstamo')){
-      // Buscar el préstamo por capital y fecha coincidentes
+    // Si es un préstamo (concepto contiene "Préstamo a"), eliminar también de inversiones
+    if(movimiento.concepto&&movimiento.concepto.includes('Préstamo a')){
+      // Extraer nombre del cliente del concepto "Préstamo a XXX"
+      const nombreCliente=movimiento.concepto.replace('Préstamo a ','').trim();
+      
+      // Buscar el préstamo en inversiones
       const{data:inversiones,error:invError}=await sb
         .from('inversiones')
-        .select('id,capital,fecha_inicial')
+        .select('id')
+        .eq('cliente',nombreCliente)
         .eq('capital',movimiento.monto)
         .eq('fecha_inicial',movimiento.fecha);
       
-      if(invError)console.error('Error buscando inversión:',invError);
+      if(invError){
+        console.error('Error buscando inversión:',invError);
+      }
       
       if(inversiones&&inversiones.length>0){
         const inversionId=inversiones[0].id;
         
-        // Eliminar pagos realizados asociados
+        // 1. Eliminar pagos realizados asociados al préstamo
         await sb.from('pagos_realizados').delete().eq('inversion_id',inversionId);
         
-        // Eliminar el préstamo
+        // 2. Eliminar el préstamo de inversiones
         await sb.from('inversiones').delete().eq('id',inversionId);
         
         console.log('Préstamo eliminado:',inversionId);
       }
     }
     
-    // Eliminar el movimiento de caja
+    // 3. Eliminar el movimiento de caja
     const{error}=await sb.from('caja').delete().eq('id',movId);
     if(error)throw error;
     
     closeModal('modal-confirmar-eliminacion');
     toast('success','Movimiento y préstamo eliminados correctamente');
-    loadCaja();loadDashboard();loadPrestamos();
+    
+    // 4. Recargar todas las vistas
+    loadCaja();
+    loadDashboard();
+    loadPrestamos();
   }catch(err){
-    toast('error','Error: '+err.message);
+    toast('error','Error al eliminar: '+err.message);
   }
 }
 
