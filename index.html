@@ -1177,24 +1177,31 @@ function confirmarEliminarMovimiento(movId,concepto,monto){
 
 async function eliminarMovimiento(movId){
   try{
-    // Primero obtener información del movimiento
+    // Obtener información del movimiento
     const{data:movimiento,error:fetchError}=await sb.from('caja').select('*').eq('id',movId).single();
     if(fetchError)throw fetchError;
     
-    // Si es un préstamo (concepto empieza con "Préstamo a"), eliminar también de inversiones
-    if(movimiento.concepto&&movimiento.concepto.startsWith('Préstamo a')){
-      // Extraer nombre del cliente del concepto
-      const nombreCliente=movimiento.concepto.replace('Préstamo a ','');
+    // Si es un préstamo, buscar y eliminar de inversiones
+    if(movimiento.concepto&&movimiento.concepto.includes('Préstamo')){
+      // Buscar el préstamo por capital y fecha coincidentes
+      const{data:inversiones,error:invError}=await sb
+        .from('inversiones')
+        .select('id,capital,fecha_inicial')
+        .eq('capital',movimiento.monto)
+        .eq('fecha_inicial',movimiento.fecha);
       
-      // Eliminar pagos asociados primero
-      const{data:inversion}=await sb.from('inversiones').select('id').eq('cliente',nombreCliente).eq('fecha_inicial',movimiento.fecha).single();
+      if(invError)console.error('Error buscando inversión:',invError);
       
-      if(inversion){
-        // Eliminar pagos realizados
-        await sb.from('pagos_realizados').delete().eq('inversion_id',inversion.id);
+      if(inversiones&&inversiones.length>0){
+        const inversionId=inversiones[0].id;
+        
+        // Eliminar pagos realizados asociados
+        await sb.from('pagos_realizados').delete().eq('inversion_id',inversionId);
         
         // Eliminar el préstamo
-        await sb.from('inversiones').delete().eq('id',inversion.id);
+        await sb.from('inversiones').delete().eq('id',inversionId);
+        
+        console.log('Préstamo eliminado:',inversionId);
       }
     }
     
@@ -1203,7 +1210,7 @@ async function eliminarMovimiento(movId){
     if(error)throw error;
     
     closeModal('modal-confirmar-eliminacion');
-    toast('success','Movimiento eliminado correctamente');
+    toast('success','Movimiento y préstamo eliminados correctamente');
     loadCaja();loadDashboard();loadPrestamos();
   }catch(err){
     toast('error','Error: '+err.message);
