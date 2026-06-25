@@ -1177,12 +1177,37 @@ function confirmarEliminarMovimiento(movId,concepto,monto){
 
 async function eliminarMovimiento(movId){
   try{
+    // Primero obtener información del movimiento
+    const{data:movimiento,error:fetchError}=await sb.from('caja').select('*').eq('id',movId).single();
+    if(fetchError)throw fetchError;
+    
+    // Si es un préstamo (concepto empieza con "Préstamo a"), eliminar también de inversiones
+    if(movimiento.concepto&&movimiento.concepto.startsWith('Préstamo a')){
+      // Extraer nombre del cliente del concepto
+      const nombreCliente=movimiento.concepto.replace('Préstamo a ','');
+      
+      // Eliminar pagos asociados primero
+      const{data:inversion}=await sb.from('inversiones').select('id').eq('cliente',nombreCliente).eq('fecha_inicial',movimiento.fecha).single();
+      
+      if(inversion){
+        // Eliminar pagos realizados
+        await sb.from('pagos_realizados').delete().eq('inversion_id',inversion.id);
+        
+        // Eliminar el préstamo
+        await sb.from('inversiones').delete().eq('id',inversion.id);
+      }
+    }
+    
+    // Eliminar el movimiento de caja
     const{error}=await sb.from('caja').delete().eq('id',movId);
     if(error)throw error;
+    
     closeModal('modal-confirmar-eliminacion');
-    toast('success','Movimiento eliminado');
-    loadCaja(); loadDashboard();
-  }catch(err){toast('error','Error: '+err.message);}
+    toast('success','Movimiento eliminado correctamente');
+    loadCaja();loadDashboard();loadPrestamos();
+  }catch(err){
+    toast('error','Error: '+err.message);
+  }
 }
 
 async function saveCaja(){
