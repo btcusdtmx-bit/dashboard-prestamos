@@ -188,6 +188,51 @@
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: currentColor; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* NUEVO: Estilos para el panel de interés devengado */
+    .interes-devengado-panel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .interes-devengado-panel h4 {
+      font-size: .85rem;
+      color: var(--amber);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .interes-devengado-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .interes-devengado-item {
+      background: var(--surface);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--amber);
+    }
+    .interes-devengado-item .label {
+      font-size: .68rem;
+      color: var(--text3);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .interes-devengado-item .value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--amber);
+    }
+    .interes-devengado-item.ahorro {
+      border-left-color: var(--green);
+    }
+    .interes-devengado-item.ahorro .value {
+      color: var(--green);
+    }
+
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-260px); }
       .sidebar.open { transform: translateX(0); box-shadow: var(--shadow-md); }
@@ -431,13 +476,42 @@
   </div>
 </div>
 
+<!-- MODAL DE PAGO CON CÁLCULO DE INTERÉS DEVENGADO -->
 <div class="modal-overlay" id="modal-pago" role="dialog" aria-modal="true">
   <div class="modal-box">
     <div class="modal-header"><h2 class="modal-title">💰 Registrar Pago</h2><button class="modal-close" onclick="closeModal('modal-pago')">✕</button></div>
     <div class="form-group"><label class="form-label">Cliente</label><input type="text" class="form-input" id="pago-cliente" readonly></div>
     <div class="form-group"><label class="form-label">Saldo Pendiente</label><input type="text" class="form-input" id="pago-saldo" readonly></div>
-    <div class="form-group"><label class="form-label">Monto *</label><input type="number" class="form-input" id="pago-monto" step="0.01" min="0.01"></div>
-    <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="pago-fecha"></div>
+    
+    <!-- NUEVO: Panel de Interés Devengado -->
+    <div class="interes-devengado-panel" id="pago-interes-panel" style="display:none">
+      <h4>📊 Cálculo de Interés Devengado</h4>
+      <div class="interes-devengado-grid">
+        <div class="interes-devengado-item">
+          <div class="label">Meses transcurridos</div>
+          <div class="value" id="pago-meses">0</div>
+        </div>
+        <div class="interes-devengado-item">
+          <div class="label">Interés devengado</div>
+          <div class="value" id="pago-interes-devengado">$0.00</div>
+        </div>
+        <div class="interes-devengado-item">
+          <div class="label">Capital pendiente</div>
+          <div class="value" id="pago-capital-pendiente" style="color:var(--blue)">$0.00</div>
+        </div>
+        <div class="interes-devengado-item">
+          <div class="label">Total a liquidar</div>
+          <div class="value" id="pago-total-liquidar" style="color:var(--green)">$0.00</div>
+        </div>
+        <div class="interes-devengado-item ahorro" id="pago-ahorro-item" style="display:none">
+          <div class="label">💰 Ahorro por pago anticipado</div>
+          <div class="value" id="pago-ahorro">$0.00</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group"><label class="form-label">Monto *</label><input type="number" class="form-input" id="pago-monto" step="0.01" min="0.01" oninput="actualizarInfoPago()"></div>
+    <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="pago-fecha" oninput="actualizarInfoPago()"></div>
     <div class="form-group"><label class="form-label">Período</label><select class="form-select" id="pago-periodo"></select></div>
     <div class="form-group"><label class="form-label">Observaciones</label><input type="text" class="form-input" id="pago-obs" placeholder="Opcional"></div>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-pago')">Cancelar</button><button class="btn btn-green" onclick="confirmarPago()">Registrar Pago</button></div>
@@ -447,9 +521,37 @@
 <div class="modal-overlay" id="modal-pago-rapido" role="dialog" aria-modal="true">
   <div class="modal-box">
     <div class="modal-header"><h2 class="modal-title">⚡ Pago Rápido</h2><button class="modal-close" onclick="closeModal('modal-pago-rapido')">✕</button></div>
-    <div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="pago-rapido-cliente"></select></div>
+    <div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="pago-rapido-cliente" onchange="actualizarInfoPagoRapido()"></select></div>
+    
+    <!-- NUEVO: Panel de Interés Devengado para Pago Rápido -->
+    <div class="interes-devengado-panel" id="pago-rapido-interes-panel" style="display:none">
+      <h4>📊 Cálculo de Interés Devengado</h4>
+      <div class="interes-devengado-grid">
+        <div class="interes-devengado-item">
+          <div class="label">Meses transcurridos</div>
+          <div class="value" id="pago-rapido-meses">0</div>
+        </div>
+        <div class="interes-devengado-item">
+          <div class="label">Interés devengado</div>
+          <div class="value" id="pago-rapido-interes-devengado">$0.00</div>
+        </div>
+        <div class="interes-devengado-item">
+          <div class="label">Capital pendiente</div>
+          <div class="value" id="pago-rapido-capital-pendiente" style="color:var(--blue)">$0.00</div>
+        </div>
+        <div class="interes-devengado-item">
+          <div class="label">Total a liquidar</div>
+          <div class="value" id="pago-rapido-total-liquidar" style="color:var(--green)">$0.00</div>
+        </div>
+        <div class="interes-devengado-item ahorro" id="pago-rapido-ahorro-item" style="display:none">
+          <div class="label">💰 Ahorro por pago anticipado</div>
+          <div class="value" id="pago-rapido-ahorro">$0.00</div>
+        </div>
+      </div>
+    </div>
+    
     <div class="form-group"><label class="form-label">Monto *</label><input type="number" class="form-input" id="pago-rapido-monto" step="0.01" min="0.01"></div>
-    <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="pago-rapido-fecha"></div>
+    <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="pago-rapido-fecha" oninput="actualizarInfoPagoRapido()"></div>
     <div class="form-group"><label class="form-label">Período</label><select class="form-select" id="pago-rapido-periodo"></select></div>
     <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-pago-rapido')">Cancelar</button><button class="btn btn-green" onclick="confirmarPagoRapido()">Registrar</button></div>
   </div>
@@ -620,6 +722,9 @@ const PERIODOS = [
 let sb, currentUser='', currentUserRole='socio', currentPagoId=null;
 let charts={}, dataPrestamos=[], dataClientes=[], dataCaja=[];
 let sortState={prestamos:{col:null,dir:1},clientes:{col:null,dir:1},caja:{col:null,dir:1}};
+
+// NUEVO: Variables para el cálculo de interés devengado
+let currentPrestamoInfo = null;
 
 window.addEventListener('load', () => {
   sb = supabase.createClient(SB_URL, SB_KEY);
@@ -902,67 +1007,354 @@ async function eliminarPago(pagoId,clienteId,cliente){
   }catch(err){toast('error','Error: '+err.message);}
 }
 
-function openPagoModal(clienteId,cliente,saldo){
-  currentPagoId=clienteId;
-  document.getElementById('pago-cliente').value=cliente;
-  document.getElementById('pago-saldo').value=fmtMoney(saldo);
-  document.getElementById('pago-monto').value='';
-  document.getElementById('pago-fecha').value=new Date().toISOString().split('T')[0];
-  document.getElementById('pago-obs').value='';
-  const sel=document.getElementById('pago-periodo');
-  if(sel)sel.value=getCurrentPeriodo();
+/* ── NUEVO: FUNCIONES PARA CÁLCULO DE INTERÉS DEVENGADO ───────────── */
+
+/**
+ * Calcula el interés devengado hasta una fecha específica
+ * @param {Object} prestamo - Datos del préstamo de la tabla inversiones
+ * @param {string} fechaPago - Fecha en formato YYYY-MM-DD
+ * @returns {Object} - { mesesTranscurridos, interesDevengado, capitalPendiente, totalLiquidar, esAnticipado, interesNoDevengado }
+ */
+async function calcularInteresDevengado(prestamoId, fechaPago) {
+  // 1. Obtener datos del préstamo
+  const { data: prestamo, error: prestamoError } = await sb
+    .from('inversiones')
+    .select('*, inversionistas(nombre)')
+    .eq('id', prestamoId)
+    .single();
+  
+  if (prestamoError) throw prestamoError;
+  
+  // 2. Calcular meses transcurridos
+  const fechaInicio = new Date(prestamo.fecha_inicial);
+  const fechaActual = new Date(fechaPago);
+  
+  const anios = fechaActual.getFullYear() - fechaInicio.getFullYear();
+  const meses = fechaActual.getMonth() - fechaInicio.getMonth();
+  const dias = fechaActual.getDate() - fechaInicio.getDate();
+  
+  let mesesTranscurridos = anios * 12 + meses;
+  if (dias > 15) mesesTranscurridos += 1;
+  mesesTranscurridos = Math.max(0, mesesTranscurridos);
+  
+  // 3. Obtener pagos anteriores
+  const { data: pagosAnteriores } = await sb
+    .from('pagos_realizados')
+    .select('monto, fecha_pago, observaciones')
+    .eq('inversion_id', prestamoId);
+  
+  let capitalPagado = 0;
+  let interesPagado = 0;
+  
+  if (pagosAnteriores && pagosAnteriores.length > 0) {
+    pagosAnteriores.forEach(pago => {
+      const monto = parseFloat(pago.monto || 0);
+      const obs = (pago.observaciones || '').toUpperCase();
+      
+      // Si en observaciones dice "CAPITAL" o "LIQUIDACIÓN", es capital
+      if (obs.includes('CAPITAL') || obs.includes('LIQUIDACIÓN')) {
+        capitalPagado += monto;
+      } else {
+        // Por defecto, asumimos que es interés
+        interesPagado += monto;
+      }
+    });
+  }
+  
+  // 4. Calcular saldo de capital actual
+  const capitalPendiente = prestamo.capital - capitalPagado;
+  
+  // 5. Calcular tasa mensual
+  const plazoMeses = prestamo.plazo_meses || 12;
+  const tasaMensual = (prestamo.interes / prestamo.capital) / plazoMeses;
+  
+  // 6. Calcular interés devengado (sobre saldo insoluto)
+  const interesDevengado = capitalPendiente * tasaMensual * mesesTranscurridos;
+  
+  // 7. Total a liquidar
+  const totalLiquidar = capitalPendiente + interesDevengado;
+  
+  // 8. Verificar si es pago anticipado
+  const esAnticipado = mesesTranscurridos < plazoMeses;
+  const interesNoDevengado = esAnticipado 
+    ? prestamo.interes - interesDevengado - interesPagado
+    : 0;
+  
+  return {
+    prestamo,
+    mesesTranscurridos,
+    interesDevengado,
+    interesPagado,
+    capitalPagado,
+    capitalPendiente,
+    totalLiquidar,
+    esAnticipado,
+    interesNoDevengado: Math.max(0, interesNoDevengado),
+    tasaMensual: tasaMensual * 100,
+    plazoMeses
+  };
+}
+
+function openPagoModal(clienteId, cliente, saldo) {
+  currentPagoId = clienteId;
+  document.getElementById('pago-cliente').value = cliente;
+  document.getElementById('pago-saldo').value = fmtMoney(saldo);
+  document.getElementById('pago-monto').value = '';
+  document.getElementById('pago-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('pago-obs').value = '';
+  const sel = document.getElementById('pago-periodo');
+  if (sel) sel.value = getCurrentPeriodo();
+  
+  // NUEVO: Ocultar panel de interés devengado inicialmente
+  document.getElementById('pago-interes-panel').style.display = 'none';
+  
   openModal('modal-pago');
+  
+  // NUEVO: Cargar información del interés devengado
+  actualizarInfoPago();
 }
 
-async function confirmarPago(){
-  const monto=parseFloat(document.getElementById('pago-monto').value);
-  const fecha=document.getElementById('pago-fecha').value;
-  const periodo=document.getElementById('pago-periodo').value;
-  const obs=document.getElementById('pago-obs').value;
-  const cliente=document.getElementById('pago-cliente').value;
-  if(!monto||monto<=0){toast('error','Ingresa un monto válido');return;}
-  if(!fecha){toast('error','Selecciona una fecha');return;}
-  try{
+async function actualizarInfoPago() {
+  if (!currentPagoId) return;
+  
+  const fecha = document.getElementById('pago-fecha').value;
+  if (!fecha) return;
+  
+  try {
+    const info = await calcularInteresDevengado(currentPagoId, fecha);
+    currentPrestamoInfo = info;
+    
+    // Mostrar panel
+    document.getElementById('pago-interes-panel').style.display = 'block';
+    
+    // Actualizar valores
+    setText('pago-meses', info.mesesTranscurridos + ' de ' + info.plazoMeses);
+    setText('pago-interes-devengado', fmtMoney(info.interesDevengado));
+    setText('pago-capital-pendiente', fmtMoney(info.capitalPendiente));
+    setText('pago-total-liquidar', fmtMoney(info.totalLiquidar));
+    
+    // Mostrar ahorro si es pago anticipado
+    const ahorroItem = document.getElementById('pago-ahorro-item');
+    if (info.esAnticipado && info.interesNoDevengado > 0) {
+      ahorroItem.style.display = 'block';
+      setText('pago-ahorro', fmtMoney(info.interesNoDevengado));
+    } else {
+      ahorroItem.style.display = 'none';
+    }
+    
+    // Sugerir monto si está vacío
+    const montoInput = document.getElementById('pago-monto');
+    if (!montoInput.value) {
+      montoInput.value = info.totalLiquidar.toFixed(2);
+    }
+    
+  } catch (err) {
+    console.error('Error calculando interés devengado:', err);
+  }
+}
+
+async function confirmarPago() {
+  const monto = parseFloat(document.getElementById('pago-monto').value);
+  const fecha = document.getElementById('pago-fecha').value;
+  const periodo = document.getElementById('pago-periodo').value;
+  const obs = document.getElementById('pago-obs').value;
+  const cliente = document.getElementById('pago-cliente').value;
+  
+  if (!monto || monto <= 0) { toast('error', 'Ingresa un monto válido'); return; }
+  if (!fecha) { toast('error', 'Selecciona una fecha'); return; }
+  
+  try {
+    // NUEVO: Calcular interés devengado para determinar distribución del pago
+    const info = await calcularInteresDevengado(currentPagoId, fecha);
+    
+    let observacionesFinal = obs || '';
+    let esLiquidacionAnticipada = false;
+    
+    // Si el monto cubre todo el total a liquidar, es liquidación
+    if (monto >= info.totalLiquidar - 0.01) {
+      esLiquidacionAnticipada = true;
+      if (info.esAnticipado && info.interesNoDevengado > 0) {
+        observacionesFinal = (obs ? obs + ' — ' : '') + 
+          `LIQUIDACIÓN ANTICIPADA - Ahorro: ${fmtMoney(info.interesNoDevengado)} en intereses no devengados`;
+      } else {
+        observacionesFinal = (obs ? obs + ' — ' : '') + 'LIQUIDACIÓN TOTAL';
+      }
+    } else {
+      // Pago parcial: distribuir entre interés y capital
+      if (monto <= info.interesDevengado) {
+        observacionesFinal = (obs ? obs + ' — ' : '') + `INTERÉS ${periodo}`;
+      } else {
+        const capitalPagado = monto - info.interesDevengado;
+        observacionesFinal = (obs ? obs + ' — ' : '') + 
+          `${periodo} - CAPITAL: ${fmtMoney(capitalPagado)}`;
+      }
+    }
+    
     await Promise.all([
-      sb.from('pagos_realizados').insert({inversion_id:currentPagoId,fecha_pago:fecha,monto,periodo,observaciones:obs}),
-      sb.from('caja').insert({fecha,tipo:'entrada',concepto:`Pago de ${cliente}${obs?' — '+obs:''}`,monto,periodo}),
+      sb.from('pagos_realizados').insert({
+        inversion_id: currentPagoId,
+        fecha_pago: fecha,
+        monto,
+        periodo,
+        observaciones: observacionesFinal
+      }),
+      sb.from('caja').insert({
+        fecha,
+        tipo: 'entrada',
+        concepto: `Pago de ${cliente}${observacionesFinal ? ' — ' + observacionesFinal : ''}`,
+        monto,
+        periodo
+      }),
     ]);
-    closeModal('modal-pago'); toast('success',`Pago registrado: ${fmtMoney(monto)}`);
-    loadDashboard(); loadPrestamos();
-  }catch(err){toast('error','Error: '+err.message);}
+    
+    closeModal('modal-pago');
+    
+    if (esLiquidacionAnticipada && info.esAnticipado && info.interesNoDevengado > 0) {
+      toast('success', `✅ Liquidación anticipada registrada. Ahorro: ${fmtMoney(info.interesNoDevengado)}`);
+    } else {
+      toast('success', `Pago registrado: ${fmtMoney(monto)}`);
+    }
+    
+    loadDashboard();
+    loadPrestamos();
+    
+  } catch (err) {
+    toast('error', 'Error: ' + err.message);
+  }
 }
 
-async function loadClientesSelect(){
-  const{data,error}=await sb.from('inversiones').select('id,cliente').order('cliente');
-  const sel=document.getElementById('pago-rapido-cliente');
-  sel.innerHTML=error?'<option value="">Error al cargar</option>':'<option value="">Seleccionar cliente…</option>'+(data||[]).map(c=>`<option value="${c.id}">${sanitize(c.cliente)}</option>`).join('');
-  document.getElementById('pago-rapido-fecha').value=new Date().toISOString().split('T')[0];
-  document.getElementById('pago-rapido-periodo').value=getCurrentPeriodo();
+async function loadClientesSelect() {
+  const { data, error } = await sb.from('inversiones').select('id,cliente').order('cliente');
+  const sel = document.getElementById('pago-rapido-cliente');
+  sel.innerHTML = error
+    ? '<option value="">Error al cargar</option>'
+    : '<option value="">Seleccionar cliente…</option>' + (data || []).map(c => `<option value="${c.id}">${sanitize(c.cliente)}</option>`).join('');
+  document.getElementById('pago-rapido-fecha').value = new Date().toISOString().split('T')[0];
+  document.getElementById('pago-rapido-periodo').value = getCurrentPeriodo();
+  
+  // NUEVO: Ocultar panel de interés devengado
+  document.getElementById('pago-rapido-interes-panel').style.display = 'none';
+  
+  // NUEVO: Actualizar info al cargar
+  actualizarInfoPagoRapido();
 }
 
-async function loadInversionistasSelect(selectId){
-  const{data,error}=await sb.from('inversionistas').select('id,nombre').order('nombre');
-  document.getElementById(selectId).innerHTML=error?'<option value="">Error al cargar</option>':'<option value="">Seleccionar inversionista…</option>'+(data||[]).map(i=>`<option value="${i.id}">${sanitize(i.nombre)}</option>`).join('');
+async function actualizarInfoPagoRapido() {
+  const clienteId = document.getElementById('pago-rapido-cliente').value;
+  const fecha = document.getElementById('pago-rapido-fecha').value;
+  
+  if (!clienteId || !fecha) {
+    document.getElementById('pago-rapido-interes-panel').style.display = 'none';
+    return;
+  }
+  
+  try {
+    const info = await calcularInteresDevengado(clienteId, fecha);
+    currentPrestamoInfo = info;
+    
+    // Mostrar panel
+    document.getElementById('pago-rapido-interes-panel').style.display = 'block';
+    
+    // Actualizar valores
+    setText('pago-rapido-meses', info.mesesTranscurridos + ' de ' + info.plazoMeses);
+    setText('pago-rapido-interes-devengado', fmtMoney(info.interesDevengado));
+    setText('pago-rapido-capital-pendiente', fmtMoney(info.capitalPendiente));
+    setText('pago-rapido-total-liquidar', fmtMoney(info.totalLiquidar));
+    
+    // Mostrar ahorro si es pago anticipado
+    const ahorroItem = document.getElementById('pago-rapido-ahorro-item');
+    if (info.esAnticipado && info.interesNoDevengado > 0) {
+      ahorroItem.style.display = 'block';
+      setText('pago-rapido-ahorro', fmtMoney(info.interesNoDevengado));
+    } else {
+      ahorroItem.style.display = 'none';
+    }
+    
+    // Sugerir monto
+    const montoInput = document.getElementById('pago-rapido-monto');
+    if (!montoInput.value) {
+      montoInput.value = info.totalLiquidar.toFixed(2);
+    }
+    
+  } catch (err) {
+    console.error('Error calculando interés devengado:', err);
+  }
 }
 
-async function confirmarPagoRapido(){
-  const clienteId=document.getElementById('pago-rapido-cliente').value;
-  const monto=parseFloat(document.getElementById('pago-rapido-monto').value);
-  const fecha=document.getElementById('pago-rapido-fecha').value;
-  const periodo=document.getElementById('pago-rapido-periodo').value;
-  if(!clienteId){toast('error','Selecciona un cliente');return;}
-  if(!monto||monto<=0){toast('error','Ingresa un monto válido');return;}
-  if(!fecha){toast('error','Selecciona una fecha');return;}
-  try{
-    const{data:cli}=await sb.from('inversiones').select('cliente').eq('id',clienteId).single();
-    const nombre=cli?.cliente||'Cliente';
+async function loadInversionistasSelect(selectId) {
+  const { data, error } = await sb.from('inversionistas').select('id,nombre').order('nombre');
+  document.getElementById(selectId).innerHTML = error
+    ? '<option value="">Error al cargar</option>'
+    : '<option value="">Seleccionar inversionista…</option>' + (data || []).map(i => `<option value="${i.id}">${sanitize(i.nombre)}</option>`).join('');
+}
+
+async function confirmarPagoRapido() {
+  const clienteId = document.getElementById('pago-rapido-cliente').value;
+  const monto = parseFloat(document.getElementById('pago-rapido-monto').value);
+  const fecha = document.getElementById('pago-rapido-fecha').value;
+  const periodo = document.getElementById('pago-rapido-periodo').value;
+  
+  if (!clienteId) { toast('error', 'Selecciona un cliente'); return; }
+  if (!monto || monto <= 0) { toast('error', 'Ingresa un monto válido'); return; }
+  if (!fecha) { toast('error', 'Selecciona una fecha'); return; }
+  
+  try {
+    const { data: cli } = await sb.from('inversiones').select('cliente').eq('id', clienteId).single();
+    const nombre = cli?.cliente || 'Cliente';
+    
+    // NUEVO: Calcular interés devengado
+    const info = await calcularInteresDevengado(clienteId, fecha);
+    
+    let observacionesFinal = '';
+    let esLiquidacionAnticipada = false;
+    
+    if (monto >= info.totalLiquidar - 0.01) {
+      esLiquidacionAnticipada = true;
+      if (info.esAnticipado && info.interesNoDevengado > 0) {
+        observacionesFinal = `LIQUIDACIÓN ANTICIPADA - Ahorro: ${fmtMoney(info.interesNoDevengado)} en intereses no devengados`;
+      } else {
+        observacionesFinal = 'LIQUIDACIÓN TOTAL';
+      }
+    } else {
+      if (monto <= info.interesDevengado) {
+        observacionesFinal = `INTERÉS ${periodo}`;
+      } else {
+        const capitalPagado = monto - info.interesDevengado;
+        observacionesFinal = `${periodo} - CAPITAL: ${fmtMoney(capitalPagado)}`;
+      }
+    }
+    
     await Promise.all([
-      sb.from('pagos_realizados').insert({inversion_id:clienteId,fecha_pago:fecha,monto,periodo}),
-      sb.from('caja').insert({fecha,tipo:'entrada',concepto:`Pago de ${nombre}`,monto,periodo}),
+      sb.from('pagos_realizados').insert({
+        inversion_id: clienteId,
+        fecha_pago: fecha,
+        monto,
+        periodo,
+        observaciones: observacionesFinal
+      }),
+      sb.from('caja').insert({
+        fecha,
+        tipo: 'entrada',
+        concepto: `Pago de ${nombre}${observacionesFinal ? ' — ' + observacionesFinal : ''}`,
+        monto,
+        periodo
+      }),
     ]);
-    closeModal('modal-pago-rapido'); toast('success',`Pago registrado: ${fmtMoney(monto)}`);
-    loadDashboard(); loadPrestamos();
-  }catch(err){toast('error','Error: '+err.message);}
+    
+    closeModal('modal-pago-rapido');
+    
+    if (esLiquidacionAnticipada && info.esAnticipado && info.interesNoDevengado > 0) {
+      toast('success', `✅ Liquidación anticipada. Ahorro: ${fmtMoney(info.interesNoDevengado)}`);
+    } else {
+      toast('success', `Pago registrado: ${fmtMoney(monto)}`);
+    }
+    
+    loadDashboard();
+    loadPrestamos();
+    
+  } catch (err) {
+    toast('error', 'Error: ' + err.message);
+  }
 }
 
 async function crearPrestamo(){
@@ -1177,16 +1569,12 @@ function confirmarEliminarMovimiento(movId,concepto,monto){
 
 async function eliminarMovimiento(movId){
   try{
-    // Obtener información del movimiento
     const{data:movimiento,error:fetchError}=await sb.from('caja').select('*').eq('id',movId).single();
     if(fetchError)throw fetchError;
     
-    // Si es un préstamo (concepto contiene "Préstamo a"), eliminar también de inversiones
     if(movimiento.concepto&&movimiento.concepto.includes('Préstamo a')){
-      // Extraer nombre del cliente del concepto "Préstamo a XXX"
       const nombreCliente=movimiento.concepto.replace('Préstamo a ','').trim();
       
-      // Buscar el préstamo en inversiones
       const{data:inversiones,error:invError}=await sb
         .from('inversiones')
         .select('id')
@@ -1201,24 +1589,19 @@ async function eliminarMovimiento(movId){
       if(inversiones&&inversiones.length>0){
         const inversionId=inversiones[0].id;
         
-        // 1. Eliminar pagos realizados asociados al préstamo
         await sb.from('pagos_realizados').delete().eq('inversion_id',inversionId);
-        
-        // 2. Eliminar el préstamo de inversiones
         await sb.from('inversiones').delete().eq('id',inversionId);
         
         console.log('Préstamo eliminado:',inversionId);
       }
     }
     
-    // 3. Eliminar el movimiento de caja
     const{error}=await sb.from('caja').delete().eq('id',movId);
     if(error)throw error;
     
     closeModal('modal-confirmar-eliminacion');
     toast('success','Movimiento y préstamo eliminados correctamente');
     
-    // 4. Recargar todas las vistas
     loadCaja();
     loadDashboard();
     loadPrestamos();
@@ -1422,7 +1805,6 @@ function calcularAmortizacion(frecuencia, fechaInicio){
   const capitalPorPago = capital / numPagos;
   
   if(tipoPago === 'intereses_final'){
-    // TIPO 1: Solo intereses periódicos, capital al final
     let tasaPeriodo;
     switch(frecuencia){
       case 'semanal': tasaPeriodo = tasaMensual / 4.33; break;
@@ -1447,23 +1829,19 @@ function calcularAmortizacion(frecuencia, fechaInicio){
     }
     pagos.push({numero: numPagos, fecha: new Date(fecha), interes: interesFijo, capital: saldo, pago: saldo + interesFijo, saldo: 0});
   }else{
-    // TIPO 2: Amortización con cálculo MENSUAL del interés sobre saldo
     let pagoActual = 1;
     let pagosEnMesActual = 0;
     
     while(pagoActual <= numPagos){
-      // Calcular interés del mes sobre el saldo actual
       const interesMensual = saldo * (tasaMensual / 100);
       const interesPorPago = interesMensual / pagosPorMes;
       
-      // Determinar cuántos pagos hacer en este mes
       const pagosRestantes = numPagos - pagoActual + 1;
       const pagosEnEsteMes = Math.min(pagosPorMes - pagosEnMesActual, pagosRestantes);
       
       for(let p = 0; p < pagosEnEsteMes && pagoActual <= numPagos; p++){
         let capitalEstePago = capitalPorPago;
         
-        // El último pago absorbe el residuo del capital
         if(pagoActual === numPagos){
           capitalEstePago = saldo;
         }
@@ -1491,7 +1869,6 @@ function calcularAmortizacion(frecuencia, fechaInicio){
         pagosEnMesActual++;
       }
       
-      // Resetear contador de pagos del mes cuando se completa
       if(pagosEnMesActual >= pagosPorMes){
         pagosEnMesActual = 0;
       }
