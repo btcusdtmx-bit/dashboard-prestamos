@@ -232,6 +232,22 @@
     .interes-devengado-item.ahorro .value {
       color: var(--green);
     }
+    .interes-devengado-item.info {
+      border-left-color: var(--blue);
+    }
+    .interes-devengado-item.info .value {
+      color: var(--blue);
+      font-size: .85rem;
+    }
+    .interes-devengado-nota {
+      font-size: .72rem;
+      color: var(--text3);
+      margin-top: 10px;
+      padding: 8px;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      border-left: 2px solid var(--amber);
+    }
 
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-260px); }
@@ -488,8 +504,12 @@
       <h4>📊 Cálculo de Interés Devengado</h4>
       <div class="interes-devengado-grid">
         <div class="interes-devengado-item">
-          <div class="label">Meses transcurridos</div>
-          <div class="value" id="pago-meses">0</div>
+          <div class="label">Días transcurridos</div>
+          <div class="value" id="pago-dias">0</div>
+        </div>
+        <div class="interes-devengado-item info">
+          <div class="label">Meses completos</div>
+          <div class="value" id="pago-meses-completos">0</div>
         </div>
         <div class="interes-devengado-item">
           <div class="label">Interés devengado</div>
@@ -507,6 +527,9 @@
           <div class="label">💰 Ahorro por pago anticipado</div>
           <div class="value" id="pago-ahorro">$0.00</div>
         </div>
+      </div>
+      <div class="interes-devengado-nota" id="pago-nota-calculo">
+        ℹ️ Primer mes: interés completo. Meses siguientes: cálculo por días transcurridos.
       </div>
     </div>
     
@@ -528,8 +551,12 @@
       <h4>📊 Cálculo de Interés Devengado</h4>
       <div class="interes-devengado-grid">
         <div class="interes-devengado-item">
-          <div class="label">Meses transcurridos</div>
-          <div class="value" id="pago-rapido-meses">0</div>
+          <div class="label">Días transcurridos</div>
+          <div class="value" id="pago-rapido-dias">0</div>
+        </div>
+        <div class="interes-devengado-item info">
+          <div class="label">Meses completos</div>
+          <div class="value" id="pago-rapido-meses-completos">0</div>
         </div>
         <div class="interes-devengado-item">
           <div class="label">Interés devengado</div>
@@ -547,6 +574,9 @@
           <div class="label">💰 Ahorro por pago anticipado</div>
           <div class="value" id="pago-rapido-ahorro">$0.00</div>
         </div>
+      </div>
+      <div class="interes-devengado-nota" id="pago-rapido-nota-calculo">
+        ℹ️ Primer mes: interés completo. Meses siguientes: cálculo por días transcurridos.
       </div>
     </div>
     
@@ -1011,9 +1041,12 @@ async function eliminarPago(pagoId,clienteId,cliente){
 
 /**
  * Calcula el interés devengado hasta una fecha específica
- * @param {Object} prestamo - Datos del préstamo de la tabla inversiones
+ * REGLA DE NEGOCIO:
+ * - Primer mes (días 1-30): Siempre se cobra el interés completo
+ * - Meses posteriores: Se cobra solo los días transcurridos del mes actual
+ * @param {Object} prestamoId - ID del préstamo
  * @param {string} fechaPago - Fecha en formato YYYY-MM-DD
- * @returns {Object} - { mesesTranscurridos, interesDevengado, capitalPendiente, totalLiquidar, esAnticipado, interesNoDevengado }
+ * @returns {Object} - Información detallada del cálculo
  */
 async function calcularInteresDevengado(prestamoId, fechaPago) {
   // 1. Obtener datos del préstamo
@@ -1025,17 +1058,14 @@ async function calcularInteresDevengado(prestamoId, fechaPago) {
   
   if (prestamoError) throw prestamoError;
   
-  // 2. Calcular meses transcurridos
+  // 2. Calcular días transcurridos
   const fechaInicio = new Date(prestamo.fecha_inicial);
   const fechaActual = new Date(fechaPago);
   
-  const anios = fechaActual.getFullYear() - fechaInicio.getFullYear();
-  const meses = fechaActual.getMonth() - fechaInicio.getMonth();
-  const dias = fechaActual.getDate() - fechaInicio.getDate();
-  
-  let mesesTranscurridos = anios * 12 + meses;
-  if (dias > 15) mesesTranscurridos += 1;
-  mesesTranscurridos = Math.max(0, mesesTranscurridos);
+  const milisegundosPorDia = 1000 * 60 * 60 * 24;
+  const diasTranscurridos = Math.max(0, Math.floor(
+    (fechaActual.getTime() - fechaInicio.getTime()) / milisegundosPorDia
+  ));
   
   // 3. Obtener pagos anteriores
   const { data: pagosAnteriores } = await sb
@@ -1067,22 +1097,57 @@ async function calcularInteresDevengado(prestamoId, fechaPago) {
   // 5. Calcular tasa mensual
   const plazoMeses = prestamo.plazo_meses || 12;
   const tasaMensual = (prestamo.interes / prestamo.capital) / plazoMeses;
+  const interesMensual = capitalPendiente * tasaMensual;
   
-  // 6. Calcular interés devengado (sobre saldo insoluto)
-  const interesDevengado = capitalPendiente * tasaMensual * mesesTranscurridos;
+  // 6. Calcular interés devengado con la nueva regla
+  let interesDevengado = 0;
+  let mesesCompletos = 0;
+  let diasMesActual = 0;
+  let notaCalculo = '';
+  
+  if (diasTranscurridos === 0) {
+    interesDevengado = 0;
+    notaCalculo = 'Sin días transcurridos';
+  } else if (diasTranscurridos <= 30) {
+    // PRIMER MES: Siempre cobra el interés completo
+    interesDevengado = interesMensual;
+    mesesCompletos = 0;
+    diasMesActual = diasTranscurridos;
+    notaCalculo = `Primer mes: Interés completo (${diasTranscurridos} días)`;
+  } else {
+    // MESES POSTERIORES: Primer mes completo + días adicionales
+    mesesCompletos = Math.floor(diasTranscurridos / 30);
+    diasMesActual = diasTranscurridos % 30;
+    
+    // Interés de meses completos
+    interesDevengado = interesMensual * mesesCompletos;
+    
+    // Interés de días restantes del mes actual (prorrateado)
+    if (diasMesActual > 0) {
+      const interesDiario = interesMensual / 30;
+      interesDevengado += interesDiario * diasMesActual;
+    }
+    
+    notaCalculo = `${mesesCompletos} mes(es) completo(s) + ${diasMesActual} días adicionales`;
+  }
+  
+  // Limitar al interés total proyectado
+  interesDevengado = Math.min(interesDevengado, prestamo.interes);
   
   // 7. Total a liquidar
   const totalLiquidar = capitalPendiente + interesDevengado;
   
   // 8. Verificar si es pago anticipado
-  const esAnticipado = mesesTranscurridos < plazoMeses;
+  const esAnticipado = diasTranscurridos < (plazoMeses * 30);
   const interesNoDevengado = esAnticipado 
     ? prestamo.interes - interesDevengado - interesPagado
     : 0;
   
   return {
     prestamo,
-    mesesTranscurridos,
+    diasTranscurridos,
+    mesesCompletos,
+    diasMesActual,
     interesDevengado,
     interesPagado,
     capitalPagado,
@@ -1091,7 +1156,8 @@ async function calcularInteresDevengado(prestamoId, fechaPago) {
     esAnticipado,
     interesNoDevengado: Math.max(0, interesNoDevengado),
     tasaMensual: tasaMensual * 100,
-    plazoMeses
+    plazoMeses,
+    notaCalculo
   };
 }
 
@@ -1128,10 +1194,12 @@ async function actualizarInfoPago() {
     document.getElementById('pago-interes-panel').style.display = 'block';
     
     // Actualizar valores
-    setText('pago-meses', info.mesesTranscurridos + ' de ' + info.plazoMeses);
+    setText('pago-dias', info.diasTranscurridos + ' días');
+    setText('pago-meses-completos', info.mesesCompletos + ' de ' + info.plazoMeses);
     setText('pago-interes-devengado', fmtMoney(info.interesDevengado));
     setText('pago-capital-pendiente', fmtMoney(info.capitalPendiente));
     setText('pago-total-liquidar', fmtMoney(info.totalLiquidar));
+    setText('pago-nota-calculo', 'ℹ️ ' + info.notaCalculo);
     
     // Mostrar ahorro si es pago anticipado
     const ahorroItem = document.getElementById('pago-ahorro-item');
@@ -1256,10 +1324,12 @@ async function actualizarInfoPagoRapido() {
     document.getElementById('pago-rapido-interes-panel').style.display = 'block';
     
     // Actualizar valores
-    setText('pago-rapido-meses', info.mesesTranscurridos + ' de ' + info.plazoMeses);
+    setText('pago-rapido-dias', info.diasTranscurridos + ' días');
+    setText('pago-rapido-meses-completos', info.mesesCompletos + ' de ' + info.plazoMeses);
     setText('pago-rapido-interes-devengado', fmtMoney(info.interesDevengado));
     setText('pago-rapido-capital-pendiente', fmtMoney(info.capitalPendiente));
     setText('pago-rapido-total-liquidar', fmtMoney(info.totalLiquidar));
+    setText('pago-rapido-nota-calculo', 'ℹ️ ' + info.notaCalculo);
     
     // Mostrar ahorro si es pago anticipado
     const ahorroItem = document.getElementById('pago-rapido-ahorro-item');
